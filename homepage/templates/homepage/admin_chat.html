@@ -1,0 +1,165 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}AI Chat Management - Admin Dashboard{% endblock %}
+
+{% block page_title %}AI Chat Management{% endblock %}
+
+{% block page_subtitle %}View and respond to user messages.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-comments"></i></div>
+        <div class="label">Total Messages</div>
+        <div class="value" id="totalMessages">0</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> All time</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-bell"></i></div>
+        <div class="label">Unread</div>
+        <div class="value" style="color: #ef4444;" id="unreadCount">0</div>
+        <div class="change negative"><i class="fas fa-exclamation-triangle"></i> Needs attention</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-users"></i></div>
+        <div class="label">Active Users</div>
+        <div class="value" style="color: #2563eb;" id="activeUsers">0</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> Engaging</div>
+    </div>
+</div>
+
+<!-- Messages -->
+<div class="content-card">
+    <div class="card-title"><i class="fas fa-inbox"></i> All Messages</div>
+    <div id="messagesContainer">
+        <p style="color: #6b7280; text-align: center; padding: 2rem 0;">Loading messages...</p>
+    </div>
+</div>
+
+<!-- Reply Modal -->
+<div id="replyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%;">
+        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem;">Reply to Message</h3>
+        <div id="replyUserInfo" style="margin-bottom: 1rem; padding: 0.8rem; background: #f8fafc; border-radius: 8px;">
+            <strong>User:</strong> <span id="replyUser"></span>
+            <br>
+            <strong>Message:</strong> <span id="replyMessage"></span>
+        </div>
+        <textarea id="replyInput" rows="4" placeholder="Type your reply..." style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem; margin-bottom: 1rem;"></textarea>
+        <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+            <button onclick="closeReplyModal()" style="padding: 0.6rem 1.5rem; background: #e5e7eb; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+            <button onclick="sendReply()" style="padding: 0.6rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-paper-plane"></i> Send Reply
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentReplyId = null;
+
+    async function loadMessages() {
+        try {
+            const response = await fetch('/api/ai/admin-messages/');
+            const data = await response.json();
+            
+            if (data.success) {
+                const messages = data.messages;
+                const container = document.getElementById('messagesContainer');
+                
+                // Update stats
+                document.getElementById('totalMessages').textContent = messages.length;
+                document.getElementById('unreadCount').textContent = messages.filter(m => !m.is_read && !m.is_ai_response).length;
+                const uniqueUsers = new Set(messages.map(m => m.user_email));
+                document.getElementById('activeUsers').textContent = uniqueUsers.size;
+                
+                if (messages.length === 0) {
+                    container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 2rem 0;">No messages yet.</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const msg of messages) {
+                    const isUnread = !msg.is_read && !msg.is_ai_response;
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: start; padding: 0.8rem; border-bottom: 1px solid #f3f4f6; ${isUnread ? 'background: #eff6ff; border-radius: 8px;' : ''}">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                    ${msg.user_name}
+                                    ${isUnread ? '<span style="background: #ef4444; color: white; font-size: 0.6rem; padding: 0.1rem 0.5rem; border-radius: 20px;">New</span>' : ''}
+                                    ${msg.is_admin_reply ? '<span style="background: #10b981; color: white; font-size: 0.6rem; padding: 0.1rem 0.5rem; border-radius: 20px;">Admin Reply</span>' : ''}
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6b7280;">${msg.created_at}</div>
+                                <div style="margin-top: 0.3rem; font-size: 0.95rem;">${msg.message}</div>
+                                ${msg.response ? `<div style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                                    <div style="font-size: 0.85rem; color: #6b7280;">Response:</div>
+                                    <div style="font-size: 0.95rem;">${msg.response}</div>
+                                </div>` : ''}
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                                ${!msg.is_ai_response && !msg.is_admin_reply ? `<button onclick="openReplyModal(${msg.id}, '${msg.user_name}', '${msg.message.replace(/'/g, "\\'")}')" style="padding: 0.3rem 0.8rem; background: #2563eb; color: white; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem;">
+                                    <i class="fas fa-reply"></i> Reply
+                                </button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+
+    function openReplyModal(id, user, message) {
+        currentReplyId = id;
+        document.getElementById('replyUser').textContent = user;
+        document.getElementById('replyMessage').textContent = message;
+        document.getElementById('replyInput').value = '';
+        document.getElementById('replyModal').style.display = 'flex';
+    }
+
+    function closeReplyModal() {
+        document.getElementById('replyModal').style.display = 'none';
+        currentReplyId = null;
+    }
+
+    async function sendReply() {
+        const reply = document.getElementById('replyInput').value.trim();
+        if (!reply) {
+            alert('Please enter a reply.');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/ai/admin-reply/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                },
+                body: JSON.stringify({
+                    message_id: currentReplyId,
+                    reply_message: reply
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                closeReplyModal();
+                loadMessages();
+                alert('Reply sent successfully!');
+            } else {
+                alert('Error sending reply: ' + (data.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error sending reply:', error);
+            alert('Error sending reply. Please try again.');
+        }
+    }
+
+    // Load messages every 30 seconds
+    loadMessages();
+    setInterval(loadMessages, 30000);
+</script>
+{% endblock %}

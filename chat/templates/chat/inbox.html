@@ -1,0 +1,155 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Chat Inbox{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;"> Chat Inbox</h1>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <span style="background: #eef2ff; color: #4f46e5; padding: 6px 16px; border-radius: 20px; font-size: 14px;">
+                Role: {{ user_role|capfirst }}
+            </span>
+            <a href="#" onclick="document.getElementById('newChatModal').style.display='flex'" style="background: #4f46e5; color: white; padding: 10px 24px; border-radius: 40px; text-decoration: none;">
+                <i class="fas fa-plus"></i> New Chat
+            </a>
+        </div>
+    </div>
+
+    <div style="background: #f7f9fc; border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; border: 1px solid #eef2f6;">
+        <p style="color: #888; font-size: 14px;">
+            <i class="fas fa-info-circle" style="color: #4f46e5;"></i>
+            <strong>Communication Rules:</strong>
+            {% if rules.conditions %}
+                {% for role, condition in rules.conditions.items %}
+                    <span style="margin-left: 10px; background: #eef2ff; padding: 2px 10px; border-radius: 12px; font-size: 12px; color: #4f46e5;">
+                        {{ role|capfirst }}: {{ condition }}
+                    </span>
+                {% endfor %}
+            {% else %}
+                <span style="margin-left: 10px; color: #888;">You can chat with all eligible users</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden;">
+        {% if rooms %}
+            <div style="display: grid; gap: 1px; background: #eef2f6;">
+                {% for room in rooms %}
+                    <a href="{% url 'chat:chat_room' room.id %}" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: white; text-decoration: none; transition: 0.2s; border-left: 4px solid {% if room.unread_count > 0 %}#4f46e5{% else %}transparent{% endif %};">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px;">
+                                    {% for participant in room.participants.all %}
+                                        {% if participant != user %}
+                                            {{ participant.username|first|upper }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: #0b1a33;">
+                                        {% for participant in room.participants.all %}
+                                            {% if participant != user %}
+                                                {{ participant.get_full_name|default:participant.username }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div style="color: #888; font-size: 14px;">
+                                        {% if room.last_message %}
+                                            {{ room.last_message.content|truncatechars:40 }}
+                                        {% else %}
+                                            No messages yet
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 12px; color: #888;">
+                                {% if room.last_message %}
+                                    {{ room.last_message.created_at|date:"Y-m-d H:i" }}
+                                {% endif %}
+                            </div>
+                            {% if room.unread_count > 0 %}
+                                <span style="background: #ef4444; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 4px;">
+                                    {{ room.unread_count }} new
+                                </span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 64px; margin-bottom: 15px;"></div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Conversations Yet</h3>
+                <p style="color: #888;">Start a new conversation by clicking "New Chat" above.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="newChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 16px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; color: #0b1a33;">Start New Conversation</h2>
+            <button onclick="document.getElementById('newChatModal').style.display='none'" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+        </div>
+
+        {% if eligible_contacts %}
+            <form method="post" action="{% url 'chat:create_chat' %}">
+                {% csrf_token %}
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Select User</label>
+                    <select name="participant_id" required style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px;">
+                        <option value="">Choose a user...</option>
+                        {% for contact in eligible_contacts %}
+                            <option value="{{ contact.id }}">
+                                {{ contact.get_full_name|default:contact.username }} ({{ contact.email }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Room Type</label>
+                    <select name="room_type" style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px;">
+                        <option value="direct">Direct Message</option>
+                        <option value="support">Support Ticket</option>
+                    </select>
+                </div>
+                <button type="submit" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                    Start Chat
+                </button>
+            </form>
+        {% else %}
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 48px; margin-bottom: 10px;">👤</div>
+                <p style="color: #888;">No users available to chat with.</p>
+                <p style="color: #888; font-size: 13px; margin-top: 5px;">
+                    {% if user_role == 'student' %}
+                        You can chat with Employers, Supervisors, Institutions, and Coordinators.
+                    {% elif user_role == 'employer' %}
+                        You can chat with Students, Supervisors, Coordinators, and Institutions.
+                    {% elif user_role == 'supervisor' %}
+                        You can chat with Students, Employers, Coordinators, Institutions, and Admin.
+                    {% elif user_role == 'coordinator' %}
+                        You can chat with Students, Employers, Supervisors, Institutions, and Admin.
+                    {% elif user_role == 'institution' %}
+                        You can chat with Students, Employers, Supervisors, Coordinators, and Admin.
+                    {% elif user_role == 'admin' %}
+                        You can chat with everyone for support and announcements.
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('newChatModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,682 @@
+{% extends 'homepage/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="features-page">
+    <div class="features-slideshow">
+        <div class="slideshow-container">
+            <div class="slide active" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                <div class="slide-content">
+                    <div class="slide-icon"></div>
+                    <h2>AI Match Score</h2>
+                    <p>Smart internship recommendations based on skills, academic background, experience, and career goals.</p>
+                    <span class="slide-tag">AI</span>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #2d1b69, #11998e);">
+                <div class="slide-content">
+                    <div class="slide-icon"></div>
+                    <h2>AI Resume Analyzer</h2>
+                    <p>Analyze resumes, calculate ATS scores, identify missing skills, and get improvement suggestions.</p>
+                    <span class="slide-tag">AI</span>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #1e3c72, #2a5298);">
+                <div class="slide-content">
+                    <div class="slide-icon"></div>
+                    <h2>Career Analytics</h2>
+                    <p>Monitor application progress, AI match trends, and career development insights in real-time.</p>
+                    <span class="slide-tag">Analytics</span>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #0c0911, #150e1b);">
+                <div class="slide-content">
+                    <div class="slide-icon"></div>
+                    <h2>Application Tracking</h2>
+                    <p>Track every application through stages: Applied, Under Review, Shortlisted, Interview, Accepted, or Rejected.</p>
+                    <span class="slide-tag">Tracking</span>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);">
+                <div class="slide-content">
+                    <div class="slide-icon"></div>
+                    <h2>Employer Portal</h2>
+                    <p>Verified companies can post internships, manage applicants, and analyze hiring performance.</p>
+                    <span class="slide-tag">Business</span>
+                </div>
+            </div>
+        </div>
+        
+        <button class="prev" onclick="changeFeatureSlide(-1)">❮</button>
+        <button class="next" onclick="changeFeatureSlide(1)">❯</button>
+        
+        <div class="dots-container">
+            <span class="dot active" onclick="currentFeatureSlide(0)"></span>
+            <span class="dot" onclick="currentFeatureSlide(1)"></span>
+            <span class="dot" onclick="currentFeatureSlide(2)"></span>
+            <span class="dot" onclick="currentFeatureSlide(3)"></span>
+            <span class="dot" onclick="currentFeatureSlide(4)"></span>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <h1>Platform Features</h1>
+        <p>Discover all the powerful features of our AI-powered internship management platform</p>
+    </div>
+
+    <!-- AI Features -->
+    <div class="feature-category">
+        <div class="category-header">
+            <h2><i class="fas fa-robot"></i> AI Features</h2>
+            <p>Intelligent tools powered by advanced AI algorithms</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Match Score</h3>
+                <p>Smart internship recommendations based on skills, academic background, experience, and career goals.</p>
+                <span class="feature-tag">AI</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>AI Resume Analyzer</h3>
+                <p>Analyze resumes, calculate ATS scores, identify missing skills, and get improvement suggestions.</p>
+                <span class="feature-tag">AI</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI Insights</h3>
+                <p>Skill gap analysis, market demand insights, and internship success predictions.</p>
+                <span class="feature-tag">AI</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Career Analytics</h3>
+                <p>Monitor application progress, AI match trends, and career development insights.</p>
+                <span class="feature-tag">AI</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Features -->
+    <div class="feature-category">
+        <div class="category-header">
+            <h2><i class="fas fa-user-graduate"></i> Student Features</h2>
+            <p>Tools designed to help students succeed</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3>Student Portfolio</h3>
+                <p>Manage academic records, skills, projects, certifications, and resumes in one place.</p>
+                <span class="feature-tag">Student</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Application Tracking</h3>
+                <p>Track every application through stages: Applied, Under Review, Shortlisted, Interview, Accepted, or Rejected.</p>
+                <span class="feature-tag">Student</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Interview Management</h3>
+                <p>Schedule interviews, send reminders, and track interview outcomes in one place.</p>
+                <span class="feature-tag">Student</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Smart Notifications</h3>
+                <p>Real-time notifications for approvals, deadlines, interview invitations, and application updates.</p>
+                <span class="feature-tag">Student</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employer Features -->
+    <div class="feature-category">
+        <div class="category-header">
+            <h2><i class="fas fa-building"></i> Employer Features</h2>
+            <p>Powerful tools for employers and organizations</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Employer Portal</h3>
+                <p>Verified companies can post internships, manage applicants, and analyze hiring performance.</p>
+                <span class="feature-tag">Employer</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3>Internship Management</h3>
+                <p>Create, manage, search, and apply for internship opportunities with advanced filters.</p>
+                <span class="feature-tag">Employer</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h3>Reports & Analytics</h3>
+                <p>Generate placement reports, internship statistics, employer performance reports, and downloadable PDFs.</p>
+                <span class="feature-tag">Employer</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Access</h3>
+                <p>Role-based authentication, email verification, and administrator approval for all users.</p>
+                <span class="feature-tag">Security</span>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+        <h2>Transform the Way Students Find Internships</h2>
+        <p>Join universities, employers, and students using AI to simplify internship placement and recruitment.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'account_signup' %}" class="btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
+            <a href="{% url 'internships:browse' %}" class="btn-secondary">Explore Internships <i class="fas fa-search"></i></a>
+            <a href="{% url 'employer:post_internship' %}" class="btn-secondary">Register as Employer <i class="fas fa-building"></i></a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .features-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Features Slideshow */
+    .features-slideshow {
+        position: relative;
+        margin-bottom: 50px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .slideshow-container {
+        position: relative;
+        height: 320px;
+    }
+
+    .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+    }
+
+    .slide.active {
+        opacity: 1;
+    }
+
+    .slide-content {
+        text-align: center;
+        color: white;
+        max-width: 700px;
+        animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .slide-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .slide-content h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .slide-content p {
+        font-size: 16px;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .slide-tag {
+        display: inline-block;
+        padding: 4px 16px;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .prev, .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 12px 16px;
+        background: rgba(0,0,0,0.4);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        border-radius: 50%;
+        transition: all 0.3s;
+        z-index: 10;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .prev:hover, .next:hover {
+        background: rgba(0,0,0,0.7);
+    }
+
+    .prev { left: 15px; }
+    .next { right: 15px; }
+
+    .dots-container {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 10;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        background: rgba(255,255,255,0.4);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .dot.active {
+        background: white;
+        transform: scale(1.2);
+    }
+
+    .dot:hover {
+        background: rgba(255,255,255,0.8);
+    }
+
+    /* Page Header */
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 36px;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        font-size: 18px;
+        color: #666;
+    }
+
+    /* Feature Categories */
+    .feature-category {
+        margin-bottom: 50px;
+    }
+
+    .category-header {
+        margin-bottom: 25px;
+    }
+
+    .category-header h2 {
+        font-size: 24px;
+        color: #1a1a2e;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .category-header h2 i {
+        color: #667eea;
+    }
+
+    .category-header p {
+        color: #888;
+        font-size: 15px;
+        margin-top: 4px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 25px 20px;
+        border-radius: 16px;
+        transition: all 0.4s ease;
+        border: 1px solid #e5e7eb;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        border-color: #667eea;
+    }
+
+    .feature-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-icon i {
+        font-size: 24px;
+        color: white;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: rotate(8deg) scale(1.05);
+    }
+
+    .feature-card h3 {
+        font-size: 17px;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+    }
+
+    .feature-card p {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 14px;
+    }
+
+    .feature-tag {
+        display: inline-block;
+        padding: 3px 14px;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .feature-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+    }
+
+    .feature-link:hover {
+        color: #764ba2;
+        gap: 12px;
+    }
+
+    .feature-link i {
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+
+    .feature-link:hover i {
+        transform: translateX(4px);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        text-align: center;
+        padding: 50px 20px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 16px;
+        color: white;
+        margin-top: 20px;
+    }
+
+    .cta-section h2 {
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    .cta-section p {
+        font-size: 18px;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 30px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        padding: 14px 35px;
+        background: #00d4ff;
+        color: #1a1a2e;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-secondary {
+        padding: 14px 35px;
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,212,255,0.3);
+        color: #1a1a2e;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: white;
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .slideshow-container {
+            height: 280px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 28px;
+        }
+        .cta-section h2 {
+            font-size: 24px;
+        }
+        .slideshow-container {
+            height: 300px;
+        }
+        .slide-content h2 {
+            font-size: 22px;
+        }
+        .slide-content p {
+            font-size: 14px;
+        }
+        .prev, .next {
+            display: none;
+        }
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        .cta-buttons a {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        .slideshow-container {
+            height: 350px;
+        }
+        .slide {
+            padding: 20px;
+        }
+        .feature-card {
+            padding: 20px;
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+        }
+        .feature-icon i {
+            font-size: 20px;
+        }
+    }
+</style>
+
+<script>
+    let featureSlideIndex = 0;
+    let featureSlideInterval;
+
+    function showFeatureSlide(index) {
+        const slides = document.querySelectorAll('.features-slideshow .slide');
+        const dots = document.querySelectorAll('.features-slideshow .dot');
+        
+        if (index >= slides.length) featureSlideIndex = 0;
+        if (index < 0) featureSlideIndex = slides.length - 1;
+        
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            dots[i].classList.remove('active');
+        });
+        
+        slides[featureSlideIndex].classList.add('active');
+        dots[featureSlideIndex].classList.add('active');
+    }
+
+    function changeFeatureSlide(n) {
+        clearInterval(featureSlideInterval);
+        featureSlideIndex += n;
+        showFeatureSlide(featureSlideIndex);
+        startFeatureAutoSlide();
+    }
+
+    function currentFeatureSlide(n) {
+        clearInterval(featureSlideInterval);
+        featureSlideIndex = n;
+        showFeatureSlide(featureSlideIndex);
+        startFeatureAutoSlide();
+    }
+
+    function startFeatureAutoSlide() {
+        featureSlideInterval = setInterval(() => {
+            featureSlideIndex++;
+            showFeatureSlide(featureSlideIndex);
+        }, 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showFeatureSlide(0);
+        startFeatureAutoSlide();
+    });
+</script>
+{% endblock %}

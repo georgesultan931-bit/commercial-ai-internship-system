@@ -1,0 +1,40 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Apply for Internship</h1>
+    <p>Apply to: {{ internship.title }}</p>
+
+    <div style="background: white; padding: 25px; border-radius: 10px; max-width: 600px; margin-top: 20px;">
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 500; margin-bottom: 5px;">Cover Letter</label>
+                <textarea name="cover_letter" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; min-height: 150px; font-family: inherit;" placeholder="Why are you interested in this internship?"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" style="background: #28a745; color: white; padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Submit Application</button>
+                <a href="{% url 'internships:internship_detail' internship.pk %}" style="background: #6c757d; color: white; padding: 10px 25px; border-radius: 6px; text-decoration: none;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .container h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 5px 0;
+    }
+    .container > p {
+        color: #666;
+        font-size: 16px;
+        margin: 0 0 20px 0;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Register - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 500px; margin: 4rem auto; min-height: 60vh;">
+    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <h1 style="font-size: 2rem; font-weight: 800; color: #1a1a2e; text-align: center; margin-bottom: 0.5rem;">Create Account</h1>
+        <p style="text-align: center; color: #6b7280; margin-bottom: 2rem;">Join InternHub today</p>
+        
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Full Name</label>
+                <input type="text" name="name" placeholder="John Doe" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Email</label>
+                <input type="email" name="email" placeholder="you@example.com" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Password</label>
+                <input type="password" name="password1" placeholder="••••••••" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Confirm Password</label>
+                <input type="password" name="password2" placeholder="••••••••" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+            </div>
+            
+            <button type="submit" style="padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1.5rem; color: #6b7280;">
+            Already have an account? <a href="{% url 'account_login' %}" style="color: #2563eb; text-decoration: none; font-weight: 600;">Login</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Delete Internship{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 600px; margin: 0 auto;">
+    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+        <h1 style="font-size: 2rem; margin-bottom: 1rem; color: #dc2626;">Delete Internship</h1>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">
+            Are you sure you want to delete <strong>"{{ internship.title }}"</strong>?
+        </p>
+        <p style="color: #6b7280; margin-bottom: 2rem; font-size: 0.9rem;">
+            This action cannot be undone. All applications for this internship will also be removed.
+        </p>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" style="padding: 0.8rem 2rem;">
+                    <i class="fas fa-trash"></i> Confirm Delete
+                </button>
+            </form>
+            <a href="{% url 'internships:my_internships' %}" class="btn btn-outline" style="padding: 0.8rem 2rem;">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

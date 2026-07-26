@@ -1,0 +1,78 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Documents{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;"> Documents</h1>
+        <span style="color: #888; font-size: 14px;">
+            {{ total_docs }} documents • {{ total_size|filesizeformat }} total • {{ verified_docs }} verified
+        </span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px;">
+        <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <h3 style="color: #888; font-size: 12px; font-weight: 500;">Total Documents</h3>
+            <p style="font-size: 28px; font-weight: 700; color: #4f46e5;">{{ total_docs }}</p>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <h3 style="color: #888; font-size: 12px; font-weight: 500;">Verified</h3>
+            <p style="font-size: 28px; font-weight: 700; color: #22c55e;">{{ verified_docs }}</p>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <h3 style="color: #888; font-size: 12px; font-weight: 500;">Pending</h3>
+            <p style="font-size: 28px; font-weight: 700; color: #f59e0b;">{{ pending_docs }}</p>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <h3 style="color: #888; font-size: 12px; font-weight: 500;">Total Size</h3>
+            <p style="font-size: 28px; font-weight: 700; color: #8b5cf6;">{{ total_size|filesizeformat }}</p>
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if documents %}
+            <div style="display: grid; gap: 15px;">
+                {% for doc in documents %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h3 style="color: #0b1a33; font-size: 16px;">{{ doc.title }}</h3>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 4px;">
+                                <span style="color: #888; font-size: 13px;">
+                                    <i class="fas fa-file"></i> {{ doc.get_file_extension }} {{ doc.get_file_size|filesizeformat }}
+                                </span>
+                                <span style="color: #888; font-size: 13px;">
+                                    <i class="fas fa-calendar"></i> {{ doc.uploaded_at|date:"Y-m-d" }}
+                                </span>
+                                <span style="color: #888; font-size: 13px;">
+                                    <i class="fas fa-tag"></i> {{ doc.category.name|default:"Uncategorized" }}
+                                </span>
+                                <span style="background: {% if doc.is_verified %}#d1fae5{% else %}#fef3c7{% endif %}; color: {% if doc.is_verified %}#059669{% else %}#d97706{% endif %}; padding: 2px 10px; border-radius: 12px; font-size: 12px;">
+                                    {% if doc.is_verified %}✅ Verified{% else %}⏳ Pending{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="{{ doc.file.url }}" target="_blank" style="background: #4f46e5; color: white; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-size: 12px;">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <form method="post" action="{% url 'documents:delete' doc.id %}" style="margin: 0;" onsubmit="return confirm('Delete this document?')">
+                                {% csrf_token %}
+                                <button type="submit" style="background: #ef4444; color: white; padding: 6px 14px; border-radius: 20px; border: none; cursor: pointer; font-size: 12px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 64px; margin-bottom: 15px;"></div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Documents</h3>
+                <p>Upload your documents to get started.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

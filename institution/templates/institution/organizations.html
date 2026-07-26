@@ -1,0 +1,32 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Partner Organizations{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;"> Partner Organizations</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if organizations %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                {% for org in organizations %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px; text-align: center; transition: 0.3s;">
+                        <div style="font-size: 48px;">🏢</div>
+                        <h3 style="color: #0b1a33; font-size: 16px; margin-top: 10px;">{{ org.company_name|default:org.user.username }}</h3>
+                        <p style="color: #888; font-size: 13px;">{{ org.industry|default:"N/A" }}</p>
+                        <span style="background: #eef2ff; color: #4f46e5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">
+                            {{ org.internship_count|default:0 }} internships
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;">🏢</div>
+                <p>No partner organizations yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

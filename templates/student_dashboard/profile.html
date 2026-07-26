@@ -1,0 +1,299 @@
+{% extends 'student_dashboard/base.html' %}
+
+{% block page_title %}Student Profile{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .profile-card {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .profile-image-section {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    .profile-image-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    .profile-image-wrapper .profile-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #e5e7eb;
+        transition: all 0.3s;
+        background: #f3f4f6;
+    }
+    .profile-image-wrapper .profile-preview:hover {
+        border-color: #4f46e5;
+    }
+    .profile-image-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .btn-upload {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-upload:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+    }
+    .btn-remove {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-remove:hover {
+        background: #fecaca;
+        transform: translateY(-2px);
+    }
+    .form-group {
+        margin-bottom: 18px;
+    }
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1f2a44;
+        margin-bottom: 6px;
+    }
+    .form-group label .required {
+        color: #dc2626;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-family: 'Inter', sans-serif;
+        background: #f7f9fc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        transition: 0.2s;
+        color: #0b1a33;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #4f46e5;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+    }
+    .form-group textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .btn-primary {
+        padding: 14px 32px;
+        background: #4f46e5;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+    }
+    .btn-primary:hover {
+        background: #4338ca;
+        transform: scale(1.01);
+        box-shadow: 0 8px 24px rgba(79,70,229,0.2);
+    }
+    .messages {
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    .messages.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .messages.success { background: #ecfdf3; color: #0b9f6c; border: 1px solid #a7f3d0; }
+    .messages.warning { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .messages.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .file-input-wrapper {
+        display: none;
+    }
+    @media (max-width: 480px) {
+        .form-row { grid-template-columns: 1fr; }
+        .profile-image-actions { flex-direction: column; align-items: center; }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 5px;">
+            <i class="fas fa-user-graduate" style="color: #4f46e5;"></i> My Profile
+        </h1>
+        <p style="color: #6b7280; margin-bottom: 25px;">Update your personal information</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Profile Image Section -->
+        <div class="profile-image-section">
+            <div class="profile-image-wrapper">
+                <img src="{{ profile.get_profile_image_url }}" alt="Profile" class="profile-preview" id="profilePreview">
+            </div>
+            
+            <div class="profile-image-actions">
+                <!-- Upload Button -->
+                <form id="imageUploadForm" action="{% url 'users:upload_profile_image' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="profile_image" id="profileImageInput" accept="image/*" class="file-input-wrapper" onchange="this.form.submit()">
+                    <input type="hidden" name="next" value="{% url 'student_dashboard:profile' %}">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('profileImageInput').click()">
+                        <i class="fas fa-camera"></i> Upload Photo
+                    </button>
+                </form>
+                
+                <!-- Remove Button -->
+                <form id="removeImageForm" action="{% url 'users:remove_profile_image' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% url 'student_dashboard:profile' %}">
+                    <button type="submit" class="btn-remove" onclick="return confirm('Are you sure you want to remove your profile image?')">
+                        <i class="fas fa-trash"></i> Remove Photo
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'student_dashboard:profile' %}">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" placeholder="Enter your phone number" value="{{ profile.phone|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" placeholder="Enter your location" value="{{ profile.location|default:'' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male" {% if profile.gender == 'male' %}selected{% endif %}>Male</option>
+                        <option value="female" {% if profile.gender == 'female' %}selected{% endif %}>Female</option>
+                        <option value="other" {% if profile.gender == 'other' %}selected{% endif %}>Other</option>
+                        <option value="prefer_not" {% if profile.gender == 'prefer_not' %}selected{% endif %}>Prefer not to say</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" value="{{ profile.date_of_birth|default:'' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Bio / About You</label>
+                <textarea id="bio" name="bio" placeholder="Tell us about yourself">{{ profile.bio|default:'' }}</textarea>
+            </div>
+
+            <hr style="margin: 20px 0; border: 1px solid #eef2f6;">
+
+            <h3 style="font-size: 18px; color: #0b1a33; margin-bottom: 15px;">🎓 Academic Information</h3>
+
+            <div class="form-group">
+                <label for="institution">Institution / University <span class="required">*</span></label>
+                <input type="text" id="institution" name="institution" placeholder="Enter your institution name" value="{{ profile.institution|default:'' }}" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="course">Course <span class="required">*</span></label>
+                    <input type="text" id="course" name="course" placeholder="Enter your course" value="{{ profile.course|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="faculty">Faculty</label>
+                    <input type="text" id="faculty" name="faculty" placeholder="Enter your faculty" value="{{ profile.faculty|default:'' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year_of_study">Year of Study <span class="required">*</span></label>
+                    <input type="number" id="year_of_study" name="year_of_study" placeholder="e.g., 1, 2, 3, 4" min="1" max="6" value="{{ profile.year_of_study|default:1 }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="admission_number">Admission Number</label>
+                    <input type="text" id="admission_number" name="admission_number" placeholder="Enter your admission number" value="{{ profile.admission_number|default:'' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Skills (comma separated)</label>
+                <input type="text" id="skills" name="skills" placeholder="e.g., Python, JavaScript, Communication" value="{{ profile.skills|join:', ' }}">
+            </div>
+
+            <button type="submit" class="btn-primary">Save Profile</button>
+        </form>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{% url 'student_dashboard:dashboard' %}" style="color: #4f46e5; text-decoration: none; font-weight: 500;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Preview image before upload
+    document.getElementById('profileImageInput').addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('profilePreview').src = event.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+{% endblock %}

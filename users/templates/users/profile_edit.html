@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile — Commercial-Grade AI-Powered Internship Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            max-width: 600px;
+            width: 100%;
+            padding: 48px 40px;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 20, 50, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1a33;
+            letter-spacing: -0.4px;
+            margin-bottom: 8px;
+        }
+
+        .subhead {
+            color: #5b6a87;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2a44;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            background: #f7f9fc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            outline: none;
+            transition: 0.2s;
+            color: #0b1a33;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #4f46e5;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #1f2a44;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0b1a33;
+            transform: scale(1.01);
+            box-shadow: 0 12px 28px rgba(15, 23, 62, 0.12);
+        }
+
+        .btn-secondary {
+            background: #f1f4f9;
+            color: #1f2a44;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e9f0;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #5b6a87;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.15s;
+        }
+
+        .back-link:hover {
+            color: #0b1a33;
+        }
+
+        .back-link::before {
+            content: "←";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        hr {
+            border: none;
+            border-top: 1.5px solid #eef2f6;
+            margin: 24px 0 16px;
+        }
+
+        .messages {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .messages.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .messages.success {
+            background: #ecfdf3;
+            color: #0b9f6c;
+            border: 1px solid #a7f3d0;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="badge">Commercial-Grade AI-Powered Internship Management System</div>
+    <h1>Edit Profile</h1>
+    <p class="subhead">Update your personal information and preferences</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'users:update_profile' %}">
+        {% csrf_token %}
+
+        <!-- First Name -->
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" placeholder="Enter your first name" />
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" placeholder="Enter your last name" />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" placeholder="Enter your email address" />
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" value="{{ profile.phone|default:'' }}" placeholder="Enter your phone number" />
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" value="{{ profile.location|default:'' }}" placeholder="Enter your location" />
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" placeholder="Tell us about yourself">{{ profile.bio|default:'' }}</textarea>
+        </div>
+
+        <!-- Skills -->
+        <div class="form-group">
+            <label for="skills">Skills <span style="font-size: 12px; color: #888;">(comma separated)</span></label>
+            <input type="text" id="skills" name="skills" value="{{ profile.skills|join:', ' }}" placeholder="Python, Django, React, JavaScript" />
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'users:profile' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+
+    <hr />
+
+    <a href="{% url 'homepage:home' %}" class="back-link">Back to Home</a>
+</div>
+
+</body>
+</html>

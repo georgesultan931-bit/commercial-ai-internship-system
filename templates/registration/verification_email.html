@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #1a1a2e;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #00d4ff;
+            font-size: 28px;
+            margin: 0;
+        }
+        .header p {
+            color: #888;
+            font-size: 14px;
+            margin: 5px 0 0 0;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .content h2 {
+            color: #1a1a2e;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .content p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn-verify {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .btn-verify:hover {
+            background: #0056b3;
+        }
+        .link-box {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 6px;
+            word-break: break-all;
+            font-size: 13px;
+            color: #007bff;
+            border: 1px solid #e5e7eb;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .warning p {
+            color: #856404;
+            margin: 0;
+            font-size: 14px;
+        }
+        .footer {
+            padding: 20px 30px;
+            border-top: 1px solid #f0f2f5;
+            text-align: center;
+        }
+        .footer p {
+            color: #888;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI InternHub</h1>
+            <p>Commercial Grade AI Powered Platform</p>
+        </div>
+        
+        <div class="content">
+            <h2>Verify Your Email Address</h2>
+            
+            <p>Hello <strong>{{ user.username }}</strong>,</p>
+            
+            <p>Thank you for registering with AI InternHub. Please click the button below to verify your email address.</p>
+            
+            <div class="btn-container">
+                <a href="http://localhost:8000{% url 'users:verify_email' uidb64=uid token=token %}" class="btn-verify">Verify Email Address</a>
+            </div>
+            
+            <p style="font-size: 14px; color: #888; text-align: center;">Or copy this link into your browser:</p>
+            <div class="link-box">
+                http://{{ domain }}{% url 'users:verify_email' uidb64=uid token=token %}
+            </div>
+            
+            <div class="warning">
+                <p><strong>Note:</strong> This link expires in 24 hours. If you didn't create an account, ignore this email.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Need help? <a href="mailto:support@aiinternhub.com">support@aiinternhub.com</a></p>
+            <p>&copy; 2026 AI InternHub. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

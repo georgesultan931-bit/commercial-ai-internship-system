@@ -1,0 +1,109 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Applications for {{ internship.title }}{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.2rem;">{{ internship.title }}</h1>
+            <p style="color: #6b7280;">{{ internship.organization.name }} • {{ internship.location }}</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <span style="padding: 0.3rem 1rem; border-radius: 20px; background: #dbeafe; color: #1e40af;">
+                {{ applications.count }} Applicants
+            </span>
+            <a href="{% url 'internships:my_internships' %}" class="btn btn-outline" style="padding: 0.5rem 1.5rem;">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Applications List -->
+    {% if applications %}
+    <div style="display: grid; gap: 1rem;">
+        {% for application in applications %}
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 600;">
+                            {{ application.applicant.first_name|slice:":1" }}{{ application.applicant.last_name|slice:":1" }}
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.1rem;">{{ application.applicant.first_name }} {{ application.applicant.last_name }}</h3>
+                            <p style="color: #6b7280; font-size: 0.9rem;">{{ application.applicant.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; color: #6b7280; font-size: 0.9rem;">
+                        <span><i class="fas fa-calendar"></i> Applied: {{ application.applied_at|date:"M d, Y" }}</span>
+                        <span><i class="fas fa-clock"></i> {{ application.applied_at|timesince }} ago</span>
+                        {% if application.match_score > 0 %}
+                        <span><i class="fas fa-brain"></i> Match Score: {{ application.match_score }}%</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if application.cover_letter %}
+                    <details style="margin-top: 0.5rem;">
+                        <summary style="color: #2563eb; cursor: pointer; font-size: 0.9rem;">View Cover Letter</summary>
+                        <p style="margin-top: 0.5rem; color: #4b5563; background: #f8fafc; padding: 1rem; border-radius: 8px;">{{ application.cover_letter }}</p>
+                    </details>
+                    {% endif %}
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; min-width: 200px;">
+                    <!-- Status Update Form -->
+                    <form method="post" action="{% url 'internships:update_application_status' application.pk %}">
+                        {% csrf_token %}
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <select name="status" style="padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 8px; flex: 1; min-width: 120px;">
+                                <option value="APPLIED" {% if application.status == 'APPLIED' %}selected{% endif %}>Applied</option>
+                                <option value="REVIEWING" {% if application.status == 'REVIEWING' %}selected{% endif %}>Reviewing</option>
+                                <option value="INTERVIEWING" {% if application.status == 'INTERVIEWING' %}selected{% endif %}>Interviewing</option>
+                                <option value="OFFERED" {% if application.status == 'OFFERED' %}selected{% endif %}>Offered</option>
+                                <option value="HIRED" {% if application.status == 'HIRED' %}selected{% endif %}>Hired</option>
+                                <option value="REJECTED" {% if application.status == 'REJECTED' %}selected{% endif %}>Rejected</option>
+                                <option value="WITHDRAWN" {% if application.status == 'WITHDRAWN' %}selected{% endif %}>Withdrawn</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" style="padding: 0.3rem 1rem; font-size: 0.8rem;">
+                                Update
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Status Badge -->
+                    <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; text-align: center; background: {% if application.status == 'APPLIED' %}#dbeafe; color: #1e40af{% elif application.status == 'REVIEWING' %}#fef3c7; color: #92400e{% elif application.status == 'INTERVIEWING' %}#ede9fe; color: #5b21b6{% elif application.status == 'OFFERED' %}#fef3c7; color: #92400e{% elif application.status == 'HIRED' %}#d1fae5; color: #065f46{% elif application.status == 'REJECTED' %}#fee2e2; color: #991b1b{% elif application.status == 'WITHDRAWN' %}#e5e7eb; color: #6b7280{% endif %};">
+                        Current: {{ application.get_status_display }}
+                    </span>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <!-- Chat Button -->
+                        <a href="{% url 'chat:start_from_application' application.id %}" class="btn btn-outline" style="padding: 0.3rem 1rem; font-size: 0.8rem; text-align: center; border-color: #2563eb; color: #2563eb;">
+                            <i class="fas fa-comment"></i> Chat
+                        </a>
+                        
+                        <!-- Schedule Interview Button -->
+                        <a href="{% url 'internships:schedule_interview' application.id %}" class="btn btn-primary" style="padding: 0.3rem 1rem; font-size: 0.8rem; text-align: center;">
+                            <i class="fas fa-calendar"></i> Interview
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="background: white; padding: 4rem; border-radius: 12px; text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">👥</div>
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">No Applications Yet</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">This internship hasn't received any applications yet.</p>
+        <a href="{% url 'internships:my_internships' %}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Internships
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

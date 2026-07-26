@@ -1,0 +1,158 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}User Management - Admin Dashboard{% endblock %}
+
+{% block page_title %}User Management{% endblock %}
+
+{% block page_subtitle %}Manage all users on the platform.{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;">
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
+        <input type="text" name="search" placeholder="Search users..." value="{{ search }}" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px; min-width: 200px;">
+        
+        <select name="role" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Roles</option>
+            {% for key, value in roles %}
+                <option value="{{ key }}" {% if role_filter == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="status" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Status</option>
+            <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+        
+        <button type="submit" style="padding: 0.6rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            <i class="fas fa-search"></i> Filter
+        </button>
+        
+        <a href="{% url 'homepage:admin_users' %}" style="padding: 0.6rem 1.5rem; background: #e5e7eb; color: #1a1a2e; border: none; border-radius: 8px; text-decoration: none;">
+            <i class="fas fa-times"></i> Clear
+        </a>
+    </form>
+    
+    <span style="color: #6b7280; font-size: 0.9rem;">Total: {{ total_users }} users</span>
+</div>
+
+<!-- Users Table -->
+<div style="background: white; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">User</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Email</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Role</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Status</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Verified</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Joined</th>
+                    <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <td style="padding: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                                {{ user.first_name|first|default:user.email|first|upper }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">{{ user.get_full_name|default:user.username }}</div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{ user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem; color: #4b5563;">{{ user.email }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="background: 
+                            {% if user.role == 'PLATFORM_ADMIN' %}#fef3c7; color: #d97706;
+                            {% elif user.role == 'STUDENT' %}#eff6ff; color: #2563eb;
+                            {% elif user.role == 'COMPANY_REP' %}#f0fdf4; color: #10b981;
+                            {% elif user.role == 'UNIVERSITY_ADMIN' %}#f5f3ff; color: #8b5cf6;
+                            {% elif user.role == 'SUPERVISOR' %}#fce4ec; color: #e11d48;
+                            {% else %}#e5e7eb; color: #6b7280;{% endif %}
+                            padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {{ user.get_role_display_name }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="background: {% if user.is_active %}#d1fae5; color: #059669;{% else %}#fee2e2; color: #dc2626;{% endif %} padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {% if user.is_active %}Active{% else %}Suspended{% endif %}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="background: {% if user.is_verified %}#d1fae5; color: #059669;{% else %}#fef3c7; color: #d97706;{% endif %} padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {% if user.is_verified %}Verified{% else %}Pending{% endif %}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; color: #6b7280; font-size: 0.9rem;">{{ user.date_joined|date:"M d, Y" }}</td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                            <!-- View Profile -->
+                            <a href="#" style="padding: 0.3rem 0.8rem; background: #eff6ff; color: #2563eb; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="View Profile">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            
+                            <!-- Verify User -->
+                            {% if not user.is_verified and user.role != 'PLATFORM_ADMIN' %}
+                            <a href="{% url 'homepage:admin_verify_user' user.id %}" style="padding: 0.3rem 0.8rem; background: #d1fae5; color: #059669; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="Verify User" onclick="return confirm('Verify this user?')">
+                                <i class="fas fa-check-circle"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- Toggle Status -->
+                            {% if user.role != 'PLATFORM_ADMIN' %}
+                            <a href="{% url 'homepage:admin_toggle_user_status' user.id %}" style="padding: 0.3rem 0.8rem; background: {% if user.is_active %}#fee2e2; color: #dc2626;{% else %}#d1fae5; color: #059669;{% endif %} border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="{% if user.is_active %}Suspend{% else %}Activate{% endif %}" onclick="return confirm('{% if user.is_active %}Suspend{% else %}Activate{% endif %} this user?')">
+                                <i class="fas {% if user.is_active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- Reset Password -->
+                            <a href="#" style="padding: 0.3rem 0.8rem; background: #fef3c7; color: #d97706; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="Reset Password" onclick="return confirm('Reset password for this user?')">
+                                <i class="fas fa-key"></i>
+                            </a>
+                            
+                            <!-- Delete User -->
+                            {% if user.role != 'PLATFORM_ADMIN' and user != request.user %}
+                            <a href="{% url 'homepage:admin_delete_user' user.id %}" style="padding: 0.3rem 0.8rem; background: #fee2e2; color: #dc2626; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="Delete User" onclick="return confirm('Delete this user permanently?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2rem; text-align: center; color: #6b7280;">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if users.has_other_pages %}
+<div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+    {% if users.has_previous %}
+        <a href="?page={{ users.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Previous</a>
+    {% endif %}
+    
+    {% for num in users.paginator.page_range %}
+        {% if users.number == num %}
+            <span style="padding: 0.5rem 1rem; background: #2563eb; color: white; border-radius: 8px;">{{ num }}</span>
+        {% else %}
+            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    
+    {% if users.has_next %}
+        <a href="?page={{ users.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

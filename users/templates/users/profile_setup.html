@@ -1,0 +1,859 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="profile-setup-container">
+    <div class="setup-header">
+        <h1>Complete Your Profile</h1>
+        <p>Fill in your details to get started. This information helps us match you with the right opportunities.</p>
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <span class="progress-text">0% Complete</span>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="profileSetupForm" action="{% url 'users:profile_setup_submit' %}" novalidate>
+        {% csrf_token %}
+
+        <!-- Section 1: Personal Information -->
+        <div class="form-section" data-section="1">
+            <h2>Personal Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" name="first_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Middle Name</label>
+                    <input type="text" name="middle_name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" name="last_name" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select name="gender" class="form-control">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" name="date_of_birth" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Nationality</label>
+                    <input type="text" name="nationality" class="form-control" placeholder="e.g., Kenyan, American">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>National ID / Passport Number *</label>
+                    <input type="text" name="national_id" class="form-control" required pattern="[0-9]{8,9}" title="Must be 8 or 9 digits" maxlength="9" minlength="8">
+                    <small>Must be 8 or 9 digits</small>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" name="phone" class="form-control" required pattern="[0-9+]{10,15}" title="Enter a valid phone number">
+                </div>
+                <div class="form-group">
+                    <label>Alternative Phone Number</label>
+                    <input type="tel" name="alternative_phone" class="form-control" pattern="[0-9+]{10,15}" title="Enter a valid phone number">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label>County / State</label>
+                    <input type="text" name="county" class="form-control" placeholder="e.g., Nairobi">
+                </div>
+                <div class="form-group">
+                    <label>City / Town *</label>
+                    <select name="city" class="form-control" required id="citySelect">
+                        <option value="">Select City/Town</option>
+                        <option value="Nairobi">Nairobi</option>
+                        <option value="Mombasa">Mombasa</option>
+                        <option value="Kisumu">Kisumu</option>
+                        <option value="Nakuru">Nakuru</option>
+                        <option value="Eldoret">Eldoret</option>
+                        <option value="Thika">Thika</option>
+                        <option value="Malindi">Malindi</option>
+                        <option value="Kitale">Kitale</option>
+                        <option value="Garissa">Garissa</option>
+                        <option value="Kakamega">Kakamega</option>
+                        <option value="Nyeri">Nyeri</option>
+                        <option value="Meru">Meru</option>
+                        <option value="Machakos">Machakos</option>
+                        <option value="Embu">Embu</option>
+                        <option value="Kericho">Kericho</option>
+                        <option value="Bungoma">Bungoma</option>
+                        <option value="Voi">Voi</option>
+                        <option value="Naivasha">Naivasha</option>
+                        <option value="Nanyuki">Nanyuki</option>
+                        <option value="Lamu">Lamu</option>
+                        <option value="Other">Other (Enter below)</option>
+                    </select>
+                    <input type="text" name="city_other" class="form-control" placeholder="Enter your city/town" style="margin-top: 5px; display: none;" id="cityOtherInput">
+                    <small>Select from dropdown or choose "Other" to enter manually</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Physical Address</label>
+                    <input type="text" name="physical_address" class="form-control" placeholder="e.g., 123 Main Street">
+                </div>
+                <div class="form-group">
+                    <label>Postal Address</label>
+                    <input type="text" name="postal_address" class="form-control" placeholder="e.g., P.O. Box 123-00100">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Emergency Contact Name</label>
+                    <input type="text" name="emergency_contact_name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Emergency Contact Phone</label>
+                    <input type="tel" name="emergency_contact_phone" class="form-control" pattern="[0-9+]{10,15}" title="Enter a valid phone number">
+                </div>
+                <div class="form-group">
+                    <label>Emergency Contact Relationship</label>
+                    <input type="text" name="emergency_contact_relationship" class="form-control" placeholder="e.g., Father, Mother, Sibling">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Academic Information -->
+        <div class="form-section" data-section="2">
+            <h2>Academic Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Institution Name *</label>
+                    <select name="institution_name" class="form-control" required id="institutionSelect">
+                        <option value="">Select Institution</option>
+                        <option value="University of Nairobi">University of Nairobi</option>
+                        <option value="Kenyatta University">Kenyatta University</option>
+                        <option value="Moi University">Moi University</option>
+                        <option value="Jomo Kenyatta University of Agriculture and Technology">Jomo Kenyatta University of Agriculture and Technology</option>
+                        <option value="Egerton University">Egerton University</option>
+                        <option value="Maseno University">Maseno University</option>
+                        <option value="Dedan Kimathi University of Technology">Dedan Kimathi University of Technology</option>
+                        <option value="Technical University of Kenya">Technical University of Kenya</option>
+                        <option value="Multimedia University of Kenya">Multimedia University of Kenya</option>
+                        <option value="Karatina University">Karatina University</option>
+                        <option value="Strathmore University">Strathmore University</option>
+                        <option value="United States International University">United States International University</option>
+                        <option value="Daystar University">Daystar University</option>
+                        <option value="Zetech University">Zetech University</option>
+                        <option value="Mount Kenya University">Mount Kenya University</option>
+                        <option value="Africa Nazarene University">Africa Nazarene University</option>
+                        <option value="Catholic University of Eastern Africa">Catholic University of Eastern Africa</option>
+                        <option value="KCA University">KCA University</option>
+                        <option value="Kiriri Women's University">Kiriri Women's University</option>
+                        <option value="Kenya Methodist University">Kenya Methodist University</option>
+                        <option value="Kenya Institute of Management">Kenya Institute of Management</option>
+                        <option value="Kenya Technical Trainers College">Kenya Technical Trainers College</option>
+                        <option value="Railway Training Institute">Railway Training Institute</option>
+                        <option value="Nairobi Institute of Technology">Nairobi Institute of Technology</option>
+                        <option value="Other">Other (Enter below)</option>
+                    </select>
+                    <input type="text" name="institution_other" class="form-control" placeholder="Enter your institution name" style="margin-top: 5px; display: none;" id="institutionOtherInput">
+                    <small>Select from dropdown or choose "Other" to enter manually</small>
+                </div>
+                <div class="form-group">
+                    <label>Course / Program *</label>
+                    <input type="text" name="course_program" class="form-control" required placeholder="e.g., Bachelor of Science in Computer Science">
+                </div>
+                <div class="form-group">
+                    <label>Registration / Admission Number</label>
+                    <input type="text" name="admission_number" class="form-control" placeholder="e.g., CS-2024-001">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Academic Level</label>
+                    <select name="academic_level" class="form-control">
+                        <option value="">Select Level</option>
+                        <option value="certificate">Certificate</option>
+                        <option value="diploma">Diploma</option>
+                        <option value="bachelors">Bachelors</option>
+                        <option value="masters">Masters</option>
+                        <option value="phd">PhD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Year Joined *</label>
+                    <input type="number" name="year_of_study" class="form-control" min="2000" max="2099" required placeholder="e.g., 2024">
+                </div>
+                <div class="form-group">
+                    <label>Expected Graduation Year</label>
+                    <input type="number" name="expected_graduation" class="form-control" min="2000" max="2099" placeholder="e.g., 2028">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Career Preferences -->
+        <div class="form-section" data-section="3">
+            <h2>Career Preferences</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Internship Type</label>
+                    <input type="text" name="internship_type" class="form-control" placeholder="e.g., IT, Finance, Marketing">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Industry</label>
+                    <input type="text" name="preferred_industry" class="form-control" placeholder="e.g., Technology, Healthcare">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Job Role</label>
+                    <input type="text" name="preferred_job_role" class="form-control" placeholder="e.g., Software Developer, Data Analyst">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Preferred Department</label>
+                    <input type="text" name="preferred_department" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Work Mode</label>
+                    <select name="preferred_work_mode" class="form-control">
+                        <option value="">Select Work Mode</option>
+                        <option value="onsite">Onsite</option>
+                        <option value="remote">Remote</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Location</label>
+                    <input type="text" name="preferred_location" class="form-control" placeholder="e.g., Nairobi, Remote">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Preferred Internship Duration</label>
+                    <input type="text" name="preferred_duration" class="form-control" placeholder="e.g., 3 months, 6 months">
+                </div>
+                <div class="form-group">
+                    <label>Available Start Date</label>
+                    <input type="date" name="available_start_date" class="form-control">
+                </div>
+            </div>
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="willing_to_relocate">
+                    Willing to Relocate
+                </label>
+            </div>
+        </div>
+
+        <!-- Section 4: Skills -->
+        <div class="form-section" data-section="4">
+            <h2>Skills</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Technical Skills</label>
+                    <input type="text" name="technical_skills" class="form-control" placeholder="Python, Java, SQL (comma separated)">
+                </div>
+                <div class="form-group">
+                    <label>Soft Skills</label>
+                    <input type="text" name="soft_skills" class="form-control" placeholder="Communication, Leadership (comma separated)">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Programming Languages</label>
+                    <input type="text" name="programming_languages" class="form-control" placeholder="Python, JavaScript, C++ (comma separated)">
+                </div>
+                <div class="form-group">
+                    <label>Frameworks</label>
+                    <input type="text" name="frameworks" class="form-control" placeholder="Django, React, Spring (comma separated)">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Databases</label>
+                    <input type="text" name="databases" class="form-control" placeholder="MySQL, PostgreSQL, MongoDB (comma separated)">
+                </div>
+                <div class="form-group">
+                    <label>Tools & Software</label>
+                    <input type="text" name="tools_software" class="form-control" placeholder="Git, Docker, AWS (comma separated)">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Operating Systems</label>
+                    <input type="text" name="operating_systems" class="form-control" placeholder="Windows, Linux, macOS (comma separated)">
+                </div>
+                <div class="form-group">
+                    <label>Spoken Languages</label>
+                    <input type="text" name="spoken_languages" class="form-control" placeholder="English, French, Swahili (comma separated)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Portfolio & Social Links (Optional) -->
+        <div class="form-section" data-section="5">
+            <h2>Portfolio & Social Links <span style="font-size: 12px; color: #888; font-weight: normal;">(Optional)</span></h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>GitHub</label>
+                    <input type="url" name="github" class="form-control" placeholder="https://github.com/username">
+                </div>
+                <div class="form-group">
+                    <label>LinkedIn</label>
+                    <input type="url" name="linkedin" class="form-control" placeholder="https://linkedin.com/in/username">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Portfolio Website</label>
+                    <input type="url" name="portfolio_website" class="form-control" placeholder="https://portfolio.com">
+                </div>
+                <div class="form-group">
+                    <label>Kaggle</label>
+                    <input type="url" name="kaggle" class="form-control" placeholder="https://kaggle.com/username">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Behance</label>
+                    <input type="url" name="behance" class="form-control" placeholder="https://behance.net/username">
+                </div>
+                <div class="form-group">
+                    <label>Dribbble</label>
+                    <input type="url" name="dribbble" class="form-control" placeholder="https://dribbble.com/username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Stack Overflow</label>
+                <input type="url" name="stackoverflow" class="form-control" placeholder="https://stackoverflow.com/users/username">
+            </div>
+        </div>
+
+        <!-- Section 6: Resume & Documents -->
+        <div class="form-section" data-section="6">
+            <h2>Resume & Documents</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Upload Resume / CV</label>
+                    <input type="file" name="resume" class="form-control-file" accept=".pdf,.doc,.docx">
+                </div>
+                <div class="form-group">
+                    <label>Academic Transcript</label>
+                    <input type="file" name="academic_transcript" class="form-control-file" accept=".pdf,.jpg,.png">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>National ID / Passport</label>
+                    <input type="file" name="id_document" class="form-control-file" accept=".pdf,.jpg,.png">
+                </div>
+                <div class="form-group">
+                    <label>Student ID Card</label>
+                    <input type="file" name="student_id_file" class="form-control-file" accept=".pdf,.jpg,.png">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Recommendation Letter</label>
+                    <input type="file" name="recommendation_letter" class="form-control-file" accept=".pdf,.doc,.docx">
+                </div>
+                <div class="form-group">
+                    <label>Cover Letter</label>
+                    <input type="file" name="cover_letter" class="form-control-file" accept=".pdf,.doc,.docx">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: AI Profile Analysis -->
+        <div class="form-section" data-section="7">
+            <h2>AI Profile Analysis</h2>
+            <div class="ai-analysis">
+                <p>Your profile will be analyzed by AI once you complete registration.</p>
+                <p>You will receive personalized recommendations for:</p>
+                <ul>
+                    <li>Profile Completion Percentage</li>
+                    <li>Resume Score</li>
+                    <li>AI Match Readiness</li>
+                    <li>Employability Score</li>
+                    <li>Skills Analysis</li>
+                    <li>Missing Skills</li>
+                    <li>Recommended Improvements</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 8: Privacy Settings -->
+        <div class="form-section" data-section="8">
+            <h2>Privacy Settings</h2>
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="profile_visible" checked>
+                    Profile Visibility (Visible to employers)
+                </label>
+            </div>
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="contact_visible">
+                    Contact Information Visibility
+                </label>
+            </div>
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="portfolio_visible" checked>
+                    Portfolio Visibility
+                </label>
+            </div>
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="employer_access" checked>
+                    Employer Access Permission
+                </label>
+            </div>
+        </div>
+
+        <!-- Profile Photo -->
+        <div class="form-section" data-section="0">
+            <h2>Profile Photo</h2>
+            <div class="form-group">
+                <label>Upload Profile Photo</label>
+                <input type="file" name="profile_image" class="form-control-file" accept="image/*">
+                <small>Upload a professional photo (JPEG, PNG)</small>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Complete Profile</button>
+            <a href="{% url 'account_login' %}" class="btn-login">Back to Login</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .profile-setup-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .setup-header {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .setup-header h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 10px 0;
+    }
+
+    .setup-header p {
+        color: #666;
+        font-size: 16px;
+        margin: 0 0 20px 0;
+    }
+
+    .progress-section {
+        margin-top: 15px;
+    }
+
+    .progress-bar {
+        height: 10px;
+        background: #f0f2f5;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #007bff);
+        border-radius: 5px;
+        transition: width 0.5s ease;
+    }
+
+    .progress-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 14px;
+        color: #888;
+    }
+
+    .form-section {
+        background: white;
+        padding: 25px 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    .form-section h2 {
+        color: #1a1a2e;
+        font-size: 20px;
+        margin: 0 0 20px 0;
+        border-bottom: 2px solid #f0f2f5;
+        padding-bottom: 10px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .form-group small {
+        display: block;
+        color: #888;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-control.error {
+        border-color: #dc3545;
+    }
+
+    .form-control.success {
+        border-color: #28a745;
+    }
+
+    .form-control-file {
+        padding: 10px 0;
+        width: 100%;
+    }
+
+    .form-group.checkbox {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group.checkbox label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 400;
+        cursor: pointer;
+    }
+
+    .form-group.checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .ai-analysis {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .ai-analysis p {
+        color: #555;
+        margin: 0 0 10px 0;
+    }
+
+    .ai-analysis ul {
+        margin: 5px 0 0 20px;
+        color: #555;
+    }
+
+    .ai-analysis ul li {
+        margin: 3px 0;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .btn-submit {
+        padding: 14px 40px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: #218838;
+    }
+
+    .btn-login {
+        padding: 14px 40px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-login:hover {
+        background: #5a6268;
+    }
+
+    @media (max-width: 1024px) {
+        .form-row {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-login {
+            width: 100%;
+            justify-content: center;
+        }
+        .form-section {
+            padding: 20px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('profileSetupForm');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.querySelector('.progress-text');
+        const sections = document.querySelectorAll('.form-section');
+        const totalSections = sections.length;
+
+        // City dropdown - show/hide other input
+        const citySelect = document.getElementById('citySelect');
+        const cityOtherInput = document.getElementById('cityOtherInput');
+
+        citySelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                cityOtherInput.style.display = 'block';
+                cityOtherInput.required = true;
+            } else {
+                cityOtherInput.style.display = 'none';
+                cityOtherInput.required = false;
+                cityOtherInput.value = '';
+            }
+        });
+
+        // Institution dropdown - show/hide other input
+        const institutionSelect = document.getElementById('institutionSelect');
+        const institutionOtherInput = document.getElementById('institutionOtherInput');
+
+        institutionSelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                institutionOtherInput.style.display = 'block';
+                institutionOtherInput.required = true;
+            } else {
+                institutionOtherInput.style.display = 'none';
+                institutionOtherInput.required = false;
+                institutionOtherInput.value = '';
+            }
+        });
+
+        // Progress bar update
+        function updateProgress() {
+            let completed = 0;
+            sections.forEach(function(section) {
+                const inputs = section.querySelectorAll('input, select, textarea');
+                let filled = 0;
+                inputs.forEach(function(input) {
+                    if (input.type === 'checkbox') {
+                        if (input.checked) filled++;
+                    } else if (input.value && input.value.trim() !== '') {
+                        filled++;
+                    }
+                });
+                if (filled > 0) completed++;
+            });
+
+            const percentage = Math.round((completed / totalSections) * 100);
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = percentage + '% Complete';
+        }
+
+        form.addEventListener('input', updateProgress);
+        form.addEventListener('change', updateProgress);
+
+        updateProgress();
+
+        // Form validation on submit
+        form.addEventListener('submit', function(e) {
+            let valid = true;
+            let firstError = null;
+
+            // Get city value
+            let cityValue = citySelect.value;
+            if (cityValue === 'Other') {
+                cityValue = cityOtherInput.value.trim();
+            }
+
+            // Get institution value
+            let institutionValue = institutionSelect.value;
+            if (institutionValue === 'Other') {
+                institutionValue = institutionOtherInput.value.trim();
+            }
+
+            // Validate required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(function(field) {
+                const value = field.value.trim();
+
+                if (!value) {
+                    field.classList.add('error');
+                    field.classList.remove('success');
+                    valid = false;
+                    if (!firstError) firstError = field;
+                } else {
+                    field.classList.remove('error');
+                    field.classList.add('success');
+                }
+            });
+
+            // Validate email
+            const emailField = form.querySelector('input[name="email"]');
+            if (emailField) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(emailField.value.trim())) {
+                    emailField.classList.add('error');
+                    emailField.classList.remove('success');
+                    valid = false;
+                    if (!firstError) firstError = emailField;
+                }
+            }
+
+            // Validate National ID (8-9 digits)
+            const nationalIdField = form.querySelector('input[name="national_id"]');
+            if (nationalIdField && nationalIdField.value) {
+                const idPattern = /^[0-9]{8,9}$/;
+                if (!idPattern.test(nationalIdField.value.trim())) {
+                    nationalIdField.classList.add('error');
+                    nationalIdField.classList.remove('success');
+                    valid = false;
+                    if (!firstError) firstError = nationalIdField;
+                }
+            }
+
+            // Validate phone numbers
+            const phoneFields = form.querySelectorAll('input[type="tel"]');
+            phoneFields.forEach(function(field) {
+                if (field.value) {
+                    const phonePattern = /^[0-9+]{10,15}$/;
+                    if (!phonePattern.test(field.value.trim())) {
+                        field.classList.add('error');
+                        field.classList.remove('success');
+                        valid = false;
+                        if (!firstError) firstError = field;
+                    }
+                }
+            });
+
+            // Validate city
+            if (!cityValue && citySelect.required) {
+                citySelect.classList.add('error');
+                valid = false;
+                if (!firstError) firstError = citySelect;
+            } else {
+                citySelect.classList.remove('error');
+                citySelect.classList.add('success');
+            }
+
+            // Validate institution
+            if (!institutionValue && institutionSelect.required) {
+                institutionSelect.classList.add('error');
+                valid = false;
+                if (!firstError) firstError = institutionSelect;
+            } else {
+                institutionSelect.classList.remove('error');
+                institutionSelect.classList.add('success');
+            }
+
+            // Validate year values
+            const yearFields = form.querySelectorAll('input[type="number"][min]');
+            yearFields.forEach(function(field) {
+                if (field.value) {
+                    const year = parseInt(field.value);
+                    const min = parseInt(field.min);
+                    const max = parseInt(field.max);
+                    if (year < min || year > max) {
+                        field.classList.add('error');
+                        field.classList.remove('success');
+                        valid = false;
+                        if (!firstError) firstError = field;
+                    }
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();
+                if (firstError) {
+                    firstError.focus();
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                alert('Please fill in all required fields correctly. Check for any errors highlighted in red.');
+            }
+        });
+
+        // Real-time validation on input
+        form.querySelectorAll('input, select').forEach(function(field) {
+            field.addEventListener('input', function() {
+                if (this.value && this.value.trim() !== '') {
+                    this.classList.remove('error');
+                    this.classList.add('success');
+                } else {
+                    this.classList.remove('success');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up — Internship Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            max-width: 480px;
+            width: 100%;
+            padding: 48px 40px;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 20, 50, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1a33;
+            letter-spacing: -0.4px;
+            margin-bottom: 8px;
+        }
+
+        .subhead {
+            color: #5b6a87;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2a44;
+            margin-bottom: 6px;
+        }
+
+        label .required {
+            color: #dc2626;
+            margin-left: 2px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            background: #f7f9fc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            outline: none;
+            transition: 0.2s;
+            color: #0b1a33;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .role-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .role-option input[type="radio"] {
+            display: none;
+        }
+
+        .role-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 8px;
+            background: #f7f9fc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1f2a44;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 80px;
+            text-align: center;
+            margin: 0;
+        }
+
+        .role-option label .icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .role-option input[type="radio"]:checked + label {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .role-option label:hover {
+            border-color: #4f46e5;
+            background: #f8f9ff;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #1f2a44;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #0b1a33;
+            transform: scale(1.01);
+            box-shadow: 0 12px 28px rgba(15, 23, 62, 0.12);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 15px;
+            color: #3f4e6b;
+        }
+
+        .footer-links a {
+            color: #4f46e5;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #5b6a87;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.15s;
+        }
+
+        .back-link:hover {
+            color: #0b1a33;
+        }
+
+        .back-link::before {
+            content: "←";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        hr {
+            border: none;
+            border-top: 1.5px solid #eef2f6;
+            margin: 20px 0 16px;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .info-text.supervisor {
+            color: #4f46e5;
+            background: #eef2ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .role-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="badge">⚡ Commercial-Grade</div>
+    <h1>Create Account</h1>
+    <p class="subhead">Sign up to start your internship journey</p>
+
+    <form method="post" action="{% url 'account_signup' %}" id="signupForm">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="password_confirm">Confirm Password <span class="required">*</span></label>
+            <input type="password" id="password_confirm" name="password_confirm" placeholder="Confirm your password" required />
+        </div>
+
+        <div class="form-group">
+            <label>I am a <span class="required">*</span></label>
+            <div class="role-selector">
+                <div class="role-option">
+                    <input type="radio" id="role_student" name="role" value="student" required />
+                    <label for="role_student">
+                        <span class="icon">🎓</span>
+                        Student
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" id="role_employer" name="role" value="employer" />
+                    <label for="role_employer">
+                        <span class="icon">🏢</span>
+                        Employer
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" id="role_institution" name="role" value="institution" />
+                    <label for="role_institution">
+                        <span class="icon">🏛️</span>
+                        Institution
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" id="role_supervisor" name="role" value="supervisor" />
+                    <label for="role_supervisor">
+                        <span class="icon">👔</span>
+                        Supervisor
+                    </label>
+                </div>
+            </div>
+            <span class="info-text" id="roleInfo">Select your role to get started</span>
+            <span class="info-text supervisor" id="supervisorInfo" style="display: none;">
+                ⚡ Supervisors will receive a verification email. After verification, you'll be assigned to your institution and students.
+            </span>
+        </div>
+
+        <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
+    </form>
+
+    <div class="footer-links">
+        Already have an account? <a href="{% url 'account_login' %}">Sign in</a>
+    </div>
+
+    <hr />
+    <a href="{% url 'homepage:home' %}" class="back-link">Back to Home</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const roleInfo = document.getElementById('roleInfo');
+        const supervisorInfo = document.getElementById('supervisorInfo');
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+
+        roleInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const role = this.value;
+                const roleNames = {
+                    'student': 'Students can browse internships, apply, and track their progress.',
+                    'employer': 'Employers can post internships, manage applications, and find talent.',
+                    'institution': 'Institutions can manage students, placements, and partner organizations.',
+                    'supervisor': 'Supervisors monitor student progress, evaluate performance, and provide guidance.'
+                };
+                roleInfo.textContent = roleNames[role] || 'Select your role to get started';
+                if (role === 'supervisor') {
+                    supervisorInfo.style.display = 'block';
+                } else {
+                    supervisorInfo.style.display = 'none';
+                }
+            });
+        });
+
+        signupForm.addEventListener('submit', function(e) {
+            const selectedRole = document.querySelector('input[name="role"]:checked');
+            if (!selectedRole) {
+                e.preventDefault();
+                alert('Please select a role to continue.');
+                return;
+            }
+            if (selectedRole.value === 'supervisor') {
+                e.preventDefault();
+                const confirmRedirect = confirm(
+                    'Supervisor registration requires email verification.\n\n' +
+                    'After verification, you will be assigned to your institution and students.\n\n' +
+                    'Click OK to proceed to email verification.'
+                );
+                if (confirmRedirect) {
+                    signupBtn.disabled = true;
+                    signupBtn.textContent = 'Sending verification...';
+                    signupForm.submit();
+                }
+                return;
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            alert('Error: ' + decodeURIComponent(error));
+        }
+        const message = urlParams.get('message');
+        if (message) {
+            alert(decodeURIComponent(message));
+        }
+        const roleParam = urlParams.get('role');
+        if (roleParam) {
+            const radio = document.querySelector(`input[name="role"][value="${roleParam}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Institution Profile{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 900px; margin: 0 auto;">
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 30px;">
+        <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 5px;"> Institution Profile</h1>
+        <p style="color: #888; margin-bottom: 25px;">View and manage your institution information</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Institution Name</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">{{ profile.institution_name|default:"Not provided" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Institution Code</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">{{ profile.institution_code|default:"Not provided" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Email</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">{{ user.email }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Phone</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">{{ profile.phone|default:"Not provided" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Location</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">{{ profile.location|default:"Not provided" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Status</label>
+                <p style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {% if profile.is_approved %}
+                        <span style="color: #22c55e;">✅ Approved</span>
+                    {% else %}
+                        <span style="color: #f59e0b;">⏳ Pending Approval</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eef2f6; display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="{% url 'institution:dashboard' %}" style="background: #f1f4f9; color: #1f2a44; padding: 10px 30px; border-radius: 40px; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

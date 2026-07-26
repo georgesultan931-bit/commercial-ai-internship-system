@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Commercial-Grade AI-Powered Internship Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            max-width: 420px;
+            width: 100%;
+            padding: 48px 40px;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 20, 50, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1a33;
+            letter-spacing: -0.4px;
+            margin-bottom: 8px;
+        }
+
+        .subhead {
+            color: #5b6a87;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2a44;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            background: #f7f9fc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            outline: none;
+            transition: 0.2s;
+            color: #0b1a33;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        .toggle-password:hover {
+            color: #4f46e5;
+        }
+
+        .forgot-password-link {
+            display: block;
+            text-align: right;
+            margin-top: 6px;
+            font-size: 13px;
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #4f46e5;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: scale(1.01);
+            box-shadow: 0 12px 28px rgba(79, 70, 229, 0.2);
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 15px;
+            color: #3f4e6b;
+        }
+
+        .footer-links a {
+            color: #4f46e5;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #5b6a87;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.15s;
+        }
+
+        .back-link:hover {
+            color: #0b1a33;
+        }
+
+        .back-link::before {
+            content: "←";
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        hr {
+            border: none;
+            border-top: 1.5px solid #eef2f6;
+            margin: 20px 0 16px;
+        }
+
+        .messages {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .messages.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .messages.success {
+            background: #ecfdf3;
+            color: #0b9f6c;
+            border: 1px solid #a7f3d0;
+        }
+
+        .messages.warning {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .login-hint {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="badge">Commercial-Grade AI-Powered Internship Management System</div>
+    <h1>Welcome Back</h1>
+    <p class="subhead">Sign in to continue your journey</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'users:login' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="username">Username or Email</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username or email" required />
+            <div class="login-hint">You can login with either your username or email address</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+                <input type="password" id="password" name="password" placeholder="Enter your password" required />
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <a href="{% url 'users:forgot_password' %}" class="forgot-password-link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+
+    <div class="footer-links">
+        Don't have an account? <a href="{% url 'users:signup' %}">Sign up now</a>
+    </div>
+
+    <hr />
+    <a href="{% url 'homepage:home' %}" class="back-link">Back to Home</a>
+</div>
+
+<script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.querySelector('.toggle-password i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.classList.remove('fa-eye');
+            toggleBtn.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.classList.remove('fa-eye-slash');
+            toggleBtn.classList.add('fa-eye');
+        }
+    }
+</script>
+
+</body>
+</html>

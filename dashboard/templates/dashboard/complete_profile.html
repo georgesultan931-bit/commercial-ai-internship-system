@@ -1,0 +1,191 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Complete Your Profile - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Complete Your Profile{% endblock %}
+{% block page_subtitle %}Please fill in all your details to get started.{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="content-card">
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 0.8rem; margin-bottom: 1rem; border-radius: 8px; 
+                    {% if message.tags == 'success' %}background: #d1fae5; color: #065f46;
+                    {% elif message.tags == 'error' %}background: #fee2e2; color: #991b1b;
+                    {% else %}background: #fef3c7; color: #92400e;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div style="padding: 0.8rem; background: #eff6ff; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #2563eb;">
+            <p style="color: #1e40af; font-size: 0.95rem; margin: 0;">
+                <i class="fas fa-info-circle"></i> Please complete your profile to continue. This information helps us find the best internships for you.
+            </p>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- ============================================
+            PERSONAL INFORMATION
+            ============================================ -->
+            <h2 style="font-size: 1.3rem; font-weight: 700; color: #2563eb; margin: 2rem 0 1rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;">
+                <i class="fas fa-user"></i> Personal Information
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Profile Photo</label>
+                    <input type="file" name="profile_photo" accept="image/*" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">First Name <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="first_name" required value="{{ profile.first_name|default:user.first_name }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Middle Name</label>
+                    <input type="text" name="middle_name" value="{{ profile.middle_name|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Last Name <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="last_name" required value="{{ profile.last_name|default:user.last_name }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Gender <span style="color: #ef4444;">*</span></label>
+                    <select name="gender" required style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        <option value="">Select Gender</option>
+                        {% for key, value in genders %}
+                        <option value="{{ key }}" {% if profile.gender == key %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Date of Birth <span style="color: #ef4444;">*</span></label>
+                    <input type="date" name="date_of_birth" required value="{{ profile.date_of_birth|date:'Y-m-d'|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">National ID/Passport <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="national_id" required value="{{ profile.national_id|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Nationality <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="nationality" required value="{{ profile.nationality|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">County/State <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="county" required value="{{ profile.county|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Home Address</label>
+                    <input type="text" name="home_address" value="{{ profile.home_address|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Postal Address</label>
+                    <input type="text" name="postal_address" value="{{ profile.postal_address|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Phone Number <span style="color: #ef4444;">*</span></label>
+                    <input type="tel" name="phone_number" required value="{{ profile.phone_number|default:user.phone_number }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Secondary Phone</label>
+                    <input type="tel" name="secondary_phone" value="{{ profile.secondary_phone|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Email <span style="color: #ef4444;">*</span></label>
+                    <input type="email" name="email" required value="{{ profile.email|default:user.email }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+            </div>
+            
+            <!-- Emergency Contact -->
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #374151; margin: 1.5rem 0 1rem;">Emergency Contact</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Contact Name <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="emergency_contact_name" required value="{{ profile.emergency_contact_name|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Contact Phone <span style="color: #ef4444;">*</span></label>
+                    <input type="tel" name="emergency_contact_phone" required value="{{ profile.emergency_contact_phone|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Relationship <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="emergency_contact_relationship" required value="{{ profile.emergency_contact_relationship|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+            </div>
+            
+            <!-- ============================================
+            ACADEMIC INFORMATION
+            ============================================ -->
+            <h2 style="font-size: 1.3rem; font-weight: 700; color: #2563eb; margin: 2rem 0 1rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;">
+                <i class="fas fa-graduation-cap"></i> Academic Information
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Institution <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="institution_name" required value="{{ profile.institution_name|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Campus</label>
+                    <input type="text" name="campus" value="{{ profile.campus|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Faculty/School</label>
+                    <input type="text" name="faculty" value="{{ profile.faculty|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Department</label>
+                    <input type="text" name="department" value="{{ profile.department|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Course/Program <span style="color: #ef4444;">*</span></label>
+                    <input type="text" name="course" required value="{{ profile.course|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Specialization</label>
+                    <input type="text" name="specialization" value="{{ profile.specialization|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Admission Number</label>
+                    <input type="text" name="admission_number" value="{{ profile.admission_number|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Registration Number</label>
+                    <input type="text" name="registration_number" value="{{ profile.registration_number|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Year of Study <span style="color: #ef4444;">*</span></label>
+                    <input type="number" name="year_of_study" required value="{{ profile.year_of_study|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Semester</label>
+                    <input type="number" name="semester" value="{{ profile.semester|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Expected Graduation</label>
+                    <input type="date" name="expected_graduation_date" value="{{ profile.expected_graduation_date|date:'Y-m-d'|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Current GPA/CGPA</label>
+                    <input type="number" step="0.01" name="current_gpa" value="{{ profile.current_gpa|default:'' }}" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Academic Level <span style="color: #ef4444;">*</span></label>
+                    <select name="academic_level" required style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        <option value="">Select Level</option>
+                        {% for key, value in academic_levels %}
+                        <option value="{{ key }}" {% if profile.academic_level == key %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" style="width: 100%; margin-top: 2rem; padding: 1rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; cursor: pointer;">
+                <i class="fas fa-save"></i> Save Profile & Continue to Dashboard
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}My Interviews{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">My Interviews</h1>
+    <p style="color: #6b7280; margin-bottom: 2rem;">View all your scheduled interviews.</p>
+
+    {% if interviews %}
+    <div style="display: grid; gap: 1rem;">
+        {% for interview in interviews %}
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid {% if interview.status == 'SCHEDULED' %}#2563eb{% elif interview.status == 'COMPLETED' %}#10b981{% elif interview.status == 'CANCELLED' %}#ef4444{% else %}#f59e0b{% endif %};">
+            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="font-size: 1.1rem;">{{ interview.application.internship.title }}</h3>
+                    <p style="color: #6b7280;">{{ interview.application.internship.organization.name }}</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
+                        <span><i class="fas fa-user"></i> {{ interview.application.applicant.first_name }} {{ interview.application.applicant.last_name }}</span>
+                        <span><i class="fas fa-calendar"></i> {{ interview.scheduled_at|date:"M d, Y H:i" }}</span>
+                        <span><i class="fas fa-clock"></i> {{ interview.duration }} minutes</span>
+                    </div>
+                    {% if interview.meeting_link %}
+                    <a href="{{ interview.meeting_link }}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.9rem;">
+                        <i class="fas fa-video"></i> Join Meeting
+                    </a>
+                    {% endif %}
+                </div>
+                <div style="text-align: right;">
+                    <span style="padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem; background: {% if interview.status == 'SCHEDULED' %}#dbeafe; color: #1e40af{% elif interview.status == 'COMPLETED' %}#d1fae5; color: #065f46{% elif interview.status == 'CANCELLED' %}#fee2e2; color: #991b1b{% else %}#fef3c7; color: #92400e{% endif %};">
+                        {{ interview.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="background: white; padding: 3rem; border-radius: 12px; text-align: center; color: #6b7280;">
+        <i class="fas fa-calendar" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+        <p>No interviews scheduled yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

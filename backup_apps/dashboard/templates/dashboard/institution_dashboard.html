@@ -1,0 +1,131 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Institution Dashboard{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <!-- Welcome Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.2rem;">{{ organization.name }}</h1>
+            <p style="color: #6b7280;">Welcome, {{ user.first_name|default:user.username }}! Manage your students and internships.</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="#" class="btn btn-outline">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+            <h3 style="font-size: 2rem; color: #2563eb;">{{ total_students }}</h3>
+            <p style="color: #6b7280;">Total Students</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+            <h3 style="font-size: 2rem; color: #10b981;">{{ verified_students }}</h3>
+            <p style="color: #6b7280;">Verified Students</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+            <h3 style="font-size: 2rem; color: #f59e0b;">{{ students_with_applications }}</h3>
+            <p style="color: #6b7280;">Students with Applications</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+            <h3 style="font-size: 2rem; color: #8b5cf6;">{{ total_internships }}</h3>
+            <p style="color: #6b7280;">Total Internships</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+            <h3 style="font-size: 2rem; color: #10b981;">{{ active_internships }}</h3>
+            <p style="color: #6b7280;">Active Internships</p>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Recent Students -->
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.5rem;">Recent Students</h2>
+                <a href="#" style="color: #2563eb; text-decoration: none;">View All →</a>
+            </div>
+            
+            {% if recent_students %}
+            <div style="display: grid; gap: 0.8rem;">
+                {% for student in recent_students %}
+                <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="font-size: 1rem;">{{ student.user.first_name }} {{ student.user.last_name }}</h4>
+                        <p style="color: #6b7280; font-size: 0.85rem;">{{ student.user.email }}</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; background: {% if student.is_verified %}#d1fae5; color: #065f46{% else %}#fee2e2; color: #991b1b{% endif %};">
+                            {% if student.is_verified %}Verified{% else %}Pending{% endif %}
+                        </span>
+                        <a href="#" style="color: #2563eb; font-size: 0.8rem;">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; color: #6b7280;">
+                <p>No students registered yet.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Internships -->
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.5rem;">Recent Internships</h2>
+                <a href="#" style="color: #2563eb; text-decoration: none;">View All →</a>
+            </div>
+            
+            {% if recent_internships %}
+            <div style="display: grid; gap: 0.8rem;">
+                {% for internship in recent_internships %}
+                <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h4 style="font-size: 1rem;">{{ internship.title }}</h4>
+                    <p style="color: #6b7280; font-size: 0.85rem;">{{ internship.location }} • {{ internship.get_category_display }}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.3rem;">
+                        <span style="font-size: 0.8rem; color: #6b7280;">{{ internship.current_applicants }} applicants</span>
+                        <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; background: {% if internship.status == 'APPROVED' %}#d1fae5; color: #065f46{% elif internship.status == 'PENDING' %}#fef3c7; color: #92400e{% else %}#e5e7eb; color: #6b7280{% endif %};">
+                            {{ internship.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; color: #6b7280;">
+                <p>No internships posted yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Quick Actions</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="#" style="background: #dbeafe; padding: 1rem; border-radius: 8px; text-align: center; text-decoration: none; color: #1e40af;">
+                <i class="fas fa-user-plus" style="font-size: 1.5rem; display: block; margin-bottom: 0.3rem;"></i>
+                Add Student
+            </a>
+            <a href="#" style="background: #d1fae5; padding: 1rem; border-radius: 8px; text-align: center; text-decoration: none; color: #065f46;">
+                <i class="fas fa-file-alt" style="font-size: 1.5rem; display: block; margin-bottom: 0.3rem;"></i>
+                Post Internship
+            </a>
+            <a href="#" style="background: #fef3c7; padding: 1rem; border-radius: 8px; text-align: center; text-decoration: none; color: #92400e;">
+                <i class="fas fa-chart-bar" style="font-size: 1.5rem; display: block; margin-bottom: 0.3rem;"></i>
+                View Reports
+            </a>
+            <a href="#" style="background: #ede9fe; padding: 1rem; border-radius: 8px; text-align: center; text-decoration: none; color: #5b21b6;">
+                <i class="fas fa-users" style="font-size: 1.5rem; display: block; margin-bottom: 0.3rem;"></i>
+                Manage Supervisors
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

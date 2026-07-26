@@ -1,0 +1,142 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Internship Detail - Admin Dashboard{% endblock %}
+
+{% block page_title %}Internship Detail{% endblock %}
+
+{% block page_subtitle %}{{ internship.title }}{% endblock %}
+
+{% block content %}
+<div class="content-grid">
+    <div>
+        <!-- Internship Info -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-info-circle"></i> Internship Information</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Title</span>
+                    <span style="font-weight: 600;">{{ internship.title }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Organization</span>
+                    <span style="font-weight: 600;">{{ internship.organization.name }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Category</span>
+                    <span style="font-weight: 600;">{{ internship.get_category_display }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Location</span>
+                    <span style="font-weight: 600;">{{ internship.location }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Status</span>
+                    <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;
+                        {% if internship.status == 'APPROVED' %}background: #d1fae5; color: #059669;
+                        {% elif internship.status == 'PENDING' %}background: #fef3c7; color: #d97706;
+                        {% elif internship.status == 'REJECTED' %}background: #fee2e2; color: #dc2626;
+                        {% else %}background: #e5e7eb; color: #6b7280;{% endif %}">
+                        {{ internship.get_status_display }}
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Posted By</span>
+                    <span style="font-weight: 600;">{{ internship.posted_by.get_full_name|default:internship.posted_by.email }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                    <span style="color: #6b7280;">Posted Date</span>
+                    <span style="font-weight: 600;">{{ internship.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-file-alt"></i> Description</div>
+            <p style="color: #4b5563; line-height: 1.8;">{{ internship.description }}</p>
+            
+            {% if internship.requirements %}
+            <div style="margin-top: 1rem;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Requirements</h4>
+                <p style="color: #4b5563;">{{ internship.requirements }}</p>
+            </div>
+            {% endif %}
+            
+            <div style="margin-top: 1rem;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Required Skills</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    {% for skill in internship.required_skills %}
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.9rem;">{{ skill }}</span>
+                    {% empty %}
+                    <span style="color: #6b7280;">No skills listed</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <!-- Applications -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-users"></i> Applications</div>
+            <div style="text-align: center; padding: 1rem 0;">
+                <div style="font-size: 2.5rem; font-weight: 700; color: #2563eb;">{{ total_applications }}</div>
+                <div style="color: #6b7280;">Total Applications</div>
+            </div>
+            {% if applications %}
+                {% for app in applications|slice:":5" %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight: 600;">{{ app.student.get_full_name|default:app.student.email }}</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">{{ app.applied_at|date:"M d, Y" }}</div>
+                    </div>
+                    <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem;
+                        {% if app.status == 'PENDING' %}background: #fef3c7; color: #d97706;
+                        {% elif app.status == 'ACCEPTED' %}background: #d1fae5; color: #059669;
+                        {% elif app.status == 'REJECTED' %}background: #fee2e2; color: #dc2626;
+                        {% else %}background: #e5e7eb; color: #6b7280;{% endif %}">
+                        {{ app.get_status_display }}
+                    </span>
+                </div>
+                {% endfor %}
+                {% if applications|length > 5 %}
+                <div style="text-align: center; margin-top: 0.5rem;">
+                    <a href="#" style="color: #2563eb; text-decoration: none; font-weight: 600;">View all {{ total_applications }} applications</a>
+                </div>
+                {% endif %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 0.5rem 0;">No applications yet.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-bolt"></i> Quick Actions</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                {% if internship.status == 'PENDING' %}
+                <a href="{% url 'homepage:admin_approve_internship' internship.id %}" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #d1fae5; border-radius: 10px; text-decoration: none; color: #059669;" onclick="return confirm('Approve this internship?')">
+                    <i class="fas fa-check-circle" style="font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Approve Internship</span>
+                </a>
+                <a href="{% url 'homepage:admin_reject_internship' internship.id %}" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #fee2e2; border-radius: 10px; text-decoration: none; color: #dc2626;" onclick="return confirm('Reject this internship?')">
+                    <i class="fas fa-times-circle" style="font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Reject Internship</span>
+                </a>
+                {% endif %}
+                
+                {% if internship.status == 'APPROVED' %}
+                <a href="{% url 'homepage:admin_close_internship' internship.id %}" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #fef3c7; border-radius: 10px; text-decoration: none; color: #d97706;" onclick="return confirm('Close this internship?')">
+                    <i class="fas fa-times-circle" style="font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Close Internship</span>
+                </a>
+                {% endif %}
+                
+                <a href="{% url 'homepage:admin_internships' %}" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #e5e7eb; border-radius: 10px; text-decoration: none; color: #6b7280;">
+                    <i class="fas fa-arrow-left" style="font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Back to Internships</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

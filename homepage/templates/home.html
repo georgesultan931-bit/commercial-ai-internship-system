@@ -1,0 +1,626 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>Welcome to Commercial-Grade AI-Powered Internship Management System</h1>
+        <p>Commercial-Grade AI-Powered Internship Management System</p>
+        <p class="sub-description">Your AI-powered platform for finding the perfect internship</p>
+        
+        <div class="hero-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'homepage:dashboard' %}" class="btn-primary">Go to Dashboard</a>
+                <a href="#features-section" class="btn-secondary">Features</a>
+            {% else %}
+                <a href="{% url 'users:login' %}" class="btn-primary">Login to Get Started</a>
+                <a href="{% url 'users:signup' %}" class="btn-secondary">Sign Up</a>
+                <a href="#features-section" class="btn-secondary">Features</a>
+            {% endif %}
+            <a href="#slideshow-section" class="btn-secondary">Learn More</a>
+        </div>
+    </div>
+
+    <!-- Slideshow Section -->
+    <div class="slideshow-section" id="slideshow-section">
+        <div class="slideshow-container">
+            <div class="slide active" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                <div class="slide-content">
+                    <div class="slide-icon">🚀</div>
+                    <h2>Platform Features</h2>
+                    <p>AI-powered insights, internship matching, and progress tracking all in one place.</p>
+                    <ul>
+                        <li>AI-Powered Career Insights</li>
+                        <li>Smart Internship Matching</li>
+                        <li>Real-time Progress Tracking</li>
+                        <li>Personalized Recommendations</li>
+                    </ul>
+                    <a href="#features-section" class="slide-btn">Explore Features →</a>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #242629, #282b2e);">
+                <div class="slide-content">
+                    <div class="slide-icon">📝</div>
+                    <h2>How to Register</h2>
+                    <p>Getting started is easy. Follow these simple steps to create your account and begin your journey.</p>
+                    <ul>
+                        <li>Step 1: Click "Sign Up Free"</li>
+                        <li>Step 2: Verify Your Email</li>
+                        <li>Step 3: Complete Your Profile</li>
+                        <li>Step 4: Start Applying to Internships</li>
+                    </ul>
+                    <a href="{% url 'users:signup' %}" class="slide-btn">Sign Up Now →</a>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #202220, #323632);">
+                <div class="slide-content">
+                    <div class="slide-icon">🏆</div>
+                    <h2>About Us</h2>
+                    <p>Commercial-Grade AI-Powered Internship Management System is a commercial-grade platform connecting talented students with the best internship opportunities.</p>
+                    <ul>
+                        <li>500+ Partner Companies</li>
+                        <li>1,000+ Internships Posted</li>
+                        <li>AI-Powered Matching Engine</li>
+                        <li>Trusted by Students Worldwide</li>
+                    </ul>
+                    <a href="#features-section" class="slide-btn">Learn More →</a>
+                </div>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, #3f3e41, #424044);">
+                <div class="slide-content">
+                    <div class="slide-icon">📧</div>
+                    <h2>Contact Us</h2>
+                    <p>Have questions? Reach out to our team and we'll get back to you as soon as possible.</p>
+                    <ul>
+                        <li>📧 support@georgesultan931@gmail.com</li>
+                        <li>📞 +254796287859</li>
+                        <li>🌐 www.aiinternhub.com</li>
+                        <li>📍 KENYA</li>
+                    </ul>
+                    <a href="#" class="slide-btn">Contact Support →</a>
+                </div>
+            </div>
+        </div>
+        
+        <button class="prev" onclick="changeSlide(-1)">❮</button>
+        <button class="next" onclick="changeSlide(1)">❯</button>
+        
+        <div class="dots-container">
+            <span class="dot active" onclick="currentSlide(0)"></span>
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+    </div>
+
+    <!-- 12 Features Grid -->
+    <div class="features-section" id="features-section">
+        <h2>Why Choose Commercial-Grade AI-Powered Internship Management System?</h2>
+        <div class="features-grid">
+            <!-- AI Match Score -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Match Score</h3>
+                <p>Smart internship recommendations based on skills, academic background, experience, and career goals.</p>
+            </div>
+            <!-- AI Resume Analyzer -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>AI Resume Analyzer</h3>
+                <p>Analyze resumes, calculate ATS scores, identify missing skills, and get improvement suggestions.</p>
+            </div>
+            <!-- Internship Management -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3>Internship Management</h3>
+                <p>Create, manage, search, and apply for internship opportunities with advanced filters.</p>
+            </div>
+            <!-- Career Analytics -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Career Analytics</h3>
+                <p>Monitor application progress, AI match trends, and career development insights.</p>
+            </div>
+            <!-- Interview Management -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Interview Management</h3>
+                <p>Schedule interviews, send reminders, and track interview outcomes in one place.</p>
+            </div>
+            <!-- Application Tracking -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Application Tracking</h3>
+                <p>Track every application through stages: Applied, Under Review, Shortlisted, Interview, Accepted, or Rejected.</p>
+            </div>
+            <!-- Employer Portal -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Employer Portal</h3>
+                <p>Verified companies can post internships, manage applicants, and analyze hiring performance.</p>
+            </div>
+            <!-- Student Portfolio -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3>Student Portfolio</h3>
+                <p>Manage academic records, skills, projects, certifications, and resumes in one place.</p>
+            </div>
+            <!-- Smart Notifications -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Smart Notifications</h3>
+                <p>Real-time notifications for approvals, deadlines, interview invitations, and application updates.</p>
+            </div>
+            <!-- AI Insights -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI Insights</h3>
+                <p>Skill gap analysis, market demand insights, and internship success predictions.</p>
+            </div>
+            <!-- Secure Access -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Access</h3>
+                <p>Role-based authentication, email verification, and administrator approval for all users.</p>
+            </div>
+            <!-- Reports & Analytics -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h3>Reports & Analytics</h3>
+                <p>Generate placement reports, internship statistics, employer performance reports, and downloadable PDFs.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .home-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .hero-section {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: white;
+        border-radius: 12px;
+        margin-bottom: 40px;
+    }
+    
+    .hero-section h1 {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+    
+    .hero-section p {
+        font-size: 20px;
+        color: #ccc;
+        margin-bottom: 5px;
+    }
+    
+    .hero-section .sub-description {
+        font-size: 16px;
+        color: #888;
+        margin-bottom: 30px;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-primary, .btn-secondary {
+        padding: 14px 35px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+    
+    .btn-primary {
+        background: #00d4ff;
+        color: #1a1a2e;
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid #00d4ff;
+    }
+    
+    .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .btn-secondary:hover {
+        background: #00d4ff;
+        color: #1a1a2e;
+    }
+    
+    /* Slideshow Section */
+    .slideshow-section {
+        position: relative;
+        margin-bottom: 40px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .slideshow-container {
+        position: relative;
+        height: 400px;
+    }
+    
+    .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+    }
+    
+    .slide.active {
+        opacity: 1;
+    }
+    
+    .slide-content {
+        text-align: center;
+        color: white;
+        max-width: 700px;
+        animation: slideUp 0.8s ease-out;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .slide-icon {
+        font-size: 64px;
+        margin-bottom: 15px;
+        display: block;
+    }
+    
+    .slide-content h2 {
+        font-size: 32px;
+        margin-bottom: 10px;
+        color: rgb(214, 202, 202);
+    }
+    
+    .slide-content p {
+        font-size: 18px;
+        color: rgba(206, 194, 194, 0.85);
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+    
+    .slide-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .slide-content ul li {
+        background: rgba(255,255,255,0.15);
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        color: rgba(224, 214, 214, 0.9);
+    }
+    
+    .slide-btn {
+        display: inline-block;
+        padding: 12px 35px;
+        background: rgba(255,255,255,0.2);
+        color: rgb(224, 203, 203);
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        border: 2px solid rgba(255,255,255,0.3);
+        transition: all 0.3s;
+    }
+    
+    .slide-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-2px);
+    }
+    
+    /* Navigation Arrows */
+    .prev, .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 16px 20px;
+        background: rgba(0,0,0,0.3);
+        color: rgb(204, 190, 190);
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        border-radius: 50%;
+        transition: all 0.3s;
+        z-index: 10;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .prev:hover, .next:hover {
+        background: rgba(0,0,0,0.6);
+    }
+    
+    .prev {
+        left: 20px;
+    }
+    
+    .next {
+        right: 20px;
+    }
+    
+    /* Dots */
+    .dots-container {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    }
+    
+    .dot {
+        width: 12px;
+        height: 12px;
+        background: rgba(255,255,255,0.4);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .dot.active {
+        background: rgb(168, 161, 161);
+        transform: scale(1.2);
+    }
+    
+    .dot:hover {
+        background: rgba(255,255,255,0.8);
+    }
+    
+    /* Features Section */
+    .features-section {
+        padding: 40px 0 60px 0;
+    }
+    
+    .features-section h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #1a1a2e;
+        font-size: 32px;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+    
+    .feature-card {
+        background: #f8f9ff;
+        padding: 30px 20px;
+        border-radius: 12px;
+        text-align: center;
+        transition: all 0.3s;
+        border: 1px solid transparent;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        border-color: #667eea;
+        background: white;
+    }
+    
+    .feature-icon-box {
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #090b11 0%, #000000 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon-box {
+        transform: rotate(8deg) scale(1.05);
+    }
+    
+    .feature-icon-box i {
+        font-size: 30px;
+        color: white;
+    }
+    
+    .feature-card h3 {
+        margin: 10px 0 8px 0;
+        color: #1a1a2e;
+        font-size: 17px;
+        font-weight: 600;
+    }
+    
+    .feature-card p {
+        color: #746a6a;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+    
+    @media (max-width: 1024px) {
+        .features-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 32px;
+        }
+        
+        .slideshow-container {
+            height: 450px;
+        }
+        
+        .slide-content h2 {
+            font-size: 24px;
+        }
+        
+        .slide-content p {
+            font-size: 16px;
+        }
+        
+        .slide-content ul li {
+            font-size: 12px;
+            padding: 6px 14px;
+        }
+        
+        .prev, .next {
+            display: none;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .hero-buttons a {
+            width: 100%;
+            max-width: 280px;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .slideshow-container {
+            height: 500px;
+        }
+        
+        .slide {
+            padding: 20px;
+        }
+        
+        .slide-content ul {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .feature-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<script>
+    let slideIndex = 0;
+    let slideInterval;
+    
+    function showSlide(index) {
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        
+        if (index >= slides.length) slideIndex = 0;
+        if (index < 0) slideIndex = slides.length - 1;
+        
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            dots[i].classList.remove('active');
+        });
+        
+        slides[slideIndex].classList.add('active');
+        dots[slideIndex].classList.add('active');
+    }
+    
+    function changeSlide(n) {
+        clearInterval(slideInterval);
+        slideIndex += n;
+        showSlide(slideIndex);
+        startAutoSlide();
+    }
+    
+    function currentSlide(n) {
+        clearInterval(slideInterval);
+        slideIndex = n;
+        showSlide(slideIndex);
+        startAutoSlide();
+    }
+    
+    function startAutoSlide() {
+        slideInterval = setInterval(() => {
+            slideIndex++;
+            showSlide(slideIndex);
+        }, 5000);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        showSlide(0);
+        startAutoSlide();
+    });
+</script>
+{% endblock %}

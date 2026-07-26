@@ -1,0 +1,47 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Announcements{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 900px; margin: 0 auto;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;">📢 Announcements</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if announcements %}
+            <div style="display: grid; gap: 15px;">
+                {% for announcement in announcements %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px; {% if announcement.is_pinned %}border-left: 4px solid #4f46e5;{% endif %}">
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <h3 style="font-size: 18px; color: #0b1a33;">{{ announcement.title }}</h3>
+                            <span style="background: 
+                                {% if announcement.announcement_type == 'urgent' %}#fee2e2; color: #dc2626
+                                {% elif announcement.announcement_type == 'important' %}#fef3c7; color: #d97706
+                                {% elif announcement.announcement_type == 'feature' %}#d1fae5; color: #059669
+                                {% elif announcement.announcement_type == 'event' %}#dbeafe; color: #2563eb
+                                {% else %}#f3f4f6; color: #6b7280{% endif %}; 
+                                padding: 2px 12px; border-radius: 12px; font-size: 12px;">
+                                {{ announcement.get_announcement_type_display }}
+                            </span>
+                            {% if announcement.is_pinned %}
+                                <span style="background: #fef3c7; color: #d97706; padding: 2px 12px; border-radius: 12px; font-size: 12px;">
+                                    📌 Pinned
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p style="color: #666; margin-top: 10px; font-size: 14px; line-height: 1.6;">{{ announcement.content|linebreaks }}</p>
+                        <div style="color: #888; font-size: 12px; margin-top: 10px;">
+                            Posted on {{ announcement.created_at|date:"Y-m-d H:i" }} by {{ announcement.created_by.username }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 64px; margin-bottom: 15px;">📢</div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Announcements</h3>
+                <p>Check back later for updates.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

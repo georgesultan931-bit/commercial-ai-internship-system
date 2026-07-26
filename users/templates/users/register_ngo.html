@@ -1,0 +1,38 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}NGO Registration{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 500px; margin: 4rem auto; min-height: 60vh;">
+    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <div style="text-align: center;">
+            <div style="font-size: 3rem;">🤝</div>
+            <h1 style="font-size: 2rem; font-weight: 800; color: #1a1a2e;">NGO Registration</h1>
+            <p style="color: #6b7280;">Register your NGO</p>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 0.8rem; margin-bottom: 1rem; border-radius: 8px; 
+                    {% if message.tags == 'success' %}background: #d1fae5; color: #065f46;
+                    {% elif message.tags == 'error' %}background: #fee2e2; color: #991b1b;
+                    {% else %}background: #fef3c7; color: #92400e;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" style="padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; width: 100%;">
+                Register as NGO
+            </button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1.5rem; color: #6b7280;">
+            Already have an account? <a href="{% url 'users:login' %}" style="color: #2563eb; text-decoration: none; font-weight: 600;">Login</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Approve Users{% endblock %}
+{% block page_subtitle %}Review and approve pending users{% endblock %}
+
+{% block admin_content %}
+<div class="approve-container">
+    {% if pending_users %}
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Date Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in pending_users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit" name="action" value="approve" class="btn-approve">✅ Approve</button>
+                        <button type="submit" name="action" value="reject" class="btn-reject">❌ Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p> No pending users to approve!</p>
+        <p>All users have been approved.</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .approve-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .btn-approve {
+        padding: 5px 15px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-approve:hover {
+        background: #218838;
+    }
+    
+    .btn-reject {
+        padding: 5px 15px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-reject:hover {
+        background: #c82333;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #888;
+    }
+</style>
+{% endblock %}

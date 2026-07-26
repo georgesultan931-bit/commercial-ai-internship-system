@@ -1,0 +1,25 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Registration Pending - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 600px; margin: 4rem auto; min-height: 60vh;">
+    <div style="background: white; padding: 3rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+        <h1 style="font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-bottom: 1rem;">Registration Submitted!</h1>
+        
+        <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left;">
+            <p style="color: #92400e; font-weight: 600; margin-bottom: 0.5rem;">📋 Your account has been submitted successfully.</p>
+            <p style="color: #78350f;">Our administrators will review your information.</p>
+            <p style="color: #78350f; margin-top: 0.5rem;">You will receive an email once your account is approved.</p>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+            <a href="{% url 'users:login' %}" style="padding: 0.8rem 2rem; background: #2563eb; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; width: 100%; max-width: 300px;">
+                Go to Login
+            </a>
+            <a href="{% url 'homepage:home' %}" style="color: #6b7280; text-decoration: none;">Back to Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

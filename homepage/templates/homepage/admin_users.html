@@ -1,0 +1,385 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="admin-users">
+    <div class="users-header">
+        <h1>User Management</h1>
+        <p>Manage all users on the platform</p>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="users-filters">
+        <div class="search-box">
+            <input type="text" placeholder="Search users..." id="userSearch" onkeyup="searchUsers()">
+            <button onclick="searchUsers()">🔍 Search</button>
+        </div>
+        <div class="filter-box">
+            <select id="roleFilter" onchange="filterUsers()">
+                <option value="">All Users</option>
+                <option value="student">Students</option>
+                <option value="employer">Employers</option>
+                <option value="institution">Institutions</option>
+                <option value="supervisor">Supervisors</option>
+                <option value="coordinator">Coordinators</option>
+                <option value="admin">Administrators</option>
+            </select>
+            <select id="statusFilter" onchange="filterUsers()">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="suspended">Suspended</option>
+                <option value="blocked">Blocked</option>
+            </select>
+            <button onclick="filterUsers()">Apply Filters</button>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="users-table-container">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">{{ user.username|first|upper }}</div>
+                            <div>
+                                <div class="user-name">{{ user.username }}</div>
+                                <div class="user-detail">
+                                    {% if user.is_staff %}Administrator{% else %}User{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="user-type">
+                            {% if user.is_staff %}
+                                Admin
+                            {% else %}
+                                User
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="user-status active">Active</span>
+                    </td>
+                    <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="#" class="btn-view" title="View">👁️</a>
+                            <a href="#" class="btn-edit" title="Edit">✏️</a>
+                            <a href="#" class="btn-suspend" title="Suspend">⏸️</a>
+                            <a href="#" class="btn-delete" title="Delete">🗑️</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
+                        No users found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <span class="step-links">
+            <a href="#" class="page-link">Previous</a>
+            <a href="#" class="page-link active">1</a>
+            <a href="#" class="page-link">2</a>
+            <a href="#" class="page-link">3</a>
+            <a href="#" class="page-link">Next</a>
+        </span>
+    </div>
+</div>
+
+<style>
+    .admin-users {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .users-header {
+        margin-bottom: 25px;
+    }
+
+    .users-header h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+
+    .users-header p {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .users-filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .search-box {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .search-box input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .search-box input:focus {
+        border-color: #007bff;
+    }
+
+    .search-box button,
+    .filter-box button {
+        padding: 10px 25px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .search-box button:hover,
+    .filter-box button:hover {
+        background: #0056b3;
+    }
+
+    .filter-box {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-box select {
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        outline: none;
+        min-width: 150px;
+    }
+
+    .filter-box select:focus {
+        border-color: #007bff;
+    }
+
+    .users-table-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .users-table thead {
+        background: #f8f9fa;
+    }
+
+    .users-table th {
+        padding: 15px 20px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .users-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .users-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .user-name {
+        font-weight: 500;
+        color: #1a1a2e;
+    }
+
+    .user-detail {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .user-type {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        background: #e3f2fd;
+        color: #007bff;
+    }
+
+    .user-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .user-status.active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .user-status.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .user-status.suspended {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .user-status.blocked {
+        background: #f5c6cb;
+        color: #721c24;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-buttons a {
+        padding: 5px 8px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background 0.3s;
+        font-size: 16px;
+    }
+
+    .btn-view:hover { background: #e3f2fd; }
+    .btn-edit:hover { background: #fff3cd; }
+    .btn-suspend:hover { background: #f8d7da; }
+    .btn-delete:hover { background: #f8d7da; }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 5px;
+    }
+
+    .page-link {
+        padding: 8px 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #1a1a2e;
+        transition: all 0.3s;
+    }
+
+    .page-link:hover {
+        background: #f0f2f5;
+    }
+
+    .page-link.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    @media (max-width: 768px) {
+        .users-filters {
+            flex-direction: column;
+        }
+        
+        .search-box {
+            flex-direction: column;
+        }
+        
+        .filter-box {
+            flex-direction: column;
+        }
+        
+        .users-table {
+            font-size: 13px;
+        }
+        
+        .users-table th,
+        .users-table td {
+            padding: 10px 12px;
+        }
+        
+        .action-buttons {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<script>
+    function searchUsers() {
+        const searchTerm = document.getElementById('userSearch').value;
+        alert('Searching for: ' + searchTerm);
+        // Add actual search logic here
+    }
+
+    function filterUsers() {
+        const role = document.getElementById('roleFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        alert('Filtering by: Role=' + role + ', Status=' + status);
+        // Add actual filter logic here
+    }
+</script>
+{% endblock %}

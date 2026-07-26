@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial-Grade AI-Powered Internship Management System - {% block title %}Dashboard{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1a1a2e;
+            background: #f1f5f9;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ============================================
+           SIDEBAR NAVIGATION
+           ============================================ */
+        .sidebar {
+            width: 280px;
+            background: #1a1a2e;
+            color: #9ca3af;
+            padding: 2rem 1.2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2563eb;
+            text-decoration: none;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #374151;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        
+        .sidebar-logo span {
+            color: white;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .sidebar-section-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #6b7280;
+            margin-bottom: 0.8rem;
+            padding-left: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.7rem 1rem;
+            color: #9ca3af;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            margin-bottom: 0.2rem;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-link i {
+            width: 22px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(37, 99, 235, 0.15);
+            color: white;
+        }
+        
+        .sidebar-link.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: #2563eb;
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid #374151;
+        }
+        
+        .sidebar-footer .sidebar-link {
+            color: #6b7280;
+        }
+        
+        .sidebar-footer .sidebar-link:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        /* Top Bar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+        
+        .topbar-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        
+        .topbar-left p {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .topbar-right .notification {
+            position: relative;
+            color: #6b7280;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .topbar-right .notification:hover {
+            color: #2563eb;
+        }
+        
+        .topbar-right .notification .dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+        
+        .topbar-right .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .topbar-right .user-profile .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .topbar-right .user-profile .name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1a1a2e;
+        }
+        
+        .topbar-right .user-profile .role {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        
+        .stat-card .change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-card .change.positive {
+            color: #10b981;
+        }
+        
+        .stat-card .change.negative {
+            color: #ef4444;
+        }
+        
+        .stat-card .icon {
+            float: right;
+            font-size: 2rem;
+            opacity: 0.2;
+        }
+        
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .content-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        
+        .content-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a1a2e;
+        }
+        
+        .content-card .card-title i {
+            color: #2563eb;
+            margin-right: 0.5rem;
+        }
+        
+        /* Mobile Responsive */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #1a1a2e;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .topbar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .hamburger {
+                display: block !important;
+            }
+        }
+        
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #2563eb;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+    SIDEBAR
+    ============================================ -->
+    <aside class="sidebar" id="sidebar">
+        <a href="{% url 'homepage:dashboard' %}" class="sidebar-logo">
+            Intern<span>Hub</span>
+        </a>
+        
+        <!-- MAIN -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Main</div>
+            <a href="{% url 'homepage:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a href="{% url 'internships:browse' %}" class="sidebar-link {% if request.resolver_match.url_name == 'browse_internships' %}active{% endif %}">
+                <i class="fas fa-search"></i> Browse Internships
+            </a>
+            <a href="{% url 'homepage:my_applications' %}" class="sidebar-link {% if request.resolver_match.url_name == 'my_applications' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i> My Applications
+                <span class="badge">3</span>
+            </a>
+            <a href="{% url 'homepage:saved' %}" class="sidebar-link {% if request.resolver_match.url_name == 'saved' %}active{% endif %}">
+                <i class="fas fa-heart"></i> Saved
+            </a>
+        </div>
+        
+        <!-- AI TOOLS -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">AI Tools</div>
+            <a href="{% url 'homepage:ai_match' %}" class="sidebar-link {% if request.resolver_match.url_name == 'ai_match' %}active{% endif %}">
+                <i class="fas fa-robot"></i> AI Match Score
+            </a>
+            <a href="{% url 'homepage:resume_builder' %}" class="sidebar-link {% if request.resolver_match.url_name == 'resume_builder' %}active{% endif %}">
+                <i class="fas fa-file-signature"></i> Resume Builder
+            </a>
+            <a href="{% url 'homepage:cover_letter' %}" class="sidebar-link {% if request.resolver_match.url_name == 'cover_letter' %}active{% endif %}">
+                <i class="fas fa-comment-dots"></i> Cover Letter
+            </a>
+        </div>
+        
+        <!-- ACCOUNT -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Account</div>
+            <a href="{% url 'homepage:profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+            <a href="{% url 'homepage:settings' %}" class="sidebar-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="{% url 'homepage:notifications' %}" class="sidebar-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+                <i class="fas fa-bell"></i> Notifications
+                <span class="badge">3</span>
+            </a>
+        </div>
+        
+        <!-- FOOTER -->
+        <div class="sidebar-footer">
+            <a href="{% url 'homepage:home' %}" class="sidebar-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </aside>
+    
+    <!-- ============================================
+    MAIN CONTENT
+    ============================================ -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                <p>{% block page_subtitle %}Welcome back, Adriel! Here's what's happening today.{% endblock %}</p>
+            </div>
+            <div class="topbar-right">
+                <div class="notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="dot"></span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <div>
+                        <div class="name">Adriel</div>
+                        <div class="role">Student</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- ============================================
+    JAVASCRIPT
+    ============================================ -->
+    <script>
+        // Mobile hamburger menu toggle
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const isClickInside = sidebar.contains(event.target) || hamburger.contains(event.target);
+                if (!isClickInside) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Complete Profile{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .profile-card {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .profile-image-section {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    .profile-image-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    .profile-image-wrapper .profile-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #e5e7eb;
+        transition: all 0.3s;
+        background: #f3f4f6;
+    }
+    .profile-image-wrapper .profile-preview:hover {
+        border-color: #4f46e5;
+    }
+    .profile-image-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .btn-upload {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-upload:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+    }
+    .btn-remove {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-remove:hover {
+        background: #fecaca;
+        transform: translateY(-2px);
+    }
+    .file-input-wrapper {
+        display: none;
+    }
+    .form-group {
+        margin-bottom: 18px;
+    }
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1f2a44;
+        margin-bottom: 6px;
+    }
+    .form-group label .required {
+        color: #dc2626;
+        margin-left: 2px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-family: 'Inter', sans-serif;
+        background: #f7f9fc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        transition: 0.2s;
+        color: #0b1a33;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #4f46e5;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+    }
+    .form-group textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .btn-primary {
+        padding: 14px 32px;
+        background: #4f46e5;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .btn-primary:hover {
+        background: #4338ca;
+        transform: scale(1.01);
+        box-shadow: 0 8px 24px rgba(79,70,229,0.2);
+    }
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0b1a33;
+        margin: 25px 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eef2f6;
+    }
+    .section-title i {
+        color: #4f46e5;
+        margin-right: 8px;
+    }
+    .messages {
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    .messages.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .messages.success { background: #ecfdf3; color: #0b9f6c; border: 1px solid #a7f3d0; }
+    .messages.warning { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .messages.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .progress-bar {
+        background: #f3f4f6;
+        border-radius: 12px;
+        height: 8px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .progress-bar .progress {
+        background: #4f46e5;
+        height: 100%;
+        border-radius: 12px;
+        transition: width 0.3s;
+        width: {{ profile.profile_completion }}%;
+    }
+    .progress-text {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 20px;
+        text-align: right;
+    }
+    @media (max-width: 480px) {
+        .form-row { grid-template-columns: 1fr; }
+        .profile-image-actions { flex-direction: column; align-items: center; }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 5px;">
+            <i class="fas fa-user-edit" style="color: #4f46e5;"></i> Complete Your Profile
+        </h1>
+        <p style="color: #6b7280; margin-bottom: 25px;">Please fill in your details to continue</p>
+
+        <div class="progress-bar">
+            <div class="progress" style="width: {{ profile.profile_completion }}%;"></div>
+        </div>
+        <div class="progress-text">Profile Completion: {{ profile.profile_completion }}%</div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Profile Image Upload -->
+        <div class="profile-image-section">
+            <div class="profile-image-wrapper">
+                <img src="{{ profile.get_profile_image_url }}" alt="Profile" class="profile-preview" id="profilePreview">
+            </div>
+            <div class="profile-image-actions">
+                <form id="imageUploadForm" action="{% url 'users:upload_profile_image' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="profile_image" id="profileImageInput" accept="image/*" class="file-input-wrapper" onchange="this.form.submit()">
+                    <input type="hidden" name="next" value="{% url 'users:complete_profile' %}">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('profileImageInput').click()">
+                        <i class="fas fa-camera"></i> Upload Photo
+                    </button>
+                </form>
+                <form id="removeImageForm" action="{% url 'users:remove_profile_image' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% url 'users:complete_profile' %}">
+                    <button type="submit" class="btn-remove" onclick="return confirm('Remove profile image?')">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'users:complete_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- ============================================================
+            STUDENT PROFILE
+            ============================================================ -->
+            {% if role == 'student' %}
+            <div class="section-title"><i class="fas fa-graduation-cap"></i> Student Information</div>
+
+            <div class="form-group">
+                <label for="full_name">Full Name <span class="required">*</span></label>
+                <input type="text" id="full_name" name="full_name" value="{{ user.get_full_name|default:user.username }}" readonly disabled style="background: #f3f4f6; cursor: not-allowed;">
+                <small style="color: #888; font-size: 12px;">Name from your account</small>
+            </div>
+
+            <div class="form-group">
+                <label for="admission_number">Registration/Admission Number <span class="required">*</span></label>
+                <input type="text" id="admission_number" name="admission_number" placeholder="e.g., STU-2024-001" value="{{ profile.admission_number|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="institution">Institution/University <span class="required">*</span></label>
+                <input type="text" id="institution" name="institution" placeholder="e.g., University of Nairobi" value="{{ profile.institution|default:'' }}" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="course">Course/Program <span class="required">*</span></label>
+                    <input type="text" id="course" name="course" placeholder="e.g., Computer Science" value="{{ profile.course|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="academic_level">Academic Level <span class="required">*</span></label>
+                    <select id="academic_level" name="academic_level" required>
+                        <option value="">Select Level</option>
+                        {% for level in academic_levels %}
+                            <option value="{{ level.0 }}" {% if profile.academic_level == level.0 %}selected{% endif %}>{{ level.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year_of_study">Year of Study <span class="required">*</span></label>
+                    <input type="number" id="year_of_study" name="year_of_study" min="1" max="6" placeholder="1" value="{{ profile.year_of_study|default:1 }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <input type="text" id="phone" name="phone" placeholder="e.g., 0712345678" value="{{ profile.phone|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Skills (comma separated) <span class="required">*</span></label>
+                <input type="text" id="skills" name="skills" placeholder="e.g., Python, Java, Networking, Communication" value="{{ profile.skills|join:', ' }}" required>
+                <small style="color: #888; font-size: 12px;">Add your skills separated by commas</small>
+            </div>
+
+            <div class="form-group">
+                <label for="cv">Upload CV/Resume <span class="required">*</span></label>
+                <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx">
+                {% if profile.cv %}
+                    <div style="margin-top: 5px; font-size: 13px; color: #22c55e;">
+                        <i class="fas fa-file"></i> Current: {{ profile.cv.name }}
+                    </div>
+                {% endif %}
+                <small style="color: #888; font-size: 12px;">Upload your CV (PDF, DOC, DOCX)</small>
+            </div>
+
+            <!-- ============================================================
+            EMPLOYER PROFILE
+            ============================================================ -->
+            {% elif role == 'employer' %}
+            <div class="section-title"><i class="fas fa-building"></i> Company Information</div>
+
+            <div class="form-group">
+                <label for="company_name">Company Name <span class="required">*</span></label>
+                <input type="text" id="company_name" name="company_name" placeholder="e.g., TechCorp Inc." value="{{ profile.company_name|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="industry">Industry <span class="required">*</span></label>
+                <input type="text" id="industry" name="industry" placeholder="e.g., Technology, Healthcare, Finance" value="{{ profile.industry|default:'' }}" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="company_email">Company Email <span class="required">*</span></label>
+                    <input type="email" id="company_email" name="company_email" placeholder="info@company.com" value="{{ profile.company_email|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="company_phone">Contact Phone <span class="required">*</span></label>
+                    <input type="text" id="company_phone" name="company_phone" placeholder="e.g., 0712345678" value="{{ profile.company_phone|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="company_location">Company Location <span class="required">*</span></label>
+                <input type="text" id="company_location" name="company_location" placeholder="e.g., Nairobi, Kenya" value="{{ profile.company_location|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company_description">Company Description <span class="required">*</span></label>
+                <textarea id="company_description" name="company_description" placeholder="Brief description of your company" required>{{ profile.company_description|default:'' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="url" id="website" name="website" placeholder="https://www.company.com" value="{{ profile.website|default:'' }}">
+                    <small style="color: #888; font-size: 12px;">Optional</small>
+                </div>
+                <div class="form-group">
+                    <label for="company_logo">Company Logo</label>
+                    <input type="file" id="company_logo" name="company_logo" accept="image/*">
+                    {% if profile.company_logo %}
+                        <div style="margin-top: 5px; font-size: 13px; color: #22c55e;">
+                            <i class="fas fa-image"></i> Current logo uploaded
+                        </div>
+                    {% endif %}
+                    <small style="color: #888; font-size: 12px;">Optional</small>
+                </div>
+            </div>
+
+            <!-- ============================================================
+            INSTITUTION PROFILE
+            ============================================================ -->
+            {% elif role == 'institution' %}
+            <div class="section-title"><i class="fas fa-university"></i> Institution Information</div>
+
+            <div class="form-group">
+                <label for="institution_name">Institution Name <span class="required">*</span></label>
+                <input type="text" id="institution_name" name="institution_name" placeholder="e.g., University of Nairobi" value="{{ profile.institution_name|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="institution_type">Institution Type <span class="required">*</span></label>
+                <select id="institution_type" name="institution_type" required>
+                    <option value="">Select Type</option>
+                    {% for type in institution_types %}
+                        <option value="{{ type.0 }}" {% if profile.institution_type == type.0 %}selected{% endif %}>{{ type.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="institution_email">Email <span class="required">*</span></label>
+                    <input type="email" id="institution_email" name="institution_email" placeholder="admin@institution.ac.ke" value="{{ profile.institution_email|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="institution_phone">Phone <span class="required">*</span></label>
+                    <input type="text" id="institution_phone" name="institution_phone" placeholder="e.g., 0712345678" value="{{ profile.institution_phone|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="county">County/Location <span class="required">*</span></label>
+                <input type="text" id="county" name="county" placeholder="e.g., Nairobi" value="{{ profile.county|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="P.O. Box, Street Address" value="{{ profile.address|default:'' }}">
+                <small style="color: #888; font-size: 12px;">Optional</small>
+            </div>
+
+            <div class="form-group">
+                <label for="logo">Institution Logo</label>
+                <input type="file" id="logo" name="logo" accept="image/*">
+                {% if profile.logo %}
+                    <div style="margin-top: 5px; font-size: 13px; color: #22c55e;">
+                        <i class="fas fa-image"></i> Current logo uploaded
+                    </div>
+                {% endif %}
+                <small style="color: #888; font-size: 12px;">Optional</small>
+            </div>
+
+            <!-- ============================================================
+            SUPERVISOR PROFILE
+            ============================================================ -->
+            {% elif role == 'supervisor' %}
+            <div class="section-title"><i class="fas fa-user-tie"></i> Supervisor Information</div>
+
+            <div class="form-group">
+                <label for="full_name">Full Name <span class="required">*</span></label>
+                <input type="text" id="full_name" name="full_name" placeholder="e.g., Dr. John Doe" value="{{ profile.full_name|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="staff_id">Staff/Employee ID <span class="required">*</span></label>
+                <input type="text" id="staff_id" name="staff_id" placeholder="e.g., EMP-2024-001" value="{{ profile.staff_id|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department <span class="required">*</span></label>
+                <input type="text" id="department" name="department" placeholder="e.g., Computer Science" value="{{ profile.department|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="position">Position/Title <span class="required">*</span></label>
+                <input type="text" id="position" name="position" placeholder="e.g., Senior Lecturer" value="{{ profile.position|default:'' }}" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="supervisor_phone">Phone Number <span class="required">*</span></label>
+                    <input type="text" id="supervisor_phone" name="supervisor_phone" placeholder="e.g., 0712345678" value="{{ profile.supervisor_phone|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="supervisor_institution">Institution <span class="required">*</span></label>
+                    <input type="text" id="supervisor_institution" name="supervisor_institution" placeholder="e.g., University of Nairobi" value="{{ profile.supervisor_institution|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="office_location">Office Location</label>
+                <input type="text" id="office_location" name="office_location" placeholder="e.g., Room 301, Engineering Building" value="{{ profile.office_location|default:'' }}">
+                <small style="color: #888; font-size: 12px;">Optional</small>
+            </div>
+
+            <div class="form-group">
+                <label for="supervisor_photo">Profile Photo</label>
+                <input type="file" id="supervisor_photo" name="supervisor_photo" accept="image/*">
+                {% if profile.supervisor_photo %}
+                    <div style="margin-top: 5px; font-size: 13px; color: #22c55e;">
+                        <i class="fas fa-image"></i> Current photo uploaded
+                    </div>
+                {% endif %}
+                <small style="color: #888; font-size: 12px;">Optional</small>
+            </div>
+
+            {% endif %}
+
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> Save Profile & Continue
+            </button>
+        </form>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{% url 'homepage:home' %}" style="color: #4f46e5; text-decoration: none; font-weight: 500;">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Profile image preview
+    document.getElementById('profileImageInput').addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('profilePreview').src = event.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+{% endblock %}

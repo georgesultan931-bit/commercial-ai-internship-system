@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logged Out - Commercial-Grade AI-Powered Internship Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logout-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+        
+        .logout-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .logout-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .logout-card h2 {
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .logout-card p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-login-again, .btn-home {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-login-again {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-login-again:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-home {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-home:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .logo-text h1 {
+            color: #00d4ff;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .logo-text p {
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <div class="logout-card">
+            <div class="logo-text">
+                <h1>Commercial-Grade AI-Powered Internship Management System</h1>
+                <p>Commercial Grade AI Powered Platform</p>
+            </div>
+            
+            <div class="logout-icon"></div>
+            <h2>Logged Out</h2>
+            <p>You have been successfully logged out.</p>
+            
+            <div class="btn-group">
+                <a href="{% url 'account_login' %}" class="btn-login-again">Login Again</a>
+                <a href="{% url 'homepage:home' %}" class="btn-home">Go to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

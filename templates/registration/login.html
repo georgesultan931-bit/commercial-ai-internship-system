@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - InternHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 440px;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+        
+        .logo h1 span {
+            color: #667eea;
+        }
+        
+        .logo p {
+            color: #888;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .welcome-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+        
+        .welcome-text p {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group label .required {
+            color: #dc3545;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+        }
+        
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .input-wrapper input:focus {
+            border-color: #667eea;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-wrapper input::placeholder {
+            color: #aaa;
+        }
+        
+        .input-wrapper .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        
+        .input-wrapper .toggle-password:hover {
+            color: #667eea;
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .form-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .form-options label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+        
+        .form-options a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .form-options a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .btn-signin {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-signin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-signin:active {
+            transform: translateY(0);
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .signup-link p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .signup-link a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .signup-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 16px;
+            transition: color 0.3s;
+        }
+        
+        .back-home:hover {
+            color: #667eea;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 32px 20px;
+            }
+            .logo h1 {
+                font-size: 24px;
+            }
+            .welcome-text h2 {
+                font-size: 20px;
+            }
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Intern<span>Hub</span></h1>
+            <p>Commercial Grade AI Powered Platform</p>
+        </div>
+
+        <div class="welcome-text">
+            <h2>Welcome Back</h2>
+            <p>Sign in to continue your journey</p>
+        </div>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="messages">
+                <div class="message message-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Invalid email or password. Please try again.
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Email <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="login" placeholder="Enter your email" required autofocus>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                    <span class="toggle-password" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label>
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
+            </div>
+
+            <button type="submit" class="btn-signin">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+
+        <div class="signup-link">
+            <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign up now</a></p>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{% url 'homepage:home' %}" class="back-home">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                password.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+    </script>
+</body>
+</html>

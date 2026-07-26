@@ -1,0 +1,36 @@
+{% extends 'supervisor/base.html' %}
+
+{% block title %}Notifications{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="actions" style="justify-content: space-between; margin-bottom: 14px;">
+        <h3>Supervisor Notifications</h3>
+        <a class="button" href="{% url 'supervisor:mark_all_notifications_read' %}">Mark All Read</a>
+    </div>
+    {% if notifications %}
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Title</th><th>Message</th><th>Type</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for notification in notifications %}
+                <tr>
+                    <td>{{ notification.title }}</td>
+                    <td>{{ notification.message|truncatewords:22 }}</td>
+                    <td><span class="badge {% if notification.is_read %}good{% else %}warn{% endif %}">{{ notification.get_notification_type_display }}</span></td>
+                    <td>{{ notification.created_at|date:"M d, Y H:i" }}</td>
+                    <td class="actions">
+                        <a class="button" href="{% url 'supervisor:mark_notification_read' notification.pk %}">Read</a>
+                        <a class="button" href="{% url 'supervisor:delete_notification' notification.pk %}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">You are all caught up.</div>
+    {% endif %}
+</div>
+{% endblock %}

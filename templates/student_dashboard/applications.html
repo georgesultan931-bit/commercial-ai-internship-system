@@ -1,0 +1,432 @@
+{% extends 'student_dashboard/base_student.html' %}
+
+{% block page_title %}My Applications{% endblock %}
+{% block page_subtitle %}Track your internship applications{% endblock %}
+
+{% block student_content %}
+<div class="applications-container">
+
+    <div class="applications-stats">
+        <div class="stat-item">
+            <span class="stat-number">{{ total_applications }}</span>
+            <span class="stat-label">Total Applications</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ pending_count }}</span>
+            <span class="stat-label">Pending</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ interview_count }}</span>
+            <span class="stat-label">Interviews</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ accepted_count }}</span>
+            <span class="stat-label">Accepted</span>
+        </div>
+    </div>
+
+    <div class="filters-section">
+        <form method="get" action="{% url 'student_dashboard:applications' %}" class="filter-form">
+            <select name="status" class="filter-select">
+                <option value="">All Status</option>
+                {% for status in status_choices %}
+                <option value="{{ status }}" {% if status_filter == status %}selected{% endif %}>{{ status|title }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="filter-btn">Filter</button>
+            <a href="{% url 'student_dashboard:applications' %}" class="clear-btn">Clear</a>
+        </form>
+    </div>
+
+    <div class="applications-list">
+        {% if applications %}
+            {% for app in applications %}
+            <div class="application-card status-{{ app.status|lower }}">
+                <div class="app-header">
+                    <div class="app-info">
+                        <h4>{{ app.internship.title }}</h4>
+                        <p class="company">{{ app.internship.company }}</p>
+                    </div>
+                    <span class="status-badge">{{ app.status|title }}</span>
+                </div>
+                
+                <div class="app-details">
+                    <div class="detail-item">
+                        <span class="label">Applied Date</span>
+                        <span class="value">{{ app.applied_date|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Location</span>
+                        <span class="value">{{ app.internship.location }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Type</span>
+                        <span class="value">{{ app.internship.type }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Stipend</span>
+                        <span class="value">{{ app.internship.stipend }}</span>
+                    </div>
+                </div>
+                
+                <div class="app-actions">
+                    {% if app.status == 'PENDING' or app.status == 'REVIEWING' %}
+                    <form method="post" action="{% url 'student_dashboard:withdraw' app.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-withdraw" onclick="return confirm('Withdraw this application?')">Withdraw</button>
+                    </form>
+                    {% endif %}
+                    <a href="{% url 'student_dashboard:internship_detail' app.internship.id %}" class="btn-view">View Internship</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-applications">
+                <p>You haven't applied to any internships yet.</p>
+                <a href="{% url 'student_dashboard:internships' %}" class="btn-browse">Browse Internships</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .applications-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .applications-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-item {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .filters-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-select {
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        outline: none;
+        flex: 1;
+        min-width: 150px;
+        transition: border-color 0.3s;
+    }
+
+    .filter-select:focus {
+        border-color: #007bff;
+    }
+
+    .filter-btn {
+        padding: 10px 25px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .filter-btn:hover {
+        background: #0056b3;
+    }
+
+    .clear-btn {
+        padding: 10px 25px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .clear-btn:hover {
+        background: #5a6268;
+    }
+
+    .applications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .application-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        padding: 20px;
+        border-left: 4px solid #6c757d;
+        transition: transform 0.3s;
+    }
+
+    .application-card:hover {
+        transform: translateX(5px);
+    }
+
+    .application-card.status-pending {
+        border-left-color: #ffc107;
+    }
+
+    .application-card.status-reviewing {
+        border-left-color: #17a2b8;
+    }
+
+    .application-card.status-shortlisted {
+        border-left-color: #6f42c1;
+    }
+
+    .application-card.status-interview {
+        border-left-color: #007bff;
+    }
+
+    .application-card.status-offered {
+        border-left-color: #fd7e14;
+    }
+
+    .application-card.status-accepted {
+        border-left-color: #28a745;
+    }
+
+    .application-card.status-rejected {
+        border-left-color: #dc3545;
+    }
+
+    .application-card.status-withdrawn {
+        border-left-color: #6c757d;
+    }
+
+    .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .app-info h4 {
+        margin: 0 0 5px 0;
+        color: #1a1a2e;
+        font-size: 18px;
+    }
+
+    .app-info .company {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .status-badge {
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        background: #f0f2f5;
+        color: #666;
+        white-space: nowrap;
+    }
+
+    .status-pending .status-badge {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-reviewing .status-badge {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .status-shortlisted .status-badge {
+        background: #e9d5ff;
+        color: #6d28d9;
+    }
+
+    .status-interview .status-badge {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .status-offered .status-badge {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-accepted .status-badge {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-rejected .status-badge {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-withdrawn .status-badge {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .app-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 20px;
+        margin-bottom: 15px;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .detail-item .label {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .detail-item .value {
+        color: #333;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .app-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-withdraw {
+        padding: 6px 18px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.3s;
+    }
+
+    .btn-withdraw:hover {
+        background: #c82333;
+    }
+
+    .btn-view {
+        padding: 6px 18px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        transition: background 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-view:hover {
+        background: #138496;
+    }
+
+    .no-applications {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .no-applications p {
+        color: #888;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .btn-browse {
+        display: inline-block;
+        padding: 10px 25px;
+        background: #007bff;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .btn-browse:hover {
+        background: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+        .app-details {
+            grid-template-columns: 1fr;
+        }
+        .app-header {
+            flex-direction: column;
+        }
+        .status-badge {
+            margin-top: 5px;
+        }
+        .filter-form {
+            flex-direction: column;
+        }
+        .filter-select {
+            width: 100%;
+        }
+        .filter-btn, .clear-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .applications-stats {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .applications-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

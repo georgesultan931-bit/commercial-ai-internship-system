@@ -1,0 +1,56 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: #1a1a2e; margin: 0 0 5px 0;">Edit User</h1>
+    <p style="color: #666; margin: 0 0 20px 0;">Editing: {{ user.username }}</p>
+
+    {% if messages %}
+        <div style="margin: 20px 0;">
+            {% for message in messages %}
+                <div style="padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; 
+                    {% if message.tags == 'success' %}background: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                    {% elif message.tags == 'error' %}background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                    {% else %}background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div style="background: white; padding: 25px; border-radius: 10px; max-width: 600px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px;">Username</label>
+                <input type="text" name="username" value="{{ user.username }}" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px;">Email</label>
+                <input type="email" name="email" value="{{ user.email }}" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px;">First Name</label>
+                <input type="text" name="first_name" value="{{ user.first_name }}" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px;">Last Name</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px;">Role</label>
+                <select name="role" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+                    <option value="student" {% if user.profile.role == 'student' %}selected{% endif %}>Student</option>
+                    <option value="employer" {% if user.profile.role == 'employer' %}selected{% endif %}>Employer</option>
+                    <option value="institution" {% if user.profile.role == 'institution' %}selected{% endif %}>Institution</option>
+                    <option value="admin" {% if user.profile.role == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f2f5;">
+                <button type="submit" style="background: #28a745; color: white; padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Save Changes</button>
+                <button onclick="window.location.href='{% url 'admin_dashboard:user_detail' user.id %}'" style="background: #6c757d; color: white; padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

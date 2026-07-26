@@ -1,0 +1,371 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="ai-insights-container">
+    <div class="insights-header">
+        <h1>AI Insights Dashboard</h1>
+        <p>AI-powered analytics and recommendations for your career growth</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon high"></div>
+            <div class="stat-info">
+                <h3>{{ ai_stats.total_matches|default:0 }}</h3>
+                <p>Total AI Matches</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon medium"></div>
+            <div class="stat-info">
+                <h3>{{ ai_stats.avg_match_score|default:0 }}%</h3>
+                <p>Average Match Score</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon low"></div>
+            <div class="stat-info">
+                <h3>{{ ai_stats.recent_matches|default:0 }}</h3>
+                <p>New Matches (7 days)</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon success"></div>
+            <div class="stat-info">
+                <h3>{{ ai_stats.high_matches|default:0 }}</h3>
+                <p>High Match (80%+)</p>
+            </div>
+        </div>
+    </div>
+
+    {% if user_matches %}
+    <div class="recent-matches">
+        <h3>Your Recent AI Matches</h3>
+        <div class="matches-list">
+            {% for match in user_matches %}
+            <div class="match-item">
+                <div class="match-info">
+                    <h4>{{ match.job_title }}</h4>
+                    <p>{{ match.company }}</p>
+                </div>
+                <div class="match-score">
+                    <span class="score">{{ match.match_score }}%</span>
+                    <span class="match-label">Match Score</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if user_recommendations %}
+    <div class="recommendations">
+        <h3>AI Recommendations</h3>
+        <div class="recommendations-grid">
+            {% for rec in user_recommendations %}
+            <div class="rec-card priority-{{ rec.priority|lower }}">
+                <div class="rec-header">
+                    <span class="rec-title">{{ rec.title }}</span>
+                    <span class="rec-priority">{{ rec.priority }}</span>
+                </div>
+                <p class="rec-description">{{ rec.description }}</p>
+                {% if rec.action_url %}
+                <a href="{{ rec.action_url }}" class="rec-action">Learn More →</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="action-buttons">
+        <a href="{% url 'ai_engine:analyze' %}" class="btn-primary">Analyze My Profile</a>
+        <a href="{% url 'ai_engine:predictions' %}" class="btn-secondary">View Predictions</a>
+    </div>
+</div>
+
+<style>
+    .ai-insights-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .insights-header {
+        background: white;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .insights-header h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 5px 0;
+    }
+
+    .insights-header p {
+        color: #666;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 18px 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+        font-size: 28px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .stat-icon.high { background: rgba(40,167,69,0.1); }
+    .stat-icon.medium { background: rgba(255,193,7,0.1); }
+    .stat-icon.low { background: rgba(220,53,69,0.1); }
+    .stat-icon.success { background: rgba(0,123,255,0.1); }
+
+    .stat-info h3 {
+        font-size: 22px;
+        margin: 0;
+        color: #1a1a2e;
+    }
+
+    .stat-info p {
+        margin: 0;
+        color: #888;
+        font-size: 13px;
+    }
+
+    .recent-matches {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .recent-matches h3 {
+        margin: 0 0 15px 0;
+        font-size: 16px;
+        color: #1a1a2e;
+    }
+
+    .matches-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .match-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .match-info h4 {
+        margin: 0 0 3px 0;
+        font-size: 14px;
+        color: #1a1a2e;
+    }
+
+    .match-info p {
+        margin: 0;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .match-score {
+        text-align: center;
+    }
+
+    .match-score .score {
+        display: block;
+        font-size: 24px;
+        font-weight: 700;
+        color: #28a745;
+    }
+
+    .match-score .match-label {
+        font-size: 11px;
+        color: #888;
+    }
+
+    .recommendations {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .recommendations h3 {
+        margin: 0 0 15px 0;
+        font-size: 16px;
+        color: #1a1a2e;
+    }
+
+    .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+    }
+
+    .rec-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .rec-card.priority-high {
+        border-left-color: #dc3545;
+    }
+
+    .rec-card.priority-medium {
+        border-left-color: #ffc107;
+    }
+
+    .rec-card.priority-low {
+        border-left-color: #28a745;
+    }
+
+    .rec-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .rec-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        font-size: 14px;
+    }
+
+    .rec-priority {
+        padding: 2px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        background: #e9ecef;
+        color: #666;
+    }
+
+    .priority-high .rec-priority {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+
+    .priority-medium .rec-priority {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .priority-low .rec-priority {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .rec-description {
+        color: #666;
+        font-size: 14px;
+        margin: 0 0 10px 0;
+    }
+
+    .rec-action {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .rec-action:hover {
+        text-decoration: underline;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        padding: 12px 30px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+
+    .btn-secondary {
+        padding: 12px 30px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .recommendations-grid {
+            grid-template-columns: 1fr;
+        }
+        .match-item {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

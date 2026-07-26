@@ -1,0 +1,123 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Edit Internship{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <!-- Company Branding Header -->
+        <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; margin-bottom: 1.5rem;">
+            {% if user.profile.organization.logo %}
+            <img src="{{ user.profile.organization.logo.url }}" alt="{{ user.profile.organization.name }}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
+            {% else %}
+            <div style="width: 60px; height: 60px; border-radius: 12px; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700;">
+                {{ user.profile.organization.name|slice:":2"|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <h2 style="font-size: 1.2rem; margin-bottom: 0.2rem;">{{ user.profile.organization.name }}</h2>
+                <p style="color: #6b7280; font-size: 0.9rem;">Editing: {{ internship.title }}</p>
+            </div>
+        </div>
+
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Edit Internship</h1>
+        <p style="color: #6b7280; margin-bottom: 2rem;">Update the details of your internship posting.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Internship Title</label>
+                {{ form.title }}
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Description</label>
+                {{ form.description }}
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Category</label>
+                    {{ form.category }}
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Location</label>
+                    {{ form.location }}
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    {{ form.is_remote }}
+                    <span style="margin-left: 0.5rem; font-weight: 500;">Remote Position</span>
+                </label>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Stipend (Optional)</label>
+                    {{ form.stipend }}
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Currency</label>
+                    {{ form.currency }}
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    {{ form.is_paid }}
+                    <span style="margin-left: 0.5rem; font-weight: 500;">Paid Internship</span>
+                </label>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Date</label>
+                    {{ form.start_date }}
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Date</label>
+                    {{ form.end_date }}
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Application Deadline</label>
+                    {{ form.application_deadline }}
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Maximum Applicants</label>
+                {{ form.max_applicants }}
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Required Skills (comma separated)</label>
+                {{ form.required_skills }}
+                <small style="color: #6b7280;">e.g., Python, Django, React</small>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Preferred Skills (comma separated)</label>
+                {{ form.preferred_skills }}
+                <small style="color: #6b7280;">e.g., AWS, Docker, PostgreSQL</small>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Additional Requirements</label>
+                {{ form.requirements }}
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+                    <i class="fas fa-save"></i> Update Internship
+                </button>
+                <a href="{% url 'internships:my_internships' %}" class="btn btn-outline" style="padding: 0.8rem 2rem;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

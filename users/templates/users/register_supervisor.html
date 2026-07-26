@@ -1,0 +1,85 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Supervisor Registration - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 500px; margin: 4rem auto; min-height: 60vh;">
+    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <div style="text-align: center;">
+            <div style="font-size: 3rem;">👨‍💼</div>
+            <h1 style="font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-bottom: 0.5rem;">Supervisor Registration</h1>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Register as a supervisor to oversee internships</p>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 0.8rem; margin-bottom: 1rem; border-radius: 8px; 
+                    {% if message.tags == 'success' %}background: #d1fae5; color: #065f46;
+                    {% elif message.tags == 'error' %}background: #fee2e2; color: #991b1b;
+                    {% else %}background: #fef3c7; color: #92400e;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% if form.errors %}
+            <div style="padding: 0.8rem; margin-bottom: 1rem; border-radius: 8px; background: #fee2e2; color: #991b1b;">
+                <strong>Please fix the following errors:</strong>
+                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field|title }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        
+        <form method="post" action="{% url 'users:register_supervisor' %}" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">First Name <span style="color: #ef4444;">*</span></label>
+                    {{ form.first_name }}
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Last Name <span style="color: #ef4444;">*</span></label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Department/Organization <span style="color: #ef4444;">*</span></label>
+                {{ form.department }}
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Email <span style="color: #ef4444;">*</span></label>
+                {{ form.email }}
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.3rem;">We'll send a verification link to this email.</div>
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Password <span style="color: #ef4444;">*</span></label>
+                {{ form.password1 }}
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.3rem;">
+                    Password must be at least 8 characters with uppercase, lowercase, and a number.
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Confirm Password <span style="color: #ef4444;">*</span></label>
+                {{ form.password2 }}
+            </div>
+            
+            <button type="submit" style="padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-user-tie"></i> Register as Supervisor
+            </button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1.5rem; color: #6b7280;">
+            Already have an account? <a href="{% url 'users:login' %}" style="color: #2563eb; text-decoration: none; font-weight: 600;">Login</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

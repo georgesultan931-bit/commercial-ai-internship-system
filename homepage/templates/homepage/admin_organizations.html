@@ -1,0 +1,156 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Organization Management - Admin Dashboard{% endblock %}
+
+{% block page_title %}Organization Management{% endblock %}
+
+{% block page_subtitle %}Manage all organizations on the platform.{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-building"></i></div>
+        <div class="label">Total Organizations</div>
+        <div class="value">{{ total_organizations }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> Registered</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-check-circle"></i></div>
+        <div class="label">Verified</div>
+        <div class="value" style="color: #059669;">{{ verified_count }}</div>
+        <div class="change positive"><i class="fas fa-check"></i> Approved</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-clock"></i></div>
+        <div class="label">Pending Verification</div>
+        <div class="value" style="color: #d97706;">{{ pending_count }}</div>
+        <div class="change negative"><i class="fas fa-hourglass-half"></i> Needs review</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;">
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
+        <input type="text" name="search" placeholder="Search organizations..." value="{{ search }}" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px; min-width: 200px;">
+        
+        <select name="type" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Types</option>
+            {% for key, value in organization_types %}
+                <option value="{{ key }}" {% if type_filter == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="verification" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Status</option>
+            <option value="verified" {% if verification_filter == 'verified' %}selected{% endif %}>Verified</option>
+            <option value="pending" {% if verification_filter == 'pending' %}selected{% endif %}>Pending</option>
+        </select>
+        
+        <button type="submit" style="padding: 0.6rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            <i class="fas fa-search"></i> Filter
+        </button>
+        
+        <a href="{% url 'homepage:admin_organizations' %}" style="padding: 0.6rem 1.5rem; background: #e5e7eb; color: #1a1a2e; border: none; border-radius: 8px; text-decoration: none;">
+            <i class="fas fa-times"></i> Clear
+        </a>
+    </form>
+</div>
+
+<!-- Organizations Table -->
+<div style="background: white; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Organization</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Type</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Email</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Verified</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Joined</th>
+                    <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for org in organizations %}
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <td style="padding: 1rem;">
+                        <div>
+                            <div style="font-weight: 600;">{{ org.name }}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">{{ org.slug }}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="background: 
+                            {% if org.organization_type == 'UNIVERSITY' %}#f5f3ff; color: #8b5cf6;
+                            {% elif org.organization_type == 'COMPANY' %}#eff6ff; color: #2563eb;
+                            {% elif org.organization_type == 'NGO' %}#f0fdf4; color: #10b981;
+                            {% elif org.organization_type == 'GOVERNMENT' %}#fef3c7; color: #d97706;
+                            {% else %}#e5e7eb; color: #6b7280;{% endif %}
+                            padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {{ org.get_organization_type_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; color: #4b5563;">{{ org.email }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="background: {% if org.is_verified %}#d1fae5; color: #059669;{% else %}#fef3c7; color: #d97706;{% endif %} padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {% if org.is_verified %}Verified{% else %}Pending{% endif %}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; color: #6b7280; font-size: 0.9rem;">{{ org.created_at|date:"M d, Y" }}</td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <div style="display: flex; gap: 0.3rem; justify-content: center; flex-wrap: wrap;">
+                            <!-- View Detail -->
+                            <a href="{% url 'homepage:admin_organization_detail' org.id %}" style="padding: 0.3rem 0.7rem; background: #eff6ff; color: #2563eb; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            
+                            <!-- Verify -->
+                            {% if not org.is_verified %}
+                            <a href="{% url 'homepage:admin_verify_organization' org.id %}" style="padding: 0.3rem 0.7rem; background: #d1fae5; color: #059669; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Verify this organization?')">
+                                <i class="fas fa-check-circle"></i>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'homepage:admin_unverify_organization' org.id %}" style="padding: 0.3rem 0.7rem; background: #fef3c7; color: #d97706; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Unverify this organization?')">
+                                <i class="fas fa-times-circle"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- Delete -->
+                            <a href="{% url 'homepage:admin_delete_organization' org.id %}" style="padding: 0.3rem 0.7rem; background: #fee2e2; color: #dc2626; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Delete this organization permanently?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: #6b7280;">No organizations found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if organizations.has_other_pages %}
+<div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+    {% if organizations.has_previous %}
+        <a href="?page={{ organizations.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if verification_filter %}&verification={{ verification_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Previous</a>
+    {% endif %}
+    
+    {% for num in organizations.paginator.page_range %}
+        {% if organizations.number == num %}
+            <span style="padding: 0.5rem 1rem; background: #2563eb; color: white; border-radius: 8px;">{{ num }}</span>
+        {% else %}
+            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if verification_filter %}&verification={{ verification_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    
+    {% if organizations.has_next %}
+        <a href="?page={{ organizations.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if verification_filter %}&verification={{ verification_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

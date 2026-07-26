@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard - Commercial-Grade AI-Powered Internship Management System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div class="sidebar-brand">
+                <h2>Commercial-Grade AI-Powered Internship Management System</h2>
+                <p>Admin Panel</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="{% if active_menu == 'admin_dashboard' %}active{% endif %}">
+                    <a href="{% url 'admin_dashboard:dashboard' %}">
+                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                    </a>
+                </li>
+                <li class="{% if active_menu == 'admin_users' %}active{% endif %}">
+                    <a href="{% url 'admin_dashboard:users' %}">
+                        <i class="bi bi-people-fill"></i> Users
+                    </a>
+                </li>
+                <li class="{% if active_menu == 'admin_internships' %}active{% endif %}">
+                    <a href="{% url 'admin_dashboard:internships' %}">
+                        <i class="bi bi-briefcase-fill"></i> Internships
+                    </a>
+                </li>
+                <li class="{% if active_menu == 'admin_applications' %}active{% endif %}">
+                    <a href="{% url 'admin_dashboard:applications' %}">
+                        <i class="bi bi-file-earmark-text-fill"></i> Applications
+                    </a>
+                </li>
+                <li class="{% if active_menu == 'admin_organizations' %}active{% endif %}">
+                    <a href="{% url 'admin_dashboard:organizations' %}">
+                        <i class="bi bi-building"></i> Organizations
+                    </a>
+                </li>
+                <li class="{% if active_menu == 'admin_ai_insights' %}active{% endif %}">
+                    <a href="{% url 'admin_dashboard:ai_insights' %}">
+                        <i class="bi bi-robot"></i> AI Insights
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'account_logout' %}">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Top Nav -->
+            <header class="admin-topnav">
+                <div class="topnav-left">
+                    <h4>{% block page_title %}Dashboard{% endblock %}</h4>
+                </div>
+                <div class="topnav-right">
+                    <button class="btn-notification" onclick="toggleNotifications()">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-info">
+                        <span>Welcome, {{ user.get_full_name|default:user.username }}</span>
+                        <div class="avatar">{{ user.username|make_list|first|upper }}</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Notifications Dropdown -->
+            <div id="notificationsDropdown" class="notifications-dropdown" style="display:none;">
+                <div class="notifications-header">
+                    <h5>Notifications</h5>
+                    <span class="mark-all-read">Mark all as read</span>
+                </div>
+                <div class="notifications-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon"></div>
+                        <div class="notification-content">
+                            <p>New internship posted by Google</p>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item unread">
+                        <div class="notification-icon"></div>
+                        <div class="notification-content">
+                            <p>15 new applications received</p>
+                            <span class="notification-time">4 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon"></div>
+                        <div class="notification-content">
+                            <p>5 applications accepted</p>
+                            <span class="notification-time">1 day ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="notifications-footer">
+                    <a href="#">View all notifications</a>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="admin-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationsDropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationsDropdown');
+            const btn = document.querySelector('.btn-notification');
+            if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+    <style>
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            width: 250px;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar-brand {
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        .sidebar-brand h2 {
+            font-size: 22px;
+            margin: 0;
+        }
+        .sidebar-brand p {
+            font-size: 12px;
+            color: #aaa;
+            margin: 0;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-menu li:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .sidebar-menu li.active {
+            background: rgba(255,255,255,0.08);
+            border-left-color: #007bff;
+        }
+        .sidebar-menu li a {
+            color: #ccc;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar-menu li a i {
+            width: 20px;
+        }
+        .sidebar-menu li:hover a {
+            color: white;
+        }
+        .admin-main {
+            margin-left: 250px;
+            width: 100%;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .admin-topnav {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .topnav-left h4 {
+            margin: 0;
+            color: #1a1a2e;
+        }
+        .topnav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .btn-notification {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
+            padding: 5px;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-info .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        .notifications-dropdown {
+            position: absolute;
+            top: 65px;
+            right: 20px;
+            width: 380px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+        .notifications-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .notifications-header h5 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .mark-all-read {
+            font-size: 12px;
+            color: #007bff;
+            cursor: pointer;
+        }
+        .notifications-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+        .notification-item.unread {
+            background: #eff6ff;
+        }
+        .notification-icon {
+            font-size: 20px;
+        }
+        .notification-content p {
+            margin: 0;
+            font-size: 14px;
+            color: #1a1a2e;
+        }
+        .notification-time {
+            font-size: 12px;
+            color: #888;
+        }
+        .notifications-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #f0f2f5;
+            text-align: center;
+        }
+        .notifications-footer a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .admin-content {
+            padding: 30px;
+        }
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 0;
+                overflow: hidden;
+                padding: 0;
+            }
+            .admin-main {
+                margin-left: 0;
+            }
+            .notifications-dropdown {
+                width: 300px;
+                right: 10px;
+            }
+        }
+    </style>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,72 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Messages - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Messages{% endblock %}
+{% block page_subtitle %}Communicate with employers and recruiters.{% endblock %}
+
+{% block content %}
+<div class="content-grid">
+    <div>
+        <!-- Received Messages -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-inbox"></i> Inbox <span style="font-size: 0.8rem; color: #6b7280; font-weight: 400;">({{ unread_count }} unread)</span></div>
+            {% if received_messages %}
+                {% for msg in received_messages %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border-radius: 10px; margin-bottom: 0.5rem; 
+                    {% if not msg.is_read %}background: #eff6ff; border-left: 4px solid #2563eb;{% else %}background: white; border: 1px solid #e5e7eb;{% endif %}">
+                    <div>
+                        <div style="font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            {{ msg.subject }}
+                            {% if not msg.is_read %}
+                            <span style="background: #2563eb; color: white; font-size: 0.6rem; padding: 0.1rem 0.6rem; border-radius: 20px;">New</span>
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">From: {{ msg.sender.get_full_name|default:msg.sender.email }}</div>
+                        <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 0.2rem;">{{ msg.created_at|timesince }} ago</div>
+                        <div style="font-size: 0.9rem; color: #4b5563; margin-top: 0.3rem;">{{ msg.message|truncatechars:100 }}</div>
+                    </div>
+                    <a href="#" style="padding: 0.3rem 1rem; background: transparent; color: #2563eb; border: 1px solid #2563eb; border-radius: 8px; text-decoration: none; font-size: 0.8rem;">
+                        Read
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 1rem 0;">No messages received.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div>
+        <!-- Compose Message -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-pen"></i> Compose Message</div>
+            <form>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                    <input type="text" placeholder="To:" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                    <input type="text" placeholder="Subject:" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                    <textarea rows="4" placeholder="Type your message..." style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;"></textarea>
+                    <button type="submit" style="padding: 0.6rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Sent Messages -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-check-circle"></i> Sent</div>
+            {% if sent_messages %}
+                {% for msg in sent_messages %}
+                <div style="padding: 0.8rem; border-bottom: 1px solid #f3f4f6; margin-bottom: 0.5rem;">
+                    <div style="font-weight: 600;">{{ msg.subject }}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">To: {{ msg.recipient.get_full_name|default:msg.recipient.email }}</div>
+                    <div style="font-size: 0.8rem; color: #9ca3af;">{{ msg.created_at|timesince }} ago</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 0.5rem 0;">No sent messages.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

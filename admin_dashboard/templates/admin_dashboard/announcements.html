@@ -1,0 +1,140 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Announcements{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 1000px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;">📢 Announcements</h1>
+        <button onclick="document.getElementById('newAnnouncementModal').style.display='flex'" style="background: #4f46e5; color: white; padding: 10px 24px; border: none; border-radius: 40px; cursor: pointer; font-weight: 600;">
+            <i class="fas fa-plus"></i> New Announcement
+        </button>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if announcements %}
+            <div style="display: grid; gap: 15px;">
+                {% for announcement in announcements %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px; {% if announcement.is_pinned %}border-left: 4px solid #4f46e5;{% endif %}">
+                        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <h3 style="font-size: 18px; color: #0b1a33;">{{ announcement.title }}</h3>
+                                    <span style="background: 
+                                        {% if announcement.announcement_type == 'urgent' %}#fee2e2; color: #dc2626
+                                        {% elif announcement.announcement_type == 'important' %}#fef3c7; color: #d97706
+                                        {% elif announcement.announcement_type == 'feature' %}#d1fae5; color: #059669
+                                        {% elif announcement.announcement_type == 'event' %}#dbeafe; color: #2563eb
+                                        {% else %}#f3f4f6; color: #6b7280{% endif %}; 
+                                        padding: 2px 12px; border-radius: 12px; font-size: 12px;">
+                                        {{ announcement.get_announcement_type_display }}
+                                    </span>
+                                    {% if announcement.is_pinned %}
+                                        <span style="background: #fef3c7; color: #d97706; padding: 2px 12px; border-radius: 12px; font-size: 12px;">
+                                            📌 Pinned
+                                        </span>
+                                    {% endif %}
+                                    <span style="background: {% if announcement.is_active %}#d1fae5; color: #059669{% else %}#fee2e2; color: #dc2626{% endif %}; padding: 2px 12px; border-radius: 12px; font-size: 12px;">
+                                        {% if announcement.is_active %}✅ Active{% else %}❌ Inactive{% endif %}
+                                    </span>
+                                </div>
+                                <p style="color: #666; margin-top: 10px; font-size: 14px; line-height: 1.6;">{{ announcement.content|linebreaks }}</p>
+                                <div style="color: #888; font-size: 12px; margin-top: 10px;">
+                                    Posted by {{ announcement.created_by.username }} on {{ announcement.created_at|date:"Y-m-d H:i" }}
+                                    {% if announcement.expires_at %}
+                                        | Expires: {{ announcement.expires_at|date:"Y-m-d" }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <form method="post" action="{% url 'admin_dashboard:toggle_announcement' announcement.id %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background: {% if announcement.is_active %}#f59e0b{% else %}#22c55e{% endif %}; color: white; padding: 4px 12px; border: none; border-radius: 16px; cursor: pointer; font-size: 12px;">
+                                        {% if announcement.is_active %}🔒 Deactivate{% else %}🔓 Activate{% endif %}
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'admin_dashboard:delete_announcement' announcement.id %}" style="margin: 0;" onsubmit="return confirm('Delete this announcement?')">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background: #ef4444; color: white; padding: 4px 12px; border: none; border-radius: 16px; cursor: pointer; font-size: 12px;">
+                                        🗑️ Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 64px; margin-bottom: 15px;">📢</div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Announcements</h3>
+                <p>Create your first announcement to notify all users.</p>
+                <button onclick="document.getElementById('newAnnouncementModal').style.display='flex'" style="margin-top: 15px; background: #4f46e5; color: white; padding: 10px 24px; border: none; border-radius: 40px; cursor: pointer; font-weight: 600;">
+                    Create Announcement
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- New Announcement Modal -->
+<div id="newAnnouncementModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 16px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; color: #0b1a33;">Create Announcement</h2>
+            <button onclick="document.getElementById('newAnnouncementModal').style.display='none'" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+        </div>
+
+        <form method="post" action="{% url 'admin_dashboard:create_announcement' %}">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Title <span style="color: #dc2626;">*</span></label>
+                <input type="text" name="title" required style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Content <span style="color: #dc2626;">*</span></label>
+                <textarea name="content" rows="5" required style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; resize: vertical; font-family: 'Inter', sans-serif;"></textarea>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Type</label>
+                <select name="announcement_type" style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px;">
+                    <option value="general">General</option>
+                    <option value="important">Important</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="feature">New Feature</option>
+                    <option value="event">Event</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                    <input type="checkbox" name="is_pinned"> 📌 Pin this announcement (appears at top)
+                </label>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                    <input type="checkbox" name="send_email" checked> 📧 Send email to all users
+                </label>
+                <p style="font-size: 12px; color: #888; margin-top: 4px;">All registered users will receive this announcement via email.</p>
+            </div>
+            <button type="submit" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-bullhorn"></i> Publish Announcement
+            </button>
+        </form>
+        <div style="margin-top: 15px; padding: 10px; background: #fef3c7; border-radius: 8px;">
+            <p style="color: #d97706; font-size: 13px;">
+                <i class="fas fa-info-circle"></i> 
+                This announcement will be sent to ALL users via notifications and email.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('newAnnouncementModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

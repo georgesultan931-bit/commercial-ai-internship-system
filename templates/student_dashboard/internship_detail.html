@@ -1,0 +1,262 @@
+{% extends 'student_dashboard/base_student.html' %}
+
+{% block page_title %}Internship Details{% endblock %}
+{% block page_subtitle %}View full internship information{% endblock %}
+
+{% block student_content %}
+<div class="detail-container">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="header-left">
+                <h1>{{ internship.title }}</h1>
+                <p class="company">{{ internship.company }}</p>
+            </div>
+            <span class="internship-type">{{ internship.type }}</span>
+        </div>
+
+        <div class="detail-body">
+            <div class="description-section">
+                <h3>Description</h3>
+                <p>{{ internship.description }}</p>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Location</span>
+                    <span class="detail-value">{{ internship.location }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Duration</span>
+                    <span class="detail-value">{{ internship.duration }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Stipend</span>
+                    <span class="detail-value">{{ internship.stipend }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Deadline</span>
+                    <span class="detail-value">{{ internship.deadline|date:"M d, Y" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Applicants</span>
+                    <span class="detail-value">{{ internship.applicants|default:0 }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Posted</span>
+                    <span class="detail-value">{{ internship.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+
+            <div class="requirements-section">
+                <h3>Requirements</h3>
+                <div class="requirements">
+                    {% for req in internship.requirements %}
+                    <span class="requirement-tag">{{ req }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-actions">
+            <a href="{% url 'student_dashboard:apply' internship.id %}" class="btn-apply">Apply Now</a>
+            <a href="{% url 'student_dashboard:save' internship.id %}" class="btn-save">Save</a>
+            <a href="{% url 'student_dashboard:internships' %}" class="btn-back">Back to List</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .detail-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        padding: 30px;
+    }
+
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f0f2f5;
+        padding-bottom: 20px;
+    }
+
+    .header-left h1 {
+        margin: 0 0 5px 0;
+        color: #1a1a2e;
+        font-size: 28px;
+    }
+
+    .header-left .company {
+        color: #666;
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .internship-type {
+        padding: 6px 18px;
+        background: #e3f2fd;
+        color: #007bff;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .detail-body {
+        margin-bottom: 25px;
+    }
+
+    .description-section {
+        margin-bottom: 20px;
+    }
+
+    .description-section h3 {
+        color: #1a1a2e;
+        margin: 0 0 10px 0;
+        font-size: 16px;
+    }
+
+    .description-section p {
+        color: #555;
+        font-size: 15px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .detail-label {
+        font-size: 12px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+    }
+
+    .detail-value {
+        font-size: 15px;
+        color: #1a1a2e;
+        font-weight: 500;
+    }
+
+    .requirements-section h3 {
+        color: #1a1a2e;
+        margin: 0 0 10px 0;
+        font-size: 16px;
+    }
+
+    .requirements {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .requirement-tag {
+        padding: 6px 16px;
+        background: #f0f2f5;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .detail-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding-top: 20px;
+        border-top: 2px solid #f0f2f5;
+    }
+
+    .btn-apply {
+        padding: 12px 35px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-apply:hover {
+        background: #218838;
+    }
+
+    .btn-save {
+        padding: 12px 35px;
+        background: #ffc107;
+        color: #1a1a2e;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-save:hover {
+        background: #e0a800;
+    }
+
+    .btn-back {
+        padding: 12px 35px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+        .detail-header {
+            flex-direction: column;
+        }
+        .internship-type {
+            margin-top: 10px;
+        }
+        .details-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .detail-actions {
+            flex-direction: column;
+        }
+        .btn-apply, .btn-save, .btn-back {
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="upload-container">
+    <h1>📤 Upload Document</h1>
+    <p>Upload your documents to keep them organized</p>
+    
+    <div class="upload-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="upload-area" id="dropArea">
+                <div class="upload-icon">📁</div>
+                <p>Drag and drop your file here</p>
+                <p class="upload-hint">or click to browse</p>
+                <input type="file" name="document" class="file-input" id="fileInput">
+                <span class="file-name" id="fileName">No file selected</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="docName">Document Name</label>
+                <input type="text" id="docName" name="docName" placeholder="Enter document name" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="docCategory">Category</label>
+                <select id="docCategory" name="docCategory" class="form-control">
+                    <option value="Resume">Resume</option>
+                    <option value="Cover Letter">Cover Letter</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Portfolio">Portfolio</option>
+                    <option value="Recommendation">Recommendation</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-upload-submit">📤 Upload</button>
+                <a href="{% url 'documents:documents' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .upload-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .upload-container h1 {
+        color: #1a1a2e;
+        margin-bottom: 5px;
+    }
+    
+    .upload-container > p {
+        color: #666;
+        margin-bottom: 30px;
+    }
+    
+    .upload-card {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .upload-area:hover {
+        border-color: #007bff;
+        background: #f8f9fa;
+    }
+    
+    .upload-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+    
+    .upload-area p {
+        margin: 5px 0;
+        color: #666;
+    }
+    
+    .upload-hint {
+        font-size: 14px;
+        color: #888;
+    }
+    
+    .file-input {
+        display: none;
+    }
+    
+    .file-name {
+        display: block;
+        margin-top: 10px;
+        color: #28a745;
+        font-weight: 500;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn-upload-submit {
+        padding: 12px 30px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    
+    .btn-cancel {
+        padding: 12px 30px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        text-align: center;
+    }
+</style>
+
+<script>
+// Drag and drop functionality
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+const fileName = document.getElementById('fileName');
+
+dropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropArea.style.borderColor = '#007bff';
+    dropArea.style.background = '#f8f9fa';
+});
+
+dropArea.addEventListener('dragleave', () => {
+    dropArea.style.borderColor = '#ddd';
+    dropArea.style.background = 'transparent';
+});
+
+dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.style.borderColor = '#ddd';
+    dropArea.style.background = 'transparent';
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        fileName.textContent = files[0].name;
+    }
+});
+
+dropArea.addEventListener('click', () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+        fileName.textContent = fileInput.files[0].name;
+    }
+});
+</script>
+{% endblock %}

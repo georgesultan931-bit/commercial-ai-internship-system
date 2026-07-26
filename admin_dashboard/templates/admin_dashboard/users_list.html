@@ -1,0 +1,130 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <div style="margin-bottom: 30px;">
+        <h1 style="color: #1a1a2e; font-size: 28px; margin: 0 0 5px 0;">User Management</h1>
+        <p style="color: #666; font-size: 16px; margin: 0;">Manage all users on the platform</p>
+    </div>
+
+    {% if messages %}
+        <div style="margin: 20px 0;">
+            {% for message in messages %}
+                <div style="padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; 
+                    {% if message.tags == 'success' %}background: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                    {% elif message.tags == 'error' %}background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                    {% else %}background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+            <input type="text" id="searchInput" placeholder="Search users..." onkeyup="filterUsers()" style="flex: 2; min-width: 200px; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+            <select id="roleFilter" onchange="filterUsers()" style="flex: 1; min-width: 150px; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+                <option value="">All Users</option>
+                <option value="admin">Admin</option>
+                <option value="employer">Employer</option>
+                <option value="student">Student</option>
+                <option value="institution">Institution</option>
+            </select>
+            <select id="statusFilter" onchange="filterUsers()" style="flex: 1; min-width: 150px; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Archived</option>
+            </select>
+            <button onclick="filterUsers()" style="padding: 10px 25px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                Apply Filters
+            </button>
+            <button onclick="resetFilters()" style="padding: 10px 25px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <div style="background: white; padding: 20px; border-radius: 10px; overflow: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">ID</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Username</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Email</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Role</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Status</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                {% for user in users %}
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">{{ user.id }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #dee2e6;"><strong>{{ user.username }}</strong></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">{{ user.email }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
+                        <span style="padding: 3px 12px; border-radius: 12px; font-size: 12px; 
+                            {% if user.profile.role == 'admin' %}background: #fef3c7; color: #92400e;
+                            {% elif user.profile.role == 'employer' %}background: #d1fae5; color: #065f46;
+                            {% elif user.profile.role == 'student' %}background: #dbeafe; color: #1e40af;
+                            {% else %}background: #e5e7eb; color: #6b7280;{% endif %}">
+                            {{ user.profile.get_role_display|default:"User" }}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
+                        {% if user.is_active %}
+                            <span style="background: #d4edda; color: #155724; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Active</span>
+                        {% else %}
+                            <span style="background: #f8d7da; color: #721c24; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Archived</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
+                        <a href="/admin-dashboard/users/detail/{{ user.id }}/" style="background: #17a2b8; color: white; padding: 5px 14px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block; margin: 2px;">View</a>
+                        <a href="/admin-dashboard/users/edit/{{ user.id }}/" style="background: #ffc107; color: #212529; padding: 5px 14px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block; margin: 2px;">Edit</a>
+                        {% if user.is_active %}
+                            <a href="/admin-dashboard/users/archive/{{ user.id }}/" style="background: #6c757d; color: white; padding: 5px 14px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block; margin: 2px;" onclick="return confirm('Archive {{ user.username }}?')">Archive</a>
+                        {% else %}
+                            <a href="/admin-dashboard/users/activate/{{ user.id }}/" style="background: #28a745; color: white; padding: 5px 14px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block; margin: 2px;" onclick="return confirm('Activate {{ user.username }}?')">Activate</a>
+                        {% endif %}
+                        <a href="/admin-dashboard/users/delete/{{ user.id }}/" style="background: #dc3545; color: white; padding: 5px 14px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block; margin: 2px;" onclick="return confirm('Delete {{ user.username }} permanently?')">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #888;">No users found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterUsers() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const role = document.getElementById('roleFilter').value.toLowerCase();
+        const status = document.getElementById('statusFilter').value.toLowerCase();
+        const rows = document.querySelectorAll('#userTableBody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const roleText = row.querySelector('td:nth-child(4)')?.textContent?.toLowerCase() || '';
+            const statusText = row.querySelector('td:nth-child(5)')?.textContent?.toLowerCase() || '';
+            
+            let show = true;
+            if (search && !text.includes(search)) show = false;
+            if (role && !roleText.includes(role)) show = false;
+            if (status && !statusText.includes(status)) show = false;
+            
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('roleFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        filterUsers();
+    }
+</script>
+{% endblock %}

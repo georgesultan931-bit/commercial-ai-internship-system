@@ -1,0 +1,300 @@
+{% extends 'employer/base.html' %}
+
+{% block page_title %}Employer Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .stat-card .stat-number {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+    .stat-card .stat-label {
+        color: #888;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+    .stat-card .stat-icon {
+        float: right;
+        font-size: 28px;
+        opacity: 0.3;
+    }
+    .stat-card .stat-icon.blue { color: #4f46e5; }
+    .stat-card .stat-icon.green { color: #22c55e; }
+    .stat-card .stat-icon.yellow { color: #eab308; }
+    .stat-card .stat-icon.purple { color: #8b5cf6; }
+    
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .chart-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .chart-card h2 {
+        font-size: 18px;
+        color: #0b1a33;
+        margin-bottom: 15px;
+    }
+    .chart-card canvas {
+        max-height: 250px;
+        width: 100%;
+    }
+    
+    .bottom-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+    }
+    .card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .card-header h2 {
+        font-size: 18px;
+        color: #0b1a33;
+        margin: 0;
+    }
+    .internship-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: #f7f9fc;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    .internship-item .internship-title {
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+    .internship-item .internship-status {
+        font-size: 12px;
+        color: #888;
+    }
+    .status-active { color: #22c55e; }
+    .status-closed { color: #ef4444; }
+    
+    .quick-action-btn {
+        display: block;
+        padding: 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        color: white;
+        margin-bottom: 10px;
+        transition: opacity 0.2s;
+        font-weight: 500;
+    }
+    .quick-action-btn:hover {
+        opacity: 0.85;
+    }
+    .quick-action-btn.blue { background: #4f46e5; }
+    .quick-action-btn.green { background: #22c55e; }
+    .quick-action-btn.purple { background: #8b5cf6; }
+    .quick-action-btn.orange { background: #f59e0b; }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+        .bottom-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Welcome Banner -->
+<div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 30px; border-radius: 16px; margin-bottom: 30px;">
+    <h1 style="font-size: 28px; margin-bottom: 5px;">Welcome back, {{ user.username }}! 🏢</h1>
+    <p style="color: #aaa;">Employer Dashboard - Manage your internships and candidates</p>
+    <div style="margin-top: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+        <span style="background: #4f46e5; padding: 5px 15px; border-radius: 20px; font-size: 14px;">
+            <i class="fas fa-briefcase"></i> {{ active_internships|default:0 }} Active Listings
+        </span>
+        <span style="background: #22c55e; padding: 5px 15px; border-radius: 20px; font-size: 14px;">
+            <i class="fas fa-users"></i> {{ total_applicants|default:0 }} Applicants
+        </span>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-briefcase"></i></div>
+        <div class="stat-number">{{ active_internships|default:0 }}</div>
+        <div class="stat-label">Active Internships</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon yellow"><i class="fas fa-users"></i></div>
+        <div class="stat-number">{{ total_applicants|default:0 }}</div>
+        <div class="stat-label">Total Applicants</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-number">{{ shortlisted|default:0 }}</div>
+        <div class="stat-label">Shortlisted</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-number">{{ interviews_scheduled|default:0 }}</div>
+        <div class="stat-label">Interviews Scheduled</div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="chart-grid">
+    <div class="chart-card">
+        <h2><i class="fas fa-chart-pie" style="color: #4f46e5;"></i> Application Status</h2>
+        <canvas id="applicationStatusChart"></canvas>
+    </div>
+    <div class="chart-card">
+        <h2><i class="fas fa-chart-bar" style="color: #4f46e5;"></i> Monthly Applicants</h2>
+        <canvas id="monthlyApplicantsChart"></canvas>
+    </div>
+</div>
+
+<!-- Bottom -->
+<div class="bottom-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-clock" style="color: #4f46e5;"></i> Recent Internships</h2>
+            <a href="#" style="color: #4f46e5; text-decoration: none; font-size: 14px;">View All →</a>
+        </div>
+        {% if recent_internships %}
+            {% for internship in recent_internships|slice:":5" %}
+                <div class="internship-item">
+                    <div>
+                        <span class="internship-title">{{ internship.title }}</span>
+                        <span class="internship-status">
+                            {% if internship.is_active %}
+                                <span class="status-active">● Active</span>
+                            {% else %}
+                                <span class="status-closed">● Closed</span>
+                            {% endif %}
+                        </span>
+                        <div style="font-size: 12px; color: #888;">{{ internship.applications.count }} applicants</div>
+                    </div>
+                    <div>
+                        <a href="#" style="color: #4f46e5; text-decoration: none; font-size: 13px;">View →</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #888; text-align: center; padding: 20px;">
+                <i class="fas fa-briefcase"></i> No internships posted yet.
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2 style="font-size: 18px; color: #0b1a33; margin-bottom: 15px;">
+            <i class="fas fa-bolt" style="color: #4f46e5;"></i> Quick Actions
+        </h2>
+        <a href="#" class="quick-action-btn blue">
+            <i class="fas fa-plus"></i> Post Internship
+        </a>
+        <a href="#" class="quick-action-btn green">
+            <i class="fas fa-users"></i> View Applicants
+        </a>
+        <a href="#" class="quick-action-btn purple">
+            <i class="fas fa-calendar-check"></i> Schedule Interviews
+        </a>
+        <a href="{% url 'chat:inbox' %}" class="quick-action-btn orange">
+            <i class="fas fa-comment-dots"></i> Messages
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx1 = document.getElementById('applicationStatusChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Shortlisted', 'Interview', 'Rejected'],
+                datasets: [{
+                    data: [
+                        {{ pending_applications|default:0 }},
+                        {{ shortlisted|default:0 }},
+                        {{ interviews_scheduled|default:0 }},
+                        {{ rejected_applications|default:0 }}
+                    ],
+                    backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 10, font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('monthlyApplicantsChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Applicants',
+                    data: {{ monthly_applicants|default:'[0,0,0,0,0,0,0,0,0,0,0,0]' }},
+                    backgroundColor: '#4f46e5',
+                    borderColor: '#4f46e5',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

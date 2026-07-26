@@ -1,0 +1,40 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Post Announcement{% endblock %}
+{% block page_subtitle %}Send an announcement to all users{% endblock %}
+
+{% block admin_content %}
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Title *</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Message *</label>
+            <textarea name="message" class="form-control" rows="6" required></textarea>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="send_email"> Send email to all users
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">📢 Post Announcement</button>
+            <a href="{% url 'admin_dashboard:announcements' %}" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-container { max-width: 700px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin: 0 auto; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 5px; }
+    .form-control { width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-primary { padding: 10px 25px; background: #fd7e14; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-secondary { padding: 10px 25px; background: #6c757d; color: white; border: none; border-radius: 6px; text-decoration: none; }
+</style>
+{% endblock %}

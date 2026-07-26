@@ -1,0 +1,95 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Review Applications{% endblock %}
+{% block page_subtitle %}Review pending applications{% endblock %}
+
+{% block admin_content %}
+<div class="review-container">
+    {% if pending_applications %}
+    <table>
+        <thead>
+            <tr>
+                <th>Applicant</th>
+                <th>Internship</th>
+                <th>Applied Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in pending_applications %}
+            <tr>
+                <td>{{ app.applicant.username }}</td>
+                <td>{{ app.internship.title }}</td>
+                <td>{{ app.applied_date|date:"M d, Y" }}</td>
+                <td>
+                    <button class="btn-approve" onclick="alert('Approve application {{ app.id }}')">✅ Approve</button>
+                    <button class="btn-review" onclick="alert('Review application {{ app.id }}')"> Review</button>
+                    <button class="btn-reject" onclick="alert('Reject application {{ app.id }}')">❌ Reject</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p> No pending applications to review!</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .review-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .btn-approve {
+        padding: 5px 15px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+    
+    .btn-review {
+        padding: 5px 15px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+    
+    .btn-reject {
+        padding: 5px 15px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

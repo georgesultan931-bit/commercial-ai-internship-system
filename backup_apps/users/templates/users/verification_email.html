@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc; border-radius: 10px; }
+        .header { background: #2563eb; color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }
+        .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; }
+        .button { display: inline-block; padding: 12px 30px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to InternHub!</h1>
+        </div>
+        <div class="content">
+            <p>Hello {{ user.first_name }},</p>
+            <p>Thank you for registering with Commercial-Grade AI-Powered Internship Management System! Please click the button below to verify your email address and activate your account.</p>
+            <div style="text-align: center;">
+                <a href="http://{{ domain }}{% url 'users:verify_email' uidb64=uid token=token %}" class="button">
+                    Verify Email Address
+                </a>
+            </div>
+            <p>If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="background: #f3f4f6; padding: 10px; border-radius: 5px; word-break: break-all;">
+                http://{{ domain }}{% url 'users:verify_email' uidb64=uid token=token %}
+            </p>
+            <p>This link will expire in 1 days.</p>
+            <p>If you didn't create an account with InternHub, please ignore this email.</p>
+            <p>Best regards,<br>The InternHub Team</p>
+        </div>
+        <div class="footer">
+        </div>
+    </div>
+</body>
+</html>

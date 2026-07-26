@@ -1,0 +1,141 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}AI Insights - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}AI Insights{% endblock %}
+{% block page_subtitle %}Your AI-powered career analysis and recommendations.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card" style="text-align:center;">
+        <div class="icon"><i class="fas fa-robot"></i></div>
+        <div class="label">AI Match Score</div>
+        <div class="value" style="color:#2563eb;">
+            {% if applications %}
+                {{ applications.0.ai_match_score|floatformat:0|default:0 }}%
+            {% else %}
+                0%
+            {% endif %}
+        </div>
+        <div style="width:100%;height:10px;background:#e5e7eb;border-radius:10px;margin-top:0.5rem;">
+            <div style="width:{% if applications %}{{ applications.0.ai_match_score|floatformat:0|default:0 }}{% else %}0{% endif %}%;height:100%;background:#2563eb;border-radius:10px;"></div>
+        </div>
+    </div>
+    <div class="stat-card" style="text-align:center;">
+        <div class="icon"><i class="fas fa-file-signature"></i></div>
+        <div class="label">Resume Score</div>
+        <div class="value" style="color:#10b981;">{{ profile.resume_score|floatformat:0|default:0 }}%</div>
+        <div style="width:100%;height:10px;background:#e5e7eb;border-radius:10px;margin-top:0.5rem;">
+            <div style="width:{{ profile.resume_score|floatformat:0|default:0 }}%;height:100%;background:#10b981;border-radius:10px;"></div>
+        </div>
+    </div>
+    <div class="stat-card" style="text-align:center;">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="label">Employability Score</div>
+        <div class="value" style="color:#8b5cf6;">{{ profile.employability_score|floatformat:0|default:0 }}%</div>
+        <div style="width:100%;height:10px;background:#e5e7eb;border-radius:10px;margin-top:0.5rem;">
+            <div style="width:{{ profile.employability_score|floatformat:0|default:0 }}%;height:100%;background:#8b5cf6;border-radius:10px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Skill Analysis -->
+<div class="content-grid">
+    <div>
+        <div class="content-card" style="margin-bottom:1.5rem;">
+            <div class="card-title"><i class="fas fa-code"></i> Skill Analysis</div>
+            <h4 style="font-weight:600;margin-bottom:0.5rem;color:#374151;">Your Skills</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+                {% for skill in user.skills %}
+                <span style="background:#eff6ff;color:#2563eb;padding:0.3rem 1rem;border-radius:20px;font-size:0.9rem;">{{ skill }}</span>
+                {% empty %}
+                <span style="color:#6b7280;">No skills added yet. Update your profile.</span>
+                {% endfor %}
+            </div>
+            
+            <h4 style="font-weight:600;margin-bottom:0.5rem;color:#374151;">Missing Skills (Recommended)</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+                <span style="background:#fef3c7;color:#d97706;padding:0.3rem 1rem;border-radius:20px;font-size:0.9rem;">Machine Learning</span>
+                <span style="background:#fef3c7;color:#d97706;padding:0.3rem 1rem;border-radius:20px;font-size:0.9rem;">Data Visualization</span>
+                <span style="background:#fef3c7;color:#d97706;padding:0.3rem 1rem;border-radius:20px;font-size:0.9rem;">Cloud Computing</span>
+            </div>
+            
+            <h4 style="font-weight:600;margin-bottom:0.5rem;color:#374151;">Career Recommendations</h4>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                <div style="background:#f0fdf4;padding:0.8rem;border-radius:8px;border-left:4px solid #10b981;">
+                    <div style="font-weight:600;">Data Scientist</div>
+                    <div style="font-size:0.85rem;color:#6b7280;">Based on your skills in Python and Data Analysis</div>
+                </div>
+                <div style="background:#eff6ff;padding:0.8rem;border-radius:8px;border-left:4px solid #2563eb;">
+                    <div style="font-weight:600;">Machine Learning Engineer</div>
+                    <div style="font-size:0.85rem;color:#6b7280;">Based on your skills in Python and Mathematics</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-graduation-cap"></i> Learning Recommendations</div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight:600;">Machine Learning Specialization</div>
+                        <div style="font-size:0.85rem;color:#6b7280;">Coursera • 3 months</div>
+                    </div>
+                    <a href="#" style="padding:0.3rem 1rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-size:0.8rem;">Enroll</a>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;">
+                    <div>
+                        <div style="font-weight:600;">Data Science Bootcamp</div>
+                        <div style="font-size:0.85rem;color:#6b7280;">Udemy • 2 months</div>
+                    </div>
+                    <a href="#" style="padding:0.3rem 1rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-size:0.8rem;">Enroll</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <div class="content-card" style="margin-bottom:1.5rem;">
+            <div class="card-title"><i class="fas fa-file-alt"></i> Resume Improvement</div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div style="background:#fef3c7;padding:0.8rem;border-radius:8px;">
+                    <div style="font-weight:600;color:#92400e;"><i class="fas fa-exclamation-triangle"></i> ATS Compatibility</div>
+                    <div style="font-size:0.85rem;color:#6b7280;">{{ profile.ats_compatibility_score|floatformat:0|default:0 }}% - Needs improvement</div>
+                </div>
+                <a href="#" style="padding:0.6rem;background:#2563eb;color:white;border:none;border-radius:8px;text-align:center;text-decoration:none;font-weight:600;">
+                    <i class="fas fa-magic"></i> AI Improve Resume
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-card" style="margin-bottom:1.5rem;">
+            <div class="card-title"><i class="fas fa-certificate"></i> Recommended Certifications</div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight:600;">AWS Certified Developer</div>
+                        <div style="font-size:0.85rem;color:#6b7280;">Amazon</div>
+                    </div>
+                    <span style="background:#dbeafe;color:#2563eb;padding:0.1rem 0.6rem;border-radius:20px;font-size:0.7rem;">Recommended</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;">
+                    <div>
+                        <div style="font-weight:600;">Google Data Analytics</div>
+                        <div style="font-size:0.85rem;color:#6b7280;">Google</div>
+                    </div>
+                    <span style="background:#dbeafe;color:#2563eb;padding:0.1rem 0.6rem;border-radius:20px;font-size:0.7rem;">Recommended</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-robot"></i> AI Career Assistant</div>
+            <div style="text-align:center;padding:0.5rem 0;">
+                <p style="color:#6b7280;font-size:0.9rem;">Need help with your career journey?</p>
+                <a href="{% url 'homepage:ai_assistant' %}" style="display:inline-block;margin-top:0.5rem;padding:0.6rem 2rem;background:#8b5cf6;color:white;border:none;border-radius:8px;text-decoration:none;font-weight:600;">
+                    <i class="fas fa-comment-dots"></i> Chat with AI Assistant
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

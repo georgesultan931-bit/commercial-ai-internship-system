@@ -1,0 +1,178 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}AI Management{% endblock %}
+{% block page_subtitle %}Manage AI features and performance{% endblock %}
+
+{% block admin_content %}
+<div class="ai-container">
+    <div class="ai-stats">
+        <div class="stat-card">
+            <span class="stat-label">Match Accuracy</span>
+            <span class="stat-value">{{ ai_match_accuracy }}%</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Total Matches</span>
+            <span class="stat-value">{{ ai_total_matches }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Pending Matches</span>
+            <span class="stat-value">{{ ai_pending_matches }}</span>
+        </div>
+    </div>
+    
+    <div class="ai-actions">
+        <a href="{% url 'admin_dashboard:ai_settings' %}" class="btn-settings"> AI Settings</a>
+        <button class="btn-train" onclick="trainAI()"> Train AI</button>
+        <button class="btn-test" onclick="testAI()"> Test AI</button>
+    </div>
+    
+    <div class="ai-logs">
+        <h3>Recent AI Activity</h3>
+        <div class="log-entry">
+            <span class="log-time">2 hours ago</span>
+            <span class="log-message">AI matched 12 candidates for Software Engineer role</span>
+        </div>
+        <div class="log-entry">
+            <span class="log-time">5 hours ago</span>
+            <span class="log-message">AI processed 45 new applications</span>
+        </div>
+        <div class="log-entry">
+            <span class="log-time">1 day ago</span>
+            <span class="log-message">AI accuracy improved by 2%</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function trainAI() {
+        if(confirm('Train the AI model? This may take a few minutes.')) {
+            alert('AI training started! (Feature coming soon)');
+        }
+    }
+    
+    function testAI() {
+        alert('Testing AI... (Feature coming soon)');
+    }
+</script>
+
+<style>
+    .ai-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .ai-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    
+    .stat-label {
+        display: block;
+        color: #888;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+    
+    .ai-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .btn-settings {
+        padding: 10px 25px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+    
+    .btn-settings:hover { background: #5a6268; }
+    
+    .btn-train {
+        padding: 10px 25px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+    
+    .btn-train:hover { background: #218838; }
+    
+    .btn-test {
+        padding: 10px 25px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+    
+    .btn-test:hover { background: #138496; }
+    
+    .ai-logs {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .ai-logs h3 {
+        margin: 0 0 15px 0;
+        color: #1a1a2e;
+    }
+    
+    .log-entry {
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f2f5;
+        display: flex;
+        gap: 20px;
+    }
+    
+    .log-entry:last-child {
+        border-bottom: none;
+    }
+    
+    .log-time {
+        color: #888;
+        font-size: 13px;
+        min-width: 100px;
+    }
+    
+    .log-message {
+        color: #333;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}

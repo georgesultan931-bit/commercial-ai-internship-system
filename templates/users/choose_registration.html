@@ -1,0 +1,212 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Choose Registration Type{% endblock %}
+
+{% block content %}
+
+<section style="padding:60px 20px; max-width:1200px; margin:auto;">
+
+    <div style="text-align:center; margin-bottom:50px;">
+        <h1 style="font-size:42px; font-weight:800;">
+            Create Your Account
+        </h1>
+
+        <p style="font-size:18px; color:#666;">
+            Select the account that best describes you.
+        </p>
+    </div>
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+        gap:30px;
+    ">
+
+        <!-- Student -->
+
+        <a href="{% url 'users:register_student' %}"
+           style="text-decoration:none;color:inherit;">
+
+            <div style="
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                box-shadow:0 15px 40px rgba(0,0,0,.08);
+                transition:.3s;
+                text-align:center;
+            ">
+
+                <div style="font-size:60px;">🎓</div>
+
+                <h2 style="margin:20px 0;">
+                    Student
+                </h2>
+
+                <p style="color:#666;">
+                    Apply for internships and build your career.
+                </p>
+
+            </div>
+
+        </a>
+
+
+
+        <!-- Employer -->
+
+        <a href="{% url 'users:register_employer' %}"
+           style="text-decoration:none;color:inherit;">
+
+            <div style="
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                box-shadow:0 15px 40px rgba(0,0,0,.08);
+                text-align:center;
+            ">
+
+                <div style="font-size:60px;">🏢</div>
+
+                <h2 style="margin:20px 0;">
+                    Employer
+                </h2>
+
+                <p style="color:#666;">
+                    Post internships and recruit top students.
+                </p>
+
+            </div>
+
+        </a>
+
+
+
+        <!-- Institution -->
+
+        <a href="{% url 'users:register_institution' %}"
+           style="text-decoration:none;color:inherit;">
+
+            <div style="
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                box-shadow:0 15px 40px rgba(0,0,0,.08);
+                text-align:center;
+            ">
+
+                <div style="font-size:60px;">🏛️</div>
+
+                <h2 style="margin:20px 0;">
+                    Institution
+                </h2>
+
+                <p style="color:#666;">
+                    Manage students and internship programs.
+                </p>
+
+            </div>
+
+        </a>
+
+
+
+        <!-- Supervisor -->
+
+        <a href="#"
+           style="text-decoration:none;color:inherit;">
+
+            <div style="
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                box-shadow:0 15px 40px rgba(0,0,0,.08);
+                text-align:center;
+            ">
+
+                <div style="font-size:60px;">👨‍🏫</div>
+
+                <h2 style="margin:20px 0;">
+                    Supervisor
+                </h2>
+
+                <p style="color:#666;">
+                    Monitor and evaluate students.
+                </p>
+
+            </div>
+
+        </a>
+
+
+
+        <!-- Government -->
+
+        <a href="#"
+           style="text-decoration:none;color:inherit;">
+
+            <div style="
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                box-shadow:0 15px 40px rgba(0,0,0,.08);
+                text-align:center;
+            ">
+
+                <div style="font-size:60px;">🏛</div>
+
+                <h2 style="margin:20px 0;">
+                    Government
+                </h2>
+
+                <p style="color:#666;">
+                    National internship administration.
+                </p>
+
+            </div>
+
+        </a>
+
+
+
+        <!-- NGO -->
+
+        <a href="#"
+           style="text-decoration:none;color:inherit;">
+
+            <div style="
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                box-shadow:0 15px 40px rgba(0,0,0,.08);
+                text-align:center;
+            ">
+
+                <div style="font-size:60px;">🌍</div>
+
+                <h2 style="margin:20px 0;">
+                    NGO
+                </h2>
+
+                <p style="color:#666;">
+                    Manage internship opportunities.
+                </p>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div style="text-align:center;margin-top:50px;">
+
+        Already have an account?
+
+        <a href="{% url 'users:login' %}">
+            Login
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

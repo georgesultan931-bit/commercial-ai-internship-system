@@ -1,0 +1,52 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}My Applications{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;">📋 My Applications</h1>
+        <span style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Total: {{ applications.count }}</span>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if applications %}
+            <div style="display: grid; gap: 15px;">
+                {% for application in applications %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 style="color: #0b1a33; font-size: 16px;">{{ application.internship.title }}</h3>
+                                <p style="color: #888; font-size: 14px;">{{ application.internship.company_name|default:"Company" }}</p>
+                                <p style="color: #888; font-size: 13px;">{{ application.internship.location }}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="background: {% if application.status == 'pending' %}#fef3c7{% elif application.status == 'shortlisted' %}#dbeafe{% elif application.status == 'accepted' %}#d1fae5{% elif application.status == 'rejected' %}#fee2e2{% endif %}; color: {% if application.status == 'pending' %}#d97706{% elif application.status == 'shortlisted' %}#2563eb{% elif application.status == 'accepted' %}#059669{% elif application.status == 'rejected' %}#dc2626{% endif %}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">
+                                    {{ application.get_status_display }}
+                                </span>
+                                <div style="font-size: 12px; color: #888; margin-top: 4px;">
+                                    {{ application.applied_date|date:"Y-m-d H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                        {% if application.cover_letter %}
+                            <p style="color: #666; font-size: 14px; margin-top: 10px; background: #f7f9fc; padding: 10px; border-radius: 8px;">
+                                {{ application.cover_letter|truncatechars:150 }}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 64px; margin-bottom: 15px;"></div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Applications Yet</h3>
+                <p>Start applying to internships to see your applications here.</p>
+                <a href="{% url 'student_dashboard:internships' %}" style="display: inline-block; margin-top: 15px; background: #4f46e5; color: white; padding: 10px 24px; border-radius: 40px; text-decoration: none;">
+                    Browse Internships
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

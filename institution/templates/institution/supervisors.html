@@ -1,0 +1,36 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Supervisors{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;"> Supervisors</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if supervisors %}
+            <div style="display: grid; gap: 15px;">
+                {% for sup in supervisors %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h3 style="color: #0b1a33; font-size: 16px;">{{ sup.user.get_full_name|default:sup.user.username }}</h3>
+                            <p style="color: #888; font-size: 14px;">{{ sup.user.email }}</p>
+                            <p style="color: #888; font-size: 13px;">{{ sup.department|default:"No department" }}</p>
+                        </div>
+                        <div>
+                            <span style="background: #eef2ff; color: #4f46e5; padding: 4px 12px; border-radius: 20px; font-size: 12px;">
+                                {{ sup.assigned_students.count }} students
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;"></div>
+                <p>No supervisors assigned yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

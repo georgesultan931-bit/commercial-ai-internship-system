@@ -1,0 +1,16 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Logged Out - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 500px; margin: 4rem auto; text-align: center; min-height: 60vh;">
+    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
+        <h1 style="font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-bottom: 0.5rem;">Logged Out</h1>
+        <p style="color: #6b7280; margin-bottom: 2rem;">You have been successfully logged out.</p>
+        <a href="{% url 'account_login' %}" class="btn btn-primary" style="padding: 0.8rem 2rem; text-decoration: none;">
+            <i class="fas fa-sign-in-alt"></i> Login Again
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Logged Out - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<section style="display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 2rem;">
+    <div style="max-width: 500px; width: 100%; background: white; border-radius: 20px; padding: 3rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
+        <h1 style="font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-bottom: 0.5rem;">You have logged out successfully</h1>
+        <p style="color: #6b7280; font-size: 0.95rem; margin-bottom: 2rem;">Thank you for using the Commercial-Grade AI-Powered Internship Management System.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+            <a href="{% url 'account_login' %}" style="display: block; padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.3s;">
+                <i class="fas fa-sign-in-alt"></i> Login Again
+            </a>
+            <a href="{% url 'homepage:home' %}" style="display: block; padding: 0.8rem; background: transparent; color: #2563eb; border: 2px solid #2563eb; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.3s;">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

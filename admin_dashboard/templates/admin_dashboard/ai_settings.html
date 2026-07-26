@@ -1,0 +1,182 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}AI Settings{% endblock %}
+{% block page_subtitle %}Configure AI features{% endblock %}
+
+{% block admin_content %}
+<div class="settings-container">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="settings-group">
+            <h3>Matching Settings</h3>
+            <div class="setting-item">
+                <label>Minimum Match Threshold</label>
+                <input type="range" min="0" max="100" value="75" class="range-slider">
+                <span class="range-value">75%</span>
+                <small>Minimum score for automatic matching</small>
+            </div>
+            
+            <div class="setting-item">
+                <label>Maximum Candidates per Job</label>
+                <input type="number" value="50" class="form-control">
+                <small>Maximum number of candidates to match per job posting</small>
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <h3>Analysis Settings</h3>
+            <div class="setting-item">
+                <label>Resume Analysis</label>
+                <select class="form-control">
+                    <option value="full">Full Analysis</option>
+                    <option value="basic">Basic Analysis</option>
+                    <option value="none">Disabled</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label>Auto-match New Jobs</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-save">Save Settings</button>
+    </form>
+</div>
+
+<style>
+    .settings-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .settings-group {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .settings-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .settings-group h3 {
+        color: #1a1a2e;
+        margin: 0 0 20px 0;
+    }
+    
+    .setting-item {
+        margin-bottom: 20px;
+    }
+    
+    .setting-item label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+    
+    .range-slider {
+        width: 80%;
+        margin-right: 10px;
+    }
+    
+    .range-value {
+        font-weight: 600;
+        color: #007bff;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    
+    .setting-item small {
+        display: block;
+        color: #888;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+        cursor: pointer;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #ccc;
+        transition: 0.4s;
+        border-radius: 26px;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider {
+        background: #007bff;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+    
+    .btn-save {
+        padding: 12px 30px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+        margin-top: 20px;
+    }
+    
+    .btn-save:hover { background: #0056b3; }
+</style>
+{% endblock %}

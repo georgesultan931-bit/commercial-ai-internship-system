@@ -1,0 +1,162 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Interview Management - Admin Dashboard{% endblock %}
+
+{% block page_title %}Interview Management{% endblock %}
+
+{% block page_subtitle %}Manage all interviews on the platform.{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-calendar-check"></i></div>
+        <div class="label">Total Interviews</div>
+        <div class="value">{{ total_interviews }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> All</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-clock"></i></div>
+        <div class="label">Scheduled</div>
+        <div class="value" style="color: #2563eb;">{{ scheduled_count }}</div>
+        <div class="change positive"><i class="fas fa-hourglass-half"></i> Upcoming</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-check-circle"></i></div>
+        <div class="label">Completed</div>
+        <div class="value" style="color: #059669;">{{ completed_count }}</div>
+        <div class="change positive"><i class="fas fa-check"></i> Done</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-times-circle"></i></div>
+        <div class="label">Cancelled</div>
+        <div class="value" style="color: #dc2626;">{{ cancelled_count }}</div>
+        <div class="change negative"><i class="fas fa-times"></i> Cancelled</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;">
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
+        <input type="text" name="search" placeholder="Search interviews..." value="{{ search }}" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px; min-width: 200px;">
+        
+        <select name="status" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Status</option>
+            {% for key, value in status_choices %}
+                <option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="type" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Types</option>
+            {% for key, value in interview_types %}
+                <option value="{{ key }}" {% if type_filter == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit" style="padding: 0.6rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            <i class="fas fa-search"></i> Filter
+        </button>
+        
+        <a href="{% url 'homepage:admin_interviews' %}" style="padding: 0.6rem 1.5rem; background: #e5e7eb; color: #1a1a2e; border: none; border-radius: 8px; text-decoration: none;">
+            <i class="fas fa-times"></i> Clear
+        </a>
+    </form>
+</div>
+
+<!-- Interviews Table -->
+<div style="background: white; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Student</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Internship</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Date</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Type</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Status</th>
+                    <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for interview in interviews %}
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <td style="padding: 1rem;">
+                        <div>
+                            <div style="font-weight: 600;">{{ interview.application.student.get_full_name|default:interview.application.student.email }}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">{{ interview.application.student.email }}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div>
+                            <div style="font-weight: 600;">{{ interview.application.internship.title }}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">{{ interview.application.internship.organization.name }}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div>
+                            <div style="font-weight: 600;">{{ interview.interview_date|date:"M d, Y" }}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">{{ interview.interview_date|time:"H:i" }}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {{ interview.get_interview_type_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;
+                            {% if interview.status == 'SCHEDULED' %}background: #dbeafe; color: #2563eb;
+                            {% elif interview.status == 'COMPLETED' %}background: #d1fae5; color: #059669;
+                            {% elif interview.status == 'CANCELLED' %}background: #fee2e2; color: #dc2626;
+                            {% else %}background: #e5e7eb; color: #6b7280;{% endif %}">
+                            {{ interview.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <div style="display: flex; gap: 0.3rem; justify-content: center; flex-wrap: wrap;">
+                            {% if interview.status == 'SCHEDULED' %}
+                            <a href="{% url 'homepage:admin_complete_interview' interview.id %}" style="padding: 0.3rem 0.7rem; background: #d1fae5; color: #059669; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Mark as completed?')">
+                                <i class="fas fa-check"></i>
+                            </a>
+                            <a href="{% url 'homepage:admin_cancel_interview' interview.id %}" style="padding: 0.3rem 0.7rem; background: #fef3c7; color: #d97706; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Cancel this interview?')">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'homepage:admin_delete_interview' interview.id %}" style="padding: 0.3rem 0.7rem; background: #fee2e2; color: #dc2626; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Delete this interview?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: #6b7280;">No interviews found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if interviews.has_other_pages %}
+<div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+    {% if interviews.has_previous %}
+        <a href="?page={{ interviews.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Previous</a>
+    {% endif %}
+    
+    {% for num in interviews.paginator.page_range %}
+        {% if interviews.number == num %}
+            <span style="padding: 0.5rem 1rem; background: #2563eb; color: white; border-radius: 8px;">{{ num }}</span>
+        {% else %}
+            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    
+    {% if interviews.has_next %}
+        <a href="?page={{ interviews.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

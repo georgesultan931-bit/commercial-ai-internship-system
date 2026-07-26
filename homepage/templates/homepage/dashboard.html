@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commercial-Grade AI-Powered Internship Management System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            background: #f0f2f5;
+        }
+        
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .logo {
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid #2a2a4e;
+            margin-bottom: 20px;
+        }
+        
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            color: #00d4ff;
+        }
+        
+        .logo p {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .user-info {
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2a4e;
+            margin-bottom: 20px;
+        }
+        
+        .user-welcome {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #00d4ff;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .username {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .user-role {
+            margin-bottom: 10px;
+            padding-left: 45px;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 3px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+        
+        .auth-link {
+            display: inline-block;
+            padding: 8px 20px;
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            margin-right: 8px;
+            transition: background 0.3s;
+        }
+        
+        .auth-link:hover {
+            background: #2a2a4e;
+        }
+        
+        .auth-link.signup {
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+        
+        .auth-link.signup:hover {
+            background: #00c4e8;
+        }
+        
+        .logout-link {
+            display: inline-block;
+            padding: 8px 20px;
+            color: #ff6b6b;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .logout-link:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        .home-link {
+            display: inline-block;
+            padding: 8px 20px;
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .home-link:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .home-btn {
+            display: block;
+            padding: 10px 20px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            border-bottom: 1px solid #2a2a4e;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+        
+        .home-btn:hover {
+            background: #2a2a4e;
+        }
+        
+        .nav-section {
+            margin-bottom: 5px;
+        }
+        
+        .nav-header {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            padding: 8px 20px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .nav-header:hover {
+            color: #fff;
+        }
+        
+        .nav-header .arrow {
+            transition: transform 0.3s;
+            font-size: 12px;
+        }
+        
+        .nav-header .arrow.open {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .sidebar ul.open {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .sidebar ul li {
+            padding: 0;
+        }
+        
+        .sidebar ul li a {
+            display: block;
+            padding: 10px 20px 10px 35px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .sidebar ul li a::before {
+            content: "›";
+            position: absolute;
+            left: 20px;
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .sidebar ul li a:hover:not(.disabled-link):not(.protected-link) {
+            background: #2a2a4e;
+            color: white;
+        }
+        
+        .sidebar ul li a.active {
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+        
+        .sidebar ul li a.active::before {
+            color: #1a1a2e;
+        }
+        
+        .sidebar ul li a.active:hover {
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+        
+        .disabled-link {
+            color: #666 !important;
+            cursor: not-allowed !important;
+            opacity: 0.5;
+        }
+        
+        .disabled-link:hover {
+            background: none !important;
+            color: #666 !important;
+        }
+        
+        .protected-link {
+            color: #ffa500 !important;
+        }
+        
+        .protected-link:hover {
+            background: rgba(255, 165, 0, 0.1) !important;
+        }
+        
+        .badge {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 11px;
+            float: right;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        
+        .topnav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .btn-notification {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            position: relative;
+            color: #1a1a2e;
+        }
+        
+        .btn-notification:hover {
+            color: #007bff;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .user-info-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info-top .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .user-info-top .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 40px;
+            width: 380px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            padding: 10px 0;
+        }
+        
+        .notification-dropdown.show {
+            display: block;
+        }
+        
+        .notification-header {
+            padding: 10px 20px;
+            border-bottom: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-header h4 {
+            margin: 0;
+            font-size: 16px;
+            color: #1a1a2e;
+        }
+        
+        .notification-header a {
+            font-size: 12px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .notification-list {
+            padding: 5px 0;
+        }
+        
+        .notification-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .notification-item .title {
+            font-weight: 500;
+            color: #1a1a2e;
+            font-size: 14px;
+        }
+        
+        .notification-item .message {
+            color: #888;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+        
+        .notification-item .time {
+            color: #aaa;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        
+        .notification-footer {
+            padding: 10px 20px;
+            border-top: 1px solid #f0f2f5;
+            text-align: center;
+        }
+        
+        .notification-footer a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .login-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-overlay.show {
+            display: flex;
+        }
+        
+        .login-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .login-modal .lock-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .login-modal h2 {
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+        
+        .login-modal p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        .login-modal .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .login-modal .btn-login-modal {
+            padding: 12px 30px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .login-modal .btn-login-modal:hover {
+            background: #0056b3;
+        }
+        
+        .login-modal .btn-signup-modal {
+            padding: 12px 30px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .login-modal .btn-signup-modal:hover {
+            background: #218838;
+        }
+        
+        .login-modal .btn-close-modal {
+            padding: 12px 30px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .login-modal .btn-close-modal:hover {
+            background: #5a6268;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .top-nav {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            .topnav-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .notification-dropdown {
+                width: 300px;
+                right: -10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-modal">
+            <div class="lock-icon">🔒</div>
+            <h2>Login Required</h2>
+            <p>Please login or create an account to access this feature.</p>
+            <div class="btn-group">
+                <a href="{% url 'account_login' %}" class="btn-login-modal">Login</a>
+                <a href="{% url 'account_signup' %}" class="btn-signup-modal">Sign Up</a>
+                <button class="btn-close-modal" onclick="closeLoginModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo">
+            <a href="{% url 'homepage:home' %}">
+                <h1>Commercial-Grade AI-Powered</h1>
+                <h1 style="font-size: 18px; margin-top: -5px;">Internship Management System</h1>
+                <p>Commercial Grade AI Powered Platform</p>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            {% if user.is_authenticated %}
+                <div class="user-welcome">
+                    <span class="user-avatar">
+                        {% if user.profile.profile_image %}
+                            <img src="{{ user.profile.profile_image.url }}" alt="{{ user.username }}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            {{ user.username|first|upper }}
+                        {% endif %}
+                    </span>
+                    <span class="username">Welcome, {{ user.username }}</span>
+                </div>
+                <div class="user-role">
+                    <span class="role-badge">{{ user.profile.get_role_display }}</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                    <a href="{% url 'homepage:home' %}" class="home-link">Home</a>
+                    <a href="{% url 'account_logout' %}" class="logout-link">Logout</a>
+                </div>
+            {% else %}
+                <a href="{% url 'account_login' %}" class="auth-link">Login</a>
+                <a href="{% url 'account_signup' %}" class="auth-link signup">Sign Up</a>
+            {% endif %}
+        </div>
+        
+        <a href="{% url 'homepage:home' %}" class="home-btn">Back to Home</a>
+        
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                DASHBOARD <span class="arrow open">▶</span>
+            </div>
+            <ul class="open">
+                <li><a href="{% url 'homepage:dashboard' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                {% if user.is_authenticated and user.profile.role == 'institution' %}
+                    <li><a href="{% url 'institution:profile' %}" class="{% if active_menu == 'profile' or active_menu == 'institution_profile' %}active{% endif %}">My Profile</a></li>
+                {% elif user.is_authenticated and user.profile.role == 'employer' %}
+                    <li><a href="{% url 'employer:company_profile' %}" class="{% if active_menu == 'profile' or active_menu == 'company_profile' %}active{% endif %}">My Profile</a></li>
+                {% elif user.is_authenticated and user.profile.role == 'student' %}
+                    <li><a href="{% url 'student_dashboard:profile' %}" class="{% if active_menu == 'profile' or active_menu == 'student_profile' %}active{% endif %}">My Profile</a></li>
+                {% elif user.is_authenticated and user.profile.role == 'supervisor' %}
+                    <li><a href="{% url 'supervisor:profile' %}" class="{% if active_menu == 'profile' or active_menu == 'supervisor_profile' %}active{% endif %}">My Profile</a></li>
+                {% else %}
+                    <li><a href="{% url 'users:profile' %}" class="{% if active_menu == 'profile' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">My Profile</a></li>
+                {% endif %}
+                <li><a href="{% url 'ai_engine:insights' %}" class="{% if active_menu == 'ai_insights' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">AI Insights</a></li>
+            </ul>
+        </div>
+        
+        {% if user.is_authenticated and user.profile.role == 'student' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                STUDENT <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'student_dashboard:dashboard' %}" class="{% if active_menu == 'student_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'student_dashboard:internships' %}" class="{% if active_menu == 'student_internships' %}active{% endif %}">Browse Internships</a></li>
+                <li><a href="{% url 'student_dashboard:recommended' %}" class="{% if active_menu == 'recommended' %}active{% endif %}">AI Recommendations</a></li>
+                <li><a href="{% url 'student_dashboard:applications' %}" class="{% if active_menu == 'student_applications' %}active{% endif %}">My Applications</a></li>
+                <li><a href="{% url 'student_dashboard:saved' %}" class="{% if active_menu == 'student_saved' %}active{% endif %}">Saved Internships</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        {% if user.is_authenticated and user.profile.role == 'employer' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                EMPLOYER <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'employer:dashboard' %}" class="{% if active_menu == 'employer_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'employer:post_internship' %}" class="{% if active_menu == 'post_internship' %}active{% endif %}">Post Internship</a></li>
+                <li><a href="{% url 'employer:manage_internships' %}" class="{% if active_menu == 'manage_internships' %}active{% endif %}">Manage Listings</a></li>
+                <li><a href="{% url 'employer:applications' %}" class="{% if active_menu == 'employer_applications' %}active{% endif %}">Applications</a></li>
+                <li><a href="{% url 'employer:company_profile' %}" class="{% if active_menu == 'company_profile' %}active{% endif %}">Company Profile</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        {% if user.is_authenticated and user.profile.role == 'institution' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                INSTITUTION <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'institution:dashboard' %}" class="{% if active_menu == 'institution_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'institution:students' %}" class="{% if active_menu == 'institution_students' %}active{% endif %}">Student Management</a></li>
+                <li><a href="{% url 'institution:placements' %}" class="{% if active_menu == 'institution_placements' %}active{% endif %}">Internship Placements</a></li>
+                <li><a href="{% url 'institution:internships' %}" class="{% if active_menu == 'institution_internships' %}active{% endif %}">Internship Opportunities</a></li>
+                <li><a href="{% url 'institution:organizations' %}" class="{% if active_menu == 'institution_organizations' %}active{% endif %}">Partner Organizations</a></li>
+                <li><a href="{% url 'institution:supervisors' %}" class="{% if active_menu == 'institution_supervisors' %}active{% endif %}">Supervisors</a></li>
+                <li><a href="{% url 'institution:logbooks' %}" class="{% if active_menu == 'institution_logbooks' %}active{% endif %}">Logbooks</a></li>
+                <li><a href="{% url 'institution:evaluations' %}" class="{% if active_menu == 'institution_evaluations' %}active{% endif %}">Evaluations</a></li>
+                <li><a href="{% url 'institution:reports' %}" class="{% if active_menu == 'institution_reports' %}active{% endif %}">Reports</a></li>
+                <li><a href="{% url 'institution:analytics' %}" class="{% if active_menu == 'institution_analytics' %}active{% endif %}">Analytics</a></li>
+                <li><a href="{% url 'institution:messages' %}" class="{% if active_menu == 'institution_messages' %}active{% endif %}">Messages</a></li>
+                <li><a href="{% url 'institution:notifications' %}" class="{% if active_menu == 'institution_notifications' %}active{% endif %}">Notifications</a></li>
+                <li><a href="{% url 'institution:calendar' %}" class="{% if active_menu == 'institution_calendar' %}active{% endif %}">Calendar</a></li>
+                <li><a href="{% url 'institution:documents' %}" class="{% if active_menu == 'institution_documents' %}active{% endif %}">Documents</a></li>
+                <li><a href="{% url 'institution:settings' %}" class="{% if active_menu == 'institution_settings' %}active{% endif %}">Settings</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        {% if user.is_authenticated and user.profile.role == 'supervisor' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                SUPERVISOR <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'supervisor:dashboard' %}" class="{% if active_menu == 'supervisor_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'supervisor:profile' %}" class="{% if active_menu == 'supervisor_profile' %}active{% endif %}">My Profile</a></li>
+                <li><a href="{% url 'supervisor:assigned_students' %}" class="{% if active_menu == 'supervisor_assigned_students' %}active{% endif %}">Assigned Students</a></li>
+                <li><a href="{% url 'supervisor:internship_monitoring' %}" class="{% if active_menu == 'supervisor_internship_monitoring' %}active{% endif %}">Internship Monitoring</a></li>
+                <li><a href="{% url 'supervisor:logbooks' %}" class="{% if active_menu == 'supervisor_logbooks' %}active{% endif %}">Logbooks</a></li>
+                <li><a href="{% url 'supervisor:evaluations' %}" class="{% if active_menu == 'supervisor_evaluations' %}active{% endif %}">Evaluations</a></li>
+                <li><a href="{% url 'supervisor:visits' %}" class="{% if active_menu == 'supervisor_visits' %}active{% endif %}">Company Visits</a></li>
+                <li><a href="{% url 'supervisor:messages' %}" class="{% if active_menu == 'supervisor_messages' %}active{% endif %}">Messages</a></li>
+                <li><a href="{% url 'supervisor:documents' %}" class="{% if active_menu == 'supervisor_documents' %}active{% endif %}">Documents</a></li>
+                <li><a href="{% url 'supervisor:reports' %}" class="{% if active_menu == 'supervisor_reports' %}active{% endif %}">Reports</a></li>
+                <li><a href="{% url 'supervisor:calendar' %}" class="{% if active_menu == 'supervisor_calendar' %}active{% endif %}">Calendar</a></li>
+                <li><a href="{% url 'supervisor:notifications' %}" class="{% if active_menu == 'supervisor_notifications' %}active{% endif %}">Notifications</a></li>
+                <li><a href="{% url 'supervisor:settings' %}" class="{% if active_menu == 'supervisor_settings' %}active{% endif %}">Settings</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        {% if user.is_authenticated and user.profile.role == 'coordinator' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                COORDINATOR <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="#" class="disabled-link">Dashboard</a></li>
+                <li><a href="#" class="disabled-link">Student Allocation</a></li>
+                <li><a href="#" class="disabled-link">Internship Monitoring</a></li>
+                <li><a href="#" class="disabled-link">Reports</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        {% if user.is_authenticated and user.is_staff %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                ADMIN <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="/admin-dashboard/" class="{% if active_menu == 'admin_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="/admin-dashboard/users/" class="{% if active_menu == 'admin_users' %}active{% endif %}">User Management</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                INTERNSHIPS <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'internships:browse' %}" class="{% if active_menu == 'browse_internships' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">Browse Internships</a></li>
+                <li><a href="{% url 'internships:recommended' %}" class="{% if active_menu == 'recommended' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">Recommended</a></li>
+                <li><a href="{% url 'internships:saved' %}" class="{% if active_menu == 'saved' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">Saved</a></li>
+                <li><a href="{% url 'internships:applications' %}" class="{% if active_menu == 'internship_applications' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">My Applications</a></li>
+            </ul>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                DOCUMENTS <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'documents:documents' %}" class="{% if active_menu == 'documents' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">Documents</a></li>
+                <li><a href="{% url 'documents:certificates' %}" class="{% if active_menu == 'certificates' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">Certificates</a></li>
+                <li><a href="{% url 'documents:portfolio' %}" class="{% if active_menu == 'portfolio' %}active{% endif %} protected-link" onclick="return checkAuth(event, this)">Portfolio</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="top-nav">
+            <h4>{% block page_title %}Dashboard{% endblock %}</h4>
+            <div class="topnav-right">
+                <div style="position: relative; display: inline-block;">
+                    <button onclick="toggleNotifications()" class="btn-notification" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span id="notificationBadge" class="notification-badge">0</span>
+                    </button>
+                    <div id="notificationDropdown" class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <a href="#" onclick="closeNotificationDropdown()">View All</a>
+                        </div>
+                        <div id="notificationList" class="notification-list">
+                            <div style="padding: 15px 20px; text-align: center; color: #888; font-size: 14px;">Loading notifications...</div>
+                        </div>
+                        <div class="notification-footer">
+                            <a href="#" onclick="closeNotificationDropdown()">Close</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-info-top">
+                    <span>Welcome, {{ user.get_full_name|default:user.username }}</span>
+                    <div class="avatar">
+                        {% if user.profile.profile_image %}
+                            <img src="{{ user.profile.profile_image.url }}" alt="{{ user.username }}">
+                        {% else %}
+                            {{ user.username|make_list|first|upper }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        // ===== Sidebar Dropdown =====
+        function toggleDropdown(header) {
+            const ul = header.nextElementSibling;
+            const arrow = header.querySelector('.arrow');
+            
+            if (ul.classList.contains('open')) {
+                ul.classList.remove('open');
+                arrow.classList.remove('open');
+            } else {
+                ul.classList.add('open');
+                arrow.classList.add('open');
+            }
+        }
+        
+        // ===== Auth Check =====
+        function checkAuth(event, link) {
+            {% if not user.is_authenticated %}
+                event.preventDefault();
+                showLoginModal();
+                return false;
+            {% endif %}
+            return true;
+        }
+        
+        function showLoginModal() {
+            document.getElementById('loginOverlay').classList.add('show');
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginOverlay').classList.remove('show');
+        }
+        
+        document.getElementById('loginOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+        
+        // ===== CSRF Token =====
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // ===== Notifications =====
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown) {
+                if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                    dropdown.style.display = 'block';
+                    loadNotifications();
+                } else {
+                    dropdown.style.display = 'none';
+                }
+            }
+        }
+
+        function closeNotificationDropdown() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown) {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function loadNotifications() {
+            const list = document.getElementById('notificationList');
+            const badge = document.getElementById('notificationBadge');
+            
+            if (!list) return;
+            
+            // Determine which API to use based on user role
+            let apiUrl = '';
+            const roleBadge = document.querySelector('.role-badge');
+            const userRole = roleBadge ? roleBadge.textContent.toLowerCase() : '';
+            
+            if (userRole.includes('supervisor')) {
+                apiUrl = '/supervisor/notifications/api/';
+            } else if (userRole.includes('institution')) {
+                apiUrl = '/institution/notifications/api/';
+            } else if (userRole.includes('student')) {
+                apiUrl = '/student/notifications/api/';
+            } else if (userRole.includes('employer')) {
+                apiUrl = '/employer/notifications/api/';
+            } else {
+                list.innerHTML = '<div style="padding: 20px; text-align: center; color: #888; font-size: 14px;">Notifications not available</div>';
+                return;
+            }
+            
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (badge && data.count > 0) {
+                    badge.style.display = 'inline';
+                    badge.textContent = data.count;
+                } else if (badge) {
+                    badge.style.display = 'none';
+                }
+                
+                if (data.notifications && data.notifications.length === 0) {
+                    list.innerHTML = '<div style="padding: 20px; text-align: center; color: #888; font-size: 14px;">No new notifications</div>';
+                    return;
+                }
+                
+                let html = '';
+                (data.notifications || []).forEach(function(n) {
+                    html += `
+                        <div class="notification-item" onclick="window.location.href='${n.link || '#'}'">
+                            <div class="title">${n.title}</div>
+                            <div class="message">${n.message}</div>
+                            <div class="time">${n.created_at}</div>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+                list.innerHTML = '<div style="padding: 20px; text-align: center; color: #888; font-size: 14px;">Error loading notifications</div>';
+            });
+        }
+
+        // ===== Close dropdown when clicking outside =====
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.querySelector('.btn-notification');
+            if (bell && dropdown && !bell.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // ===== Initialize =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Open first dashboard section by default
+            const dashboardHeader = document.querySelector('.nav-section:first-child .nav-header');
+            if (dashboardHeader) {
+                const arrow = dashboardHeader.querySelector('.arrow');
+                const ul = dashboardHeader.nextElementSibling;
+                ul.classList.add('open');
+                arrow.classList.add('open');
+            }
+            
+            // Load notifications after 1 second
+            setTimeout(loadNotifications, 1000);
+            
+            // Refresh notifications every 30 seconds
+            setInterval(loadNotifications, 30000);
+        });
+    </script>
+</body>
+</html>

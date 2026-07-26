@@ -1,0 +1,78 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="predictions-container">
+    <h1> AI Career Predictions</h1>
+    <p>Data-driven predictions for your career trajectory</p>
+
+    <div class="prediction-grid">
+        <div class="prediction-card">
+            <h3> Career Growth</h3>
+            <div class="growth-info">
+                <p><strong>Current Role:</strong> {{ predictions.career_growth.current_role }}</p>
+                <p><strong>Next Role:</strong> {{ predictions.career_growth.next_role }}</p>
+                <p><strong>Timeline:</strong> {{ predictions.career_growth.timeline }}</p>
+                <p><strong>Salary Increase:</strong> {{ predictions.career_growth.salary_increase }}</p>
+                <p><strong>Confidence:</strong> {{ predictions.career_growth.confidence }}%</p>
+            </div>
+        </div>
+
+        <div class="prediction-card">
+            <h3> Skill Predictions</h3>
+            {% for skill in predictions.skill_predictions %}
+            <div class="skill-prediction">
+                <span class="skill-name">{{ skill.skill }}</span>
+                <div class="skill-progress">
+                    <div class="skill-current" style="width: {{ skill.current }}%;">{{ skill.current }}%</div>
+                    <div class="skill-predicted" style="width: {{ skill.predicted }}%;">{{ skill.predicted }}%</div>
+                </div>
+                <span class="skill-timeframe">{{ skill.timeframe }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="prediction-card full-width">
+            <h3> Job Market Forecast</h3>
+            <div class="forecast-grid">
+                <div class="forecast-item">
+                    <span class="forecast-label">Next 6 Months</span>
+                    <span class="forecast-value">{{ predictions.job_market_forecast.next_6_months }}</span>
+                </div>
+                <div class="forecast-item">
+                    <span class="forecast-label">Next Year</span>
+                    <span class="forecast-value">{{ predictions.job_market_forecast.next_year }}</span>
+                </div>
+                <div class="forecast-item">
+                    <span class="forecast-label">Top Roles</span>
+                    <span class="forecast-value">
+                        {% for role in predictions.job_market_forecast.top_roles %}
+                            {{ role }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .predictions-container { max-width: 1200px; margin: 0 auto; }
+    .predictions-container h1 { color: #1a1a2e; }
+    .prediction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .prediction-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .prediction-card h3 { margin-top: 0; }
+    .prediction-card.full-width { grid-column: 1 / -1; }
+    .growth-info p { margin: 8px 0; }
+    .skill-prediction { margin-bottom: 15px; }
+    .skill-prediction .skill-name { display: block; font-weight: 500; }
+    .skill-progress { height: 20px; background: #f0f2f5; border-radius: 10px; margin: 5px 0; position: relative; overflow: hidden; display: flex; }
+    .skill-current { height: 100%; background: #28a745; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 600; border-radius: 10px; min-width: 30px; }
+    .skill-predicted { height: 100%; background: #007bff; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 600; border-radius: 10px; min-width: 30px; }
+    .skill-timeframe { font-size: 12px; color: #888; }
+    .forecast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .forecast-item { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
+    .forecast-label { display: block; color: #888; font-size: 13px; }
+    .forecast-value { display: block; font-size: 18px; font-weight: 600; color: #1a1a2e; margin-top: 5px; }
+    @media (max-width: 768px) { .prediction-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}

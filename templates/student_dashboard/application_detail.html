@@ -1,0 +1,115 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div style="margin-bottom: 30px;">
+        <h1 style="color: #1a1a2e; font-size: 28px; margin: 0 0 5px 0;">Application Details</h1>
+        <p style="color: #666; font-size: 16px; margin: 0;">Track your application progress</p>
+    </div>
+
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h2 style="margin: 0 0 5px 0; color: #1a1a2e;">{{ application.internship.title }}</h2>
+                <p style="color: #666; margin: 0;"><strong>{{ application.internship.company }}</strong> • {{ application.internship.location }}</p>
+                <p style="color: #888; font-size: 14px; margin: 5px 0 0 0;">Applied: {{ application.applied_date|date:"M d, Y H:i" }}</p>
+            </div>
+            <div>
+                {% if application.status == 'PENDING' %}
+                    <span style="background: #fef3c7; color: #92400e; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Pending</span>
+                {% elif application.status == 'REVIEWING' %}
+                    <span style="background: #dbeafe; color: #1e40af; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Reviewing</span>
+                {% elif application.status == 'SHORTLISTED' %}
+                    <span style="background: #c3d2f7; color: #3730a3; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Shortlisted</span>
+                {% elif application.status == 'INTERVIEW' %}
+                    <span style="background: #d1fae5; color: #065f46; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Interview</span>
+                {% elif application.status == 'ACCEPTED' %}
+                    <span style="background: #d4edda; color: #155724; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Accepted </span>
+                {% elif application.status == 'REJECTED' %}
+                    <span style="background: #f8d7da; color: #721c24; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Rejected</span>
+                {% else %}
+                    <span style="background: #e5e7eb; color: #6b7280; padding: 6px 20px; border-radius: 20px; font-weight: 500;">Unknown</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">Application Timeline</h3>
+        <div style="position: relative; padding-left: 30px;">
+            <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #e5e7eb;"></div>
+            
+            <div style="position: relative; margin-bottom: 20px;">
+                <div style="position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #28a745; border: 3px solid #d4edda;"></div>
+                <div>
+                    <div style="font-weight: 600; color: #1a1a2e;">Application Submitted</div>
+                    <div style="font-size: 13px; color: #888;">{{ application.applied_date|date:"M d, Y H:i" }}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 4px;">Your application was submitted successfully.</div>
+                </div>
+            </div>
+
+            {% if application.status != 'PENDING' %}
+            <div style="position: relative; margin-bottom: 20px;">
+                <div style="position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #17a2b8; border: 3px solid #dbeafe;"></div>
+                <div>
+                    <div style="font-weight: 600; color: #1a1a2e;">Under Review</div>
+                    <div style="font-size: 13px; color: #888;">{{ application.updated_at|date:"M d, Y" }}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 4px;">Your application is being reviewed by the employer.</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if application.status == 'SHORTLISTED' or application.status == 'INTERVIEW' or application.status == 'ACCEPTED' %}
+            <div style="position: relative; margin-bottom: 20px;">
+                <div style="position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #8b5cf6; border: 3px solid #c3d2f7;"></div>
+                <div>
+                    <div style="font-weight: 600; color: #1a1a2e;">Shortlisted</div>
+                    <div style="font-size: 13px; color: #888;">{{ application.updated_at|date:"M d, Y" }}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 4px;">Congratulations! You've been shortlisted for this position.</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if application.status == 'INTERVIEW' or application.status == 'ACCEPTED' %}
+            <div style="position: relative; margin-bottom: 20px;">
+                <div style="position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #10b981; border: 3px solid #d1fae5;"></div>
+                <div>
+                    <div style="font-weight: 600; color: #1a1a2e;">Interview Scheduled</div>
+                    <div style="font-size: 13px; color: #888;">{{ application.updated_at|date:"M d, Y" }}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 4px;">An interview has been scheduled with the employer.</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if application.status == 'ACCEPTED' %}
+            <div style="position: relative; margin-bottom: 20px;">
+                <div style="position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #28a745; border: 3px solid #d4edda;"></div>
+                <div>
+                    <div style="font-weight: 600; color: #1a1a2e;">Accepted </div>
+                    <div style="font-size: 13px; color: #888;">{{ application.updated_at|date:"M d, Y" }}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 4px;">Congratulations! You've been accepted for this position.</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if application.status == 'REJECTED' %}
+            <div style="position: relative; margin-bottom: 20px;">
+                <div style="position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #dc3545; border: 3px solid #f8d7da;"></div>
+                <div>
+                    <div style="font-weight: 600; color: #1a1a2e;">Rejected</div>
+                    <div style="font-size: 13px; color: #888;">{{ application.updated_at|date:"M d, Y" }}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 4px;">We're sorry, but you were not selected for this position. Keep trying!</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <a href="{% url 'student_dashboard:applications' %}" style="padding: 12px 30px; background: #6c757d; color: white; border-radius: 8px; text-decoration: none; font-weight: 500;">Back to Applications</a>
+        {% if application.status == 'PENDING' %}
+            <a href="#" style="padding: 12px 30px; background: #dc3545; color: white; border-radius: 8px; text-decoration: none; font-weight: 500;" onclick="return confirm('Withdraw this application?')">Withdraw</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}{{ internship.title }} - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}{{ internship.title }}{% endblock %}
+{% block page_subtitle %}{{ internship.organization.name }} • {{ internship.location }}{% endblock %}
+
+{% block content %}
+<div class="content-grid">
+    <div>
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-info-circle"></i> Job Description</div>
+            <p style="color: #4b5563; line-height: 1.8;">{{ internship.description }}</p>
+            
+            <div style="margin-top: 1.5rem;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Required Skills</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    {% for skill in internship.required_skills %}
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.9rem;">{{ skill }}</span>
+                    {% empty %}
+                    <span style="color: #6b7280;">No specific skills listed</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div style="margin-top: 1rem;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Preferred Skills</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    {% for skill in internship.preferred_skills %}
+                    <span style="background: #f0fdf4; color: #059669; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.9rem;">{{ skill }}</span>
+                    {% empty %}
+                    <span style="color: #6b7280;">No preferred skills listed</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if internship.requirements %}
+            <div style="margin-top: 1rem;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Requirements</h4>
+                <p style="color: #4b5563;">{{ internship.requirements }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div>
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-robot"></i> AI Match Score</div>
+            <div style="text-align: center; padding: 1rem 0;">
+                <div style="font-size: 3rem; font-weight: 800; color: #2563eb;">{{ ai_match_score }}%</div>
+                <div style="color: #6b7280; font-size: 0.9rem;">Your Match Rate</div>
+                <div style="width: 100%; height: 10px; background: #e5e7eb; border-radius: 10px; margin-top: 1rem;">
+                    <div style="width: {{ ai_match_score }}%; height: 100%; background: #2563eb; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-briefcase"></i> Job Details</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Category</span>
+                    <span>{{ internship.get_category_display }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Location</span>
+                    <span>{{ internship.location }}</span>
+                </div>
+                {% if internship.stipend %}
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Stipend</span>
+                    <span>${{ internship.stipend }}/month</span>
+                </div>
+                {% endif %}
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">Applicants</span>
+                    <span>{{ internship.current_applicants }} / {{ internship.max_applicants }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                {% if has_applied %}
+                <button style="padding: 0.8rem; background: #d1fae5; color: #059669; border: 2px solid #059669; border-radius: 8px; font-weight: 600; cursor: not-allowed;" disabled>
+                    <i class="fas fa-check"></i> Already Applied
+                </button>
+                {% else %}
+                <a href="{% url 'dashboard:apply_internship' internship.id %}" style="text-decoration: none;">
+                    <button style="width: 100%; padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </button>
+                </a>
+                {% endif %}
+                
+                <form method="post" action="{% url 'dashboard:save_internship' internship.id %}">
+                    {% csrf_token %}
+                    <button type="submit" style="width: 100%; padding: 0.8rem; background: {% if is_saved %}#ef4444{% else %}transparent{% endif %}; color: {% if is_saved %}white{% else %}#2563eb{% endif %}; border: 2px solid {% if is_saved %}#ef4444{% else %}#2563eb{% endif %}; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-heart"></i> {% if is_saved %}Unsave{% else %}Save{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

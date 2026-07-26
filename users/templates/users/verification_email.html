@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verification Pending — Commercial-Grade AI-Powered Internship Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: #ffffff;
+            max-width: 480px;
+            width: 100%;
+            padding: 48px 40px;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 20, 50, 0.08);
+            text-align: center;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1a33;
+            margin-bottom: 12px;
+        }
+        p {
+            color: #5b6a87;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 32px;
+            background: #1f2a44;
+            color: white;
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: #0b1a33;
+        }
+        .sub-info {
+            color: #888;
+            font-size: 13px;
+            background: #f7f9fc;
+            padding: 12px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📧</div>
+        <h1>Verification Email Sent</h1>
+        <p>We've sent a verification link to your email address.</p>
+        <p>Please check your inbox and click the link to verify your account.</p>
+        <p class="sub-info">
+            After verification, an administrator will assign you to your institution and students.
+        </p>
+        <a href="{% url 'homepage:home' %}" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

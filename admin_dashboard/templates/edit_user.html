@@ -1,0 +1,30 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Edit User{% endblock %}
+{% block page_subtitle %}Edit user: {{ user.username }}{% endblock %}
+
+{% block admin_content %}
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" value="{{ user.username }}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ user.email }}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select name="role" class="form-control">
+                <option value="user" {% if not user.is_staff %}selected{% endif %}>User</option>
+                <option value="staff" {% if user.is_staff and not user.is_superuser %}selected{% endif %}>Staff</option>
+                <option value="admin" {% if user.is_superuser %}selected{% endif %}>Admin</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-primary">Update User</button>
+        <a href="{% url 'admin_dashboard:users' %}" class="btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

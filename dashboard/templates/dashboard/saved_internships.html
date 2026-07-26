@@ -1,0 +1,46 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Saved Internships - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Saved Internships{% endblock %}
+{% block page_subtitle %}Your saved internship opportunities.{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% if saved %}
+        {% for item in saved %}
+        <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="font-weight: 600;">{{ item.internship.title }}</h3>
+                <div style="color: #6b7280; font-size: 0.9rem;">{{ item.internship.organization.name }} • {{ item.internship.location }}</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">{{ item.internship.get_category_display }}</span>
+                    {% if item.internship.stipend %}
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">${{ item.internship.stipend }}/mo</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.8rem;">
+                <a href="{% url 'dashboard:internship_detail' item.internship.id %}" style="padding: 0.5rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; text-decoration: none; cursor: pointer;">
+                    View Details
+                </a>
+                <form method="post" action="{% url 'dashboard:save_internship' item.internship.id %}">
+                    {% csrf_token %}
+                    <button type="submit" style="padding: 0.5rem 1.2rem; background: transparent; color: #ef4444; border: 1px solid #ef4444; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-heart"></i> Unsave
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="background: white; padding: 3rem; border-radius: 16px; border: 1px solid #e5e7eb; text-align: center;">
+            <i class="fas fa-heart" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+            <h3 style="color: #6b7280;">No Saved Internships</h3>
+            <p style="color: #9ca3af;">Save internships you're interested in!</p>
+            <a href="{% url 'internships:browse' %}" style="display: inline-block; margin-top: 1rem; padding: 0.6rem 2rem; background: #2563eb; color: white; border-radius: 8px; text-decoration: none;">
+                Browse Internships
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

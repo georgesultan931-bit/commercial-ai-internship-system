@@ -1,0 +1,130 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.2rem;">My Profile</h1>
+            <p style="color: #6b7280;">Manage your personal information and documents</p>
+        </div>
+        <a href="{% url 'users:edit_profile' %}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Profile
+        </a>
+    </div>
+
+    <!-- Profile Card -->
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2rem;">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 2rem; color: white;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; color: white; overflow: hidden;">
+                    {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 0.2rem;">{{ user.first_name }} {{ user.last_name }}</h2>
+                    <p style="opacity: 0.9;">{{ profile.get_role_display }}</p>
+                    {% if profile.organization %}
+                    <p style="opacity: 0.8; font-size: 0.9rem;">{{ profile.organization.name }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div style="padding: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: #2563eb;">Personal Information</h3>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div><strong>Email:</strong> {{ user.email }}</div>
+                        <div><strong>Phone:</strong> {{ profile.phone_number|default:"Not provided" }}</div>
+                        <div><strong>Bio:</strong> {{ profile.bio|default:"Not provided" }}</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: #10b981;">Academic Information</h3>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div><strong>Registration No:</strong> {{ profile.registration_number|default:"Not provided" }}</div>
+                        <div><strong>Course:</strong> {{ profile.course|default:"Not provided" }}</div>
+                        <div><strong>Faculty:</strong> {{ profile.faculty|default:"Not provided" }}</div>
+                        <div><strong>Year of Study:</strong> {{ profile.year_of_study|default:"Not provided" }}</div>
+                        <div><strong>GPA:</strong> {{ profile.gpa|default:"Not provided" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.8rem; color: #f59e0b;">Skills</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    {% for skill in profile.skills %}
+                    <span style="background: #dbeafe; color: #1e40af; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem;">
+                        {{ skill }}
+                    </span>
+                    {% empty %}
+                    <span style="color: #6b7280;">No skills added yet</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.8rem; color: #8b5cf6;">Documents</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; color: #dc2626;"></i>
+                        <p style="font-size: 0.8rem; margin-top: 0.3rem;">CV</p>
+                        {% if profile.cv %}
+                        <a href="{{ profile.cv.url }}" target="_blank" style="color: #2563eb; font-size: 0.8rem;">View</a>
+                        {% else %}
+                        <span style="color: #6b7280; font-size: 0.8rem;">Not uploaded</span>
+                        {% endif %}
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <i class="fas fa-file-alt" style="font-size: 2rem; color: #2563eb;"></i>
+                        <p style="font-size: 0.8rem; margin-top: 0.3rem;">Transcript</p>
+                        {% if profile.transcript %}
+                        <a href="{{ profile.transcript.url }}" target="_blank" style="color: #2563eb; font-size: 0.8rem;">View</a>
+                        {% else %}
+                        <span style="color: #6b7280; font-size: 0.8rem;">Not uploaded</span>
+                        {% endif %}
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <i class="fas fa-award" style="font-size: 2rem; color: #f59e0b;"></i>
+                        <p style="font-size: 0.8rem; margin-top: 0.3rem;">Certificates</p>
+                        {% if profile.certificates %}
+                        <a href="{{ profile.certificates.url }}" target="_blank" style="color: #2563eb; font-size: 0.8rem;">View</a>
+                        {% else %}
+                        <span style="color: #6b7280; font-size: 0.8rem;">Not uploaded</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.8rem; color: #2563eb;">AI Match Score</h3>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="flex: 1; background: #e5e7eb; border-radius: 8px; height: 20px; overflow: hidden;">
+                        <div style="width: {{ match_score|default:0 }}%; background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; transition: width 0.5s;"></div>
+                    </div>
+                    <span style="font-weight: 600; color: #2563eb; font-size: 1.2rem;">{{ match_score|default:0 }}%</span>
+                </div>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-top: 0.5rem;">
+                    Your AI match score with recommended internships.
+                </p>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; display: flex; gap: 1rem;">
+                <a href="{% url 'users:edit_profile' %}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+                <a href="{% url 'account_logout' %}" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

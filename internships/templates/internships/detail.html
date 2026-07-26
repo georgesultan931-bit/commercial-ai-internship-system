@@ -1,0 +1,104 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}{{ internship.title }}{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h1 style="font-size: 24px; color: #0b1a33;">{{ internship.title }}</h1>
+                <p style="color: #888; font-size: 14px;">
+                    <i class="fas fa-building" style="margin-right: 5px;"></i>
+                    {{ internship.posted_by.get_full_name|default:internship.posted_by.username }}
+                </p>
+                <p style="color: #888; font-size: 14px;">
+                    <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i>
+                    {{ internship.location }}
+                </p>
+            </div>
+            <div>
+                <span style="background: {% if internship.is_active %}#d1fae5{% else %}#fee2e2{% endif %}; color: {% if internship.is_active %}#059669{% else %}#dc2626{% endif %}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">
+                    {% if internship.is_active %}✅ Active{% else %}❌ Closed{% endif %}
+                </span>
+                <span style="display: block; margin-top: 5px; background: {% if internship.is_application_open %}#d1fae5{% else %}#fee2e2{% endif %}; color: {% if internship.is_application_open %}#059669{% else %}#dc2626{% endif %}; padding: 4px 12px; border-radius: 20px; font-size: 12px; text-align: center;">
+                    {% if internship.is_application_open %}📥 Accepting Applications{% else %}🔒 Not Accepting Applications{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #eef2f6;">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Type</label>
+                <p style="font-size: 14px; color: #0b1a33;">{{ internship.get_type_display|default:"N/A" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Duration</label>
+                <p style="font-size: 14px; color: #0b1a33;">{{ internship.duration|default:"Not specified" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Deadline</label>
+                <p style="font-size: 14px; color: #0b1a33;">{{ internship.deadline|date:"Y-m-d" }}</p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Max Applicants</label>
+                <p style="font-size: 14px; color: #0b1a33;">{{ internship.max_applicants|default:"Unlimited" }}</p>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Description</label>
+            <p style="font-size: 15px; color: #0b1a33; line-height: 1.8; margin-top: 5px;">{{ internship.description|linebreaks }}</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Requirements</label>
+            <p style="font-size: 15px; color: #0b1a33; line-height: 1.8; margin-top: 5px;">{{ internship.requirements|linebreaks }}</p>
+        </div>
+
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eef2f6; display: flex; gap: 12px; flex-wrap: wrap;">
+            {% if user.is_authenticated %}
+                {% if is_admin %}
+                    <span style="background: #f1f4f9; color: #888; padding: 12px 32px; border-radius: 40px; font-weight: 600;">
+                        👔 Admin - View Only
+                    </span>
+                {% elif is_employer %}
+                    <span style="background: #f1f4f9; color: #888; padding: 12px 32px; border-radius: 40px; font-weight: 600;">
+                        👔 Your Internship
+                    </span>
+                {% elif internship.is_active and internship.is_application_open and not has_applied %}
+                    <a href="{% url 'internships:apply' internship.id %}" style="background: #22c55e; color: white; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 600;">
+                        📝 Apply Now
+                    </a>
+                {% elif has_applied %}
+                    <span style="background: #fef3c7; color: #d97706; padding: 12px 32px; border-radius: 40px; font-weight: 600;">
+                        ⏳ Already Applied
+                    </span>
+                {% elif not internship.is_application_open %}
+                    <span style="background: #fee2e2; color: #dc2626; padding: 12px 32px; border-radius: 40px; font-weight: 600;">
+                        🔒 Applications Closed
+                    </span>
+                {% endif %}
+                
+                {% if not is_employer and not is_admin %}
+                    {% if not is_saved %}
+                        <a href="{% url 'internships:save' internship.id %}" style="background: #f1f4f9; color: #1f2a44; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 600;">
+                            ⭐ Save
+                        </a>
+                    {% else %}
+                        <a href="{% url 'internships:unsave' internship.id %}" style="background: #f1f4f9; color: #ef4444; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 600;">
+                            ⭐ Unsave
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            
+            <a href="{% url 'internships:browse' %}" style="background: #f1f4f9; color: #1f2a44; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-arrow-left"></i> Back to Browse
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>AI Insights</h1>
+    <p>AI-powered insights and analytics</p>
+
+    <div style="background: white; padding: 40px; border-radius: 10px; text-align: center; margin-top: 20px;">
+        <p style="font-size: 48px; margin-bottom: 15px;"></p>
+        <h2 style="color: #1a1a2e; margin-bottom: 10px;">AI Insights Coming Soon</h2>
+        <p style="color: #666; max-width: 500px; margin: 0 auto 20px auto;">
+            AI-powered analytics and insights for your platform will be available here.
+        </p>
+        <a href="{% url 'admin_dashboard:dashboard' %}" style="background: #007bff; color: white; padding: 10px 25px; border-radius: 6px; text-decoration: none; display: inline-block;">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

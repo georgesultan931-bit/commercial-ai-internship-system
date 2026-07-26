@@ -1,0 +1,71 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Choose Registration - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 1200px; margin: 4rem auto; min-height: 60vh;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: #1a1a2e; text-align: center; margin-bottom: 0.5rem;">Choose Your Registration Type</h1>
+    <p style="text-align: center; color: #6b7280; margin-bottom: 3rem;">Select how you want to use the platform</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+        
+        <!-- Student -->
+        <a href="{% url 'users:register_student' %}" style="text-decoration: none;">
+            <div style="background: white; padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; border: 3px solid transparent;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">👨‍🎓</div>
+                <h3 style="color: #1a1a2e; margin-bottom: 0.5rem;">Student</h3>
+                <p style="color: #6b7280;">Find internships and kickstart your career</p>
+            </div>
+        </a>
+        
+        <!-- Employer -->
+        <a href="{% url 'users:register_employer' %}" style="text-decoration: none;">
+            <div style="background: white; padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; border: 3px solid transparent;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🏢</div>
+                <h3 style="color: #1a1a2e; margin-bottom: 0.5rem;">Employer</h3>
+                <p style="color: #6b7280;">Post internships and find talented students</p>
+            </div>
+        </a>
+        
+        <!-- Institution -->
+        <a href="{% url 'users:register_institution' %}" style="text-decoration: none;">
+            <div style="background: white; padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; border: 3px solid transparent;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎓</div>
+                <h3 style="color: #1a1a2e; margin-bottom: 0.5rem;">Institution</h3>
+                <p style="color: #6b7280;">Manage student internships and monitor progress</p>
+            </div>
+        </a>
+        
+        <!-- Supervisor -->
+        <a href="{% url 'users:register_supervisor' %}" style="text-decoration: none;">
+            <div style="background: white; padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; border: 3px solid transparent;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">👨‍💼</div>
+                <h3 style="color: #1a1a2e; margin-bottom: 0.5rem;">Supervisor</h3>
+                <p style="color: #6b7280;">Monitor and evaluate student performance</p>
+            </div>
+        </a>
+        
+        <!-- Government -->
+        <a href="{% url 'users:register_government' %}" style="text-decoration: none;">
+            <div style="background: white; padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; border: 3px solid transparent;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🏛️</div>
+                <h3 style="color: #1a1a2e; margin-bottom: 0.5rem;">Government</h3>
+                <p style="color: #6b7280;">National internship administration</p>
+            </div>
+        </a>
+        
+        <!-- NGO -->
+        <a href="{% url 'users:register_ngo' %}" style="text-decoration: none;">
+            <div style="background: white; padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; border: 3px solid transparent;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🤝</div>
+                <h3 style="color: #1a1a2e; margin-bottom: 0.5rem;">NGO</h3>
+                <p style="color: #6b7280;">Manage internship opportunities</p>
+            </div>
+        </a>
+    </div>
+    
+    <p style="text-align: center; margin-top: 2rem; color: #6b7280;">
+        Already have an account? <a href="{% url 'users:login' %}" style="color: #2563eb; text-decoration: none; font-weight: 600;">Login</a>
+    </p>
+</section>
+{% endblock %}

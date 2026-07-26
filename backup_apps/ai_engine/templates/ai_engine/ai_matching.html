@@ -1,0 +1,147 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}AI Matching{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">AI Matching</h1>
+    <p style="color: #6b7280; margin-bottom: 2rem;">AI-powered matching between students and internships.</p>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div style="margin-bottom: 2rem;">
+        {% for message in messages %}
+        <div style="padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; {% if message.tags == 'success' %}background: #d1fae5; color: #065f46;{% else %}background: #fee2e2; color: #991b1b;{% endif %}">
+            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Left: Upload Resume -->
+        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+                <i class="fas fa-upload" style="color: #2563eb;"></i> Upload Resume
+            </h3>
+            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">Upload your resume (PDF or DOCX) to get AI-powered analysis and matching.</p>
+            
+            <form method="post" enctype="multipart/form-data" action="{% url 'ai_engine:upload_resume' %}">
+                {% csrf_token %}
+                <div style="margin-bottom: 1rem;">
+                    <input type="file" name="resume" accept=".pdf,.docx" required 
+                           style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                    <small style="color: #6b7280;">Supported formats: PDF, DOCX (Max 5MB)</small>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem;">
+                    <i class="fas fa-upload"></i> Analyze Resume
+                </button>
+            </form>
+            
+            {% if has_resume %}
+            <div style="margin-top: 1rem; padding: 1rem; background: #d1fae5; border-radius: 8px; color: #065f46;">
+                <i class="fas fa-check-circle"></i> Resume uploaded and analyzed!
+                <br>
+                <small>Skills found: {{ skills|join:", " }}</small>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: AI Features -->
+        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+                <i class="fas fa-robot" style="color: #2563eb;"></i> AI Features
+            </h3>
+            <div style="display: grid; gap: 1rem;">
+                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #dbeafe; border-radius: 8px; text-decoration: none; color: #1e40af; transition: all 0.3s;">
+                    <i class="fas fa-robot" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <h4 style="font-size: 1rem;">View Match Scores</h4>
+                        <p style="font-size: 0.8rem; opacity: 0.8;">See how well you match with internships</p>
+                    </div>
+                    <span style="margin-left: auto;">→</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #d1fae5; border-radius: 8px; text-decoration: none; color: #065f46; transition: all 0.3s;">
+                    <i class="fas fa-brain" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <h4 style="font-size: 1rem;">Get Recommendations</h4>
+                        <p style="font-size: 0.8rem; opacity: 0.8;">Personalized internship suggestions</p>
+                    </div>
+                    <span style="margin-left: auto;">→</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px; text-decoration: none; color: #92400e; transition: all 0.3s;">
+                    <i class="fas fa-chart-line" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <h4 style="font-size: 1rem;">View Analytics</h4>
+                        <p style="font-size: 0.8rem; opacity: 0.8;">Track your application performance</p>
+                    </div>
+                    <span style="margin-left: auto;">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+            <i class="fas fa-star" style="color: #f59e0b;"></i> Your Matches
+        </h3>
+        
+        {% if recommendations %}
+        <div style="display: grid; gap: 1rem;">
+            {% for rec in recommendations %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #2563eb;">
+                <div>
+                    <h4 style="font-size: 1rem;">{{ rec.internship.title }}</h4>
+                    <p style="color: #6b7280; font-size: 0.9rem;">{{ rec.internship.organization.name }}</p>
+                    <p style="color: #6b7280; font-size: 0.8rem;">{{ rec.internship.location }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="padding: 0.3rem 1rem; border-radius: 20px; background: #2563eb; color: white; font-weight: 600; font-size: 1.1rem;">
+                        {{ rec.score }}%
+                    </span>
+                    <br>
+                    <a href="{% url 'internships:internship_detail' rec.internship.pk %}" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.3rem 1rem; margin-top: 0.5rem; display: inline-block;">
+                        View Details
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 3rem; color: #6b7280;">
+            <i class="fas fa-robot" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+            <p>Upload your resume to get AI-powered internship matches.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Your matches will appear here once you upload and analyze your resume.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Matches -->
+    {% if recent_matches %}
+    <div style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+            <i class="fas fa-history" style="color: #6b7280;"></i> Recent Applications
+        </h3>
+        <div style="display: grid; gap: 0.8rem;">
+            {% for match in recent_matches %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 8px;">
+                <div>
+                    <h4 style="font-size: 0.95rem;">{{ match.internship.title }}</h4>
+                    <p style="color: #6b7280; font-size: 0.85rem;">{{ match.internship.organization.name }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; background: {% if match.status == 'APPLIED' %}#dbeafe; color: #1e40af{% elif match.status == 'REVIEWING' %}#fef3c7; color: #92400e{% elif match.status == 'INTERVIEWING' %}#ede9fe; color: #5b21b6{% elif match.status == 'OFFERED' %}#fef3c7; color: #92400e{% elif match.status == 'HIRED' %}#d1fae5; color: #065f46{% elif match.status == 'REJECTED' %}#fee2e2; color: #991b1b{% endif %};">
+                        {{ match.get_status_display }}
+                    </span>
+                    <br>
+                    <small style="color: #6b7280; font-size: 0.7rem;">{{ match.applied_at|timesince }} ago</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

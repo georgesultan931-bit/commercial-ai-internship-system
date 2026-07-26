@@ -1,0 +1,185 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Admin Dashboard - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block page_subtitle %}Welcome back, {{ user.first_name }}! Manage the platform and users.{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-users"></i></div>
+        <div class="label">Total Users</div>
+        <div class="value">{{ total_users }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> Active users</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="label">Active Internships</div>
+        <div class="value">{{ active_internships }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> {{ pending_internships }} pending</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-file-alt"></i></div>
+        <div class="label">Total Applications</div>
+        <div class="value">{{ total_applications }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> {{ total_placements }} placed</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-robot"></i></div>
+        <div class="label">AI Match Score</div>
+        <div class="value">{{ avg_ai_match }}%</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> Average match</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <!-- Left Column -->
+    <div>
+        <!-- User Breakdown -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-users"></i> User Breakdown</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem;">
+                <div style="background: #eff6ff; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">{{ total_students }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Students</div>
+                </div>
+                <div style="background: #f0fdf4; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">{{ total_employers }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Employers</div>
+                </div>
+                <div style="background: #f5f3ff; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6;">{{ total_institutions }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Institutions</div>
+                </div>
+                <div style="background: #fef3c7; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">{{ total_supervisors }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Supervisors</div>
+                </div>
+                <div style="background: #fce4ec; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #e11d48;">{{ total_coordinators }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Coordinators</div>
+                </div>
+                <div style="background: #e8f5e9; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #2e7d32;">{{ total_interviews }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Interviews</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activities -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-clock"></i> Recent Activities</div>
+            
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #6b7280; margin: 0.5rem 0;">Recent Registrations</h4>
+            {% if recent_users %}
+                {% for user in recent_users %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">{{ user.get_full_name|default:user.email }}</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">
+    {% if user.is_staff %}Administrator{% else %}User{% endif %}
+</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: #9ca3af;">{{ user.date_joined|timesince }} ago</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 0.5rem 0;">No recent registrations.</p>
+            {% endif %}
+            
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #6b7280; margin: 0.5rem 0;">Recent Internships</h4>
+            {% if recent_internships %}
+                {% for internship in recent_internships %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">{{ internship.title }}</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">{{ internship.organization.name }}</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: #9ca3af;">{{ internship.created_at|timesince }} ago</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 0.5rem 0;">No recent internships.</p>
+            {% endif %}
+            
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #6b7280; margin: 0.5rem 0;">Recent Applications</h4>
+            {% if recent_applications %}
+                {% for app in recent_applications %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">{{ app.internship.title }}</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">{{ app.student.get_full_name|default:app.student.email }}</div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: #9ca3af;">{{ app.applied_at|timesince }} ago</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 0.5rem 0;">No recent applications.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div>
+        <!-- Quick Actions -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-bolt"></i> Quick Actions</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #eff6ff; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-user-plus" style="color: #2563eb; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Add New User</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #f0fdf4; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-plus-circle" style="color: #10b981; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Post Internship</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #f5f3ff; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-check-circle" style="color: #8b5cf6; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Approve Pending</span>
+                    <span style="margin-left: auto; background: #ef4444; color: white; padding: 0.1rem 0.6rem; border-radius: 20px; font-size: 0.7rem;">{{ pending_internships }}</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #fef3c7; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-chart-bar" style="color: #d97706; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Generate Report</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #fce4ec; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-cog" style="color: #e11d48; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">System Settings</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- AI Match Statistics -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-robot"></i> AI Match Statistics</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Average Match Score</span>
+                    <span style="font-weight: 600; color: #2563eb;">{{ avg_ai_match }}%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Total Applications</span>
+                    <span style="font-weight: 600;">{{ total_applications }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Total Placements</span>
+                    <span style="font-weight: 600; color: #10b981;">{{ total_placements }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                    <span style="color: #6b7280;">Placement Rate</span>
+                    <span style="font-weight: 600; color: #8b5cf6;">
+                        {% if total_applications > 0 %}
+                            {{ total_placements|divisibleby:total_applications|floatformat:1 }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

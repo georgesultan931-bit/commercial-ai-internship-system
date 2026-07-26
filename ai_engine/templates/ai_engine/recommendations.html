@@ -1,0 +1,122 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="recommendations-container">
+    <div class="page-header">
+        <h1>AI Recommendations</h1>
+        <p>Personalized recommendations for your career growth</p>
+    </div>
+
+    <div class="coming-soon">
+        <div class="icon"></div>
+        <h2>AI Recommendations Coming Soon</h2>
+        <p>Get personalized career recommendations based on your skills and interests</p>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="feature-icon"></span>
+                <div class="feature-info">
+                    <h4>Skill-Based Matching</h4>
+                    <p>Get matched with internships based on your skills</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon"></span>
+                <div class="feature-info">
+                    <h4>Career Path Planning</h4>
+                    <p>AI-powered career path recommendations</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon"></span>
+                <div class="feature-info">
+                    <h4>Skill Gap Analysis</h4>
+                    <p>Identify skills you need to develop</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'homepage:dashboard' %}" class="btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    .recommendations-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .page-header {
+        margin-bottom: 30px;
+    }
+    .page-header h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 5px 0;
+    }
+    .page-header p {
+        color: #666;
+        font-size: 16px;
+        margin: 0;
+    }
+    .coming-soon {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .coming-soon .icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+    }
+    .coming-soon h2 {
+        color: #1a1a2e;
+        margin-bottom: 15px;
+    }
+    .coming-soon p {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+    .feature-list {
+        text-align: left;
+        margin: 30px 0;
+    }
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+        margin-bottom: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    .feature-icon {
+        font-size: 28px;
+    }
+    .feature-info h4 {
+        margin: 0 0 5px 0;
+        color: #1a1a2e;
+    }
+    .feature-info p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+    .btn-primary {
+        display: inline-block;
+        padding: 12px 35px;
+        background: #007bff;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+    .btn-primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,378 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Student Dashboard</h1>
+        <p>Welcome back, {{ user.get_full_name|default:user.username }}! Track your internship journey.</p>
+    </div>
+
+    <!-- Profile Completion -->
+    <div style="background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <span style="font-weight: 600; color: #1a1a2e;">Profile Completion</span>
+                <span style="color: #888; font-size: 14px; margin-left: 10px;">Complete your profile to get better matches</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 200px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                    <div style="width: {{ profile_completion|default:0 }}%; height: 100%; background: #8b5cf6; border-radius: 4px;"></div>
+                </div>
+                <span style="font-weight: 700; color: #8b5cf6; font-size: 18px;">{{ profile_completion|default:0 }}%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"></div>
+            <div class="stat-content">
+                <h3>{{ total_internships|default:0 }}</h3>
+                <p>Available Internships</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"></div>
+            <div class="stat-content">
+                <h3>{{ applied_count|default:0 }}</h3>
+                <p>Applied</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"></div>
+            <div class="stat-content">
+                <h3>{{ saved_count|default:0 }}</h3>
+                <p>Saved</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"></div>
+            <div class="stat-content">
+                <h3>{{ accepted_count|default:0 }}</h3>
+                <p>Accepted</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Status Breakdown -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-bottom: 25px;">
+        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 3px solid #fef3c7;">
+            <span style="font-size: 18px; font-weight: 700; color: #92400e;">{{ pending_count|default:0 }}</span>
+            <p style="font-size: 11px; color: #888; margin: 2px 0 0 0;">Pending</p>
+        </div>
+        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 3px solid #dbeafe;">
+            <span style="font-size: 18px; font-weight: 700; color: #1e40af;">{{ reviewing_count|default:0 }}</span>
+            <p style="font-size: 11px; color: #888; margin: 2px 0 0 0;">Reviewing</p>
+        </div>
+        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 3px solid #c3d2f7;">
+            <span style="font-size: 18px; font-weight: 700; color: #3730a3;">{{ shortlisted_count|default:0 }}</span>
+            <p style="font-size: 11px; color: #888; margin: 2px 0 0 0;">Shortlisted</p>
+        </div>
+        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 3px solid #d1fae5;">
+            <span style="font-size: 18px; font-weight: 700; color: #065f46;">{{ interview_count|default:0 }}</span>
+            <p style="font-size: 11px; color: #888; margin: 2px 0 0 0;">Interview</p>
+        </div>
+        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 3px solid #d4edda;">
+            <span style="font-size: 18px; font-weight: 700; color: #155724;">{{ accepted_count|default:0 }}</span>
+            <p style="font-size: 11px; color: #888; margin: 2px 0 0 0;">Accepted</p>
+        </div>
+        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 3px solid #f8d7da;">
+            <span style="font-size: 18px; font-weight: 700; color: #721c24;">{{ rejected_count|default:0 }}</span>
+            <p style="font-size: 11px; color: #888; margin: 2px 0 0 0;">Rejected</p>
+        </div>
+    </div>
+
+    <div class="dashboard-actions">
+        <a href="{% url 'student_dashboard:internships' %}" class="action-btn primary">
+            <span>Browse Internships</span>
+        </a>
+        <a href="{% url 'student_dashboard:applications' %}" class="action-btn secondary">
+            <span>My Applications</span>
+        </a>
+        <a href="{% url 'student_dashboard:profile' %}" class="action-btn secondary">
+            <span>My Profile</span>
+        </a>
+        <a href="{% url 'student_dashboard:recommended' %}" class="action-btn secondary" style="background: #8b5cf6; color: white;">
+            <span>AI Recommendations</span>
+        </a>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card recent-applications">
+            <div class="card-header">
+                <h3>Recent Applications</h3>
+                <a href="{% url 'student_dashboard:applications' %}" class="view-all">View All →</a>
+            </div>
+            <div class="card-content">
+                {% if recent_applications %}
+                    {% for app in recent_applications %}
+                    <div class="application-item">
+                        <div class="app-info">
+                            <strong>{{ app.internship.title }}</strong>
+                            <p>{{ app.internship.company }}</p>
+                            <span class="app-date">{{ app.applied_date|date:"M d, Y" }}</span>
+                        </div>
+                        <span class="status-badge status-{{ app.status|lower }}">
+                            {{ app.get_status_display }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-data">You haven't applied to any internships yet.</p>
+                    <a href="{% url 'student_dashboard:internships' %}" class="btn-post-first">Browse Internships</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dashboard-card recommended">
+            <div class="card-header">
+                <h3>Recommended Internships</h3>
+                <a href="{% url 'student_dashboard:recommended' %}" class="view-all">View All →</a>
+            </div>
+            <div class="card-content">
+                {% if recommended %}
+                    {% for internship in recommended %}
+                    <div class="internship-item">
+                        <div class="internship-info">
+                            <strong>{{ internship.title }}</strong>
+                            <p>{{ internship.company }} • {{ internship.location }}</p>
+                        </div>
+                        <a href="{% url 'student_dashboard:internship_detail' internship.pk %}" class="btn-small">View</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-data">Complete your profile for recommendations.</p>
+                    <a href="{% url 'student_dashboard:profile' %}" class="btn-post-first">Update Profile</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Feed -->
+    <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">Recent Activity</h3>
+        {% if recent_activities %}
+            {% for activity in recent_activities %}
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <div>
+                    <div style="font-weight: 500; color: #1a1a2e;">
+                        {% if activity.action == 'applied' %}📝 Applied to{% elif activity.action == 'saved' %} Saved{% elif activity.action == 'viewed' %}👁️ Viewed{% endif %}
+                        <span style="color: #007bff;">{{ activity.internship.title }}</span>
+                    </div>
+                    <div style="font-size: 13px; color: #888;">{{ activity.internship.company }}</div>
+                </div>
+                <div style="font-size: 12px; color: #aaa;">{{ activity.created_at|timesince }} ago</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #888; text-align: center; padding: 20px;">No recent activity</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .dashboard-header {
+        margin-bottom: 30px;
+    }
+    .dashboard-header h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 5px 0;
+    }
+    .dashboard-header p {
+        color: #666;
+        font-size: 16px;
+        margin: 0;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .stat-icon {
+        font-size: 32px;
+    }
+    .stat-content h3 {
+        font-size: 28px;
+        margin: 0;
+        color: #1a1a2e;
+    }
+    .stat-content p {
+        margin: 0;
+        color: #888;
+        font-size: 14px;
+    }
+    .dashboard-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+    .action-btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+    }
+    .action-btn.primary {
+        background: #007bff;
+        color: white;
+    }
+    .action-btn.primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+    .action-btn.secondary {
+        background: #e5e7eb;
+        color: #1a1a2e;
+    }
+    .action-btn.secondary:hover {
+        background: #d1d5db;
+    }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .dashboard-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f2f5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .card-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #1a1a2e;
+    }
+    .view-all {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .view-all:hover {
+        text-decoration: underline;
+    }
+    .card-content {
+        padding: 15px 20px;
+    }
+    .application-item, .internship-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    .application-item:last-child, .internship-item:last-child {
+        border-bottom: none;
+    }
+    .app-info strong, .internship-info strong {
+        display: block;
+        color: #1a1a2e;
+    }
+    .app-info p, .internship-info p {
+        margin: 2px 0;
+        color: #666;
+        font-size: 14px;
+    }
+    .app-date {
+        font-size: 12px;
+        color: #999;
+    }
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-reviewing { background: #dbeafe; color: #1e40af; }
+    .status-shortlisted { background: #c3d2f7; color: #3730a3; }
+    .status-interview { background: #d1fae5; color: #065f46; }
+    .status-accepted { background: #d4edda; color: #155724; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+    .no-data {
+        color: #888;
+        text-align: center;
+        padding: 20px 0;
+    }
+    .btn-post-first {
+        display: block;
+        text-align: center;
+        padding: 10px;
+        background: #007bff;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-top: 10px;
+    }
+    .btn-post-first:hover {
+        background: #0056b3;
+        color: white;
+    }
+    .btn-small {
+        padding: 4px 12px;
+        background: #007bff;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 12px;
+    }
+    .btn-small:hover {
+        background: #0056b3;
+        color: white;
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .stat-card {
+            padding: 15px;
+        }
+        .dashboard-actions {
+            flex-direction: column;
+        }
+        .action-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

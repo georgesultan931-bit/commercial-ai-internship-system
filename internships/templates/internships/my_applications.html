@@ -1,0 +1,65 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>My Applications</h1>
+    <p>Track all your internship applications</p>
+
+    {% if applications %}
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+            {% for application in applications %}
+            <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0;">{{ application.internship.title }}</h3>
+                        <p style="color: #666; margin: 0;">{{ application.internship.company }} • {{ application.internship.location }}</p>
+                        <p style="color: #888; font-size: 14px; margin: 5px 0 0 0;">Applied {{ application.applied_date|timesince }} ago</p>
+                    </div>
+                    <span style="padding: 4px 15px; border-radius: 20px; font-size: 13px; font-weight: 500; 
+                        {% if application.status == 'PENDING' %}background: #fef3c7; color: #92400e;
+                        {% elif application.status == 'REVIEWING' %}background: #dbeafe; color: #1e40af;
+                        {% elif application.status == 'SHORTLISTED' %}background: #c3d2f7; color: #3730a3;
+                        {% elif application.status == 'INTERVIEW' %}background: #d1fae5; color: #065f46;
+                        {% elif application.status == 'ACCEPTED' %}background: #d4edda; color: #155724;
+                        {% elif application.status == 'REJECTED' %}background: #f8d7da; color: #721c24;
+                        {% else %}background: #e5e7eb; color: #6b7280;{% endif %}">
+                        {{ application.get_status_display }}
+                    </span>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0f2f5; display: flex; gap: 10px;">
+                    <a href="{% url 'internships:internship_detail' application.internship.pk %}" style="background: #007bff; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">View Internship</a>
+                    {% if application.status == 'PENDING' %}
+                        <a href="{% url 'internships:withdraw_application' application.pk %}" style="background: #dc3545; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;" onclick="return confirm('Withdraw this application?')">Withdraw</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 10px; margin-top: 20px;">
+            <p style="font-size: 48px; margin-bottom: 15px;"></p>
+            <h3 style="color: #1a1a2e; margin-bottom: 10px;">No Applications Yet</h3>
+            <p style="color: #666; margin-bottom: 20px;">Start browsing internships and apply!</p>
+            <a href="{% url 'internships:browse' %}" style="background: #007bff; color: white; padding: 10px 30px; border-radius: 6px; text-decoration: none; display: inline-block;">Browse Internships</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .container h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 5px 0;
+    }
+    .container > p {
+        color: #666;
+        font-size: 16px;
+        margin: 0 0 20px 0;
+    }
+</style>
+{% endblock %}

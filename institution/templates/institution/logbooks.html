@@ -1,0 +1,29 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Logbooks{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;"> Logbooks</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if logbooks %}
+            <div style="display: grid; gap: 15px;">
+                {% for log in logbooks %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px;">
+                        <h3 style="color: #0b1a33; font-size: 16px;">{{ log.student.user.get_full_name|default:log.student.user.username }}</h3>
+                        <p style="color: #888; font-size: 14px;">{{ log.entry|truncatechars:200 }}</p>
+                        <span style="color: #888; font-size: 12px;">{{ log.created_at|date:"Y-m-d H:i" }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;"></div>
+                <p>No logbook entries yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

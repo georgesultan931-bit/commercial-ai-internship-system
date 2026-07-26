@@ -1,0 +1,114 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Post Internship{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 30px;">
+        <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 5px;"> Post New Internship</h1>
+        <p style="color: #888; margin-bottom: 25px;">Fill in the details below to create a new internship opportunity</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; background: {% if message.tags == 'success' %}#ecfdf3{% else %}#fef2f2{% endif %}; color: {% if message.tags == 'success' %}#0b9f6c{% else %}#dc2626{% endif %}; border: 1px solid {% if message.tags == 'success' %}#a7f3d0{% else %}#fecaca{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'employer:post_internship' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Internship Title <span style="color: #dc2626;">*</span></label>
+                <input type="text" name="title" required style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;" placeholder="e.g., Software Engineering Intern">
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Company Image</label>
+                <input type="file" name="company_image" accept="image/*" style="width: 100%; padding: 10px; font-size: 14px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;">
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Description <span style="color: #dc2626;">*</span></label>
+                <textarea name="description" rows="6" required style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; resize: vertical; font-family: 'Inter', sans-serif;" placeholder="Describe the internship role, responsibilities, and what the intern will learn..."></textarea>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Requirements <span style="color: #dc2626;">*</span></label>
+                <textarea name="requirements" rows="4" required style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; resize: vertical; font-family: 'Inter', sans-serif;" placeholder="List the skills, qualifications, and requirements for this internship..."></textarea>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Location <span style="color: #dc2626;">*</span></label>
+                <input type="text" name="location" required style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;" placeholder="e.g., Nairobi, Kenya">
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Internship Type <span style="color: #dc2626;">*</span></label>
+                <select name="type" required style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;">
+                    <option value="">Select type...</option>
+                    <option value="full_time">Full Time</option>
+                    <option value="part_time">Part Time</option>
+                    <option value="remote">Remote</option>
+                    <option value="hybrid">Hybrid</option>
+                    <option value="internship">Internship</option>
+                    <option value="volunteer">Volunteer</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Duration</label>
+                <input type="text" name="duration" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;" placeholder="e.g., 3 months, 6 months, 1 year">
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Application Deadline <span style="color: #dc2626;">*</span></label>
+                <input type="date" name="deadline" required style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;">
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Maximum Applicants</label>
+                <input type="number" name="max_applicants" value="50" min="1" max="1000" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px;">
+            </div>
+
+            <!-- Status Toggle -->
+            <div style="margin-bottom: 18px; background: #f7f9fc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 10px;">Status</label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                        <input type="radio" name="is_active" value="true" checked> ✅ Open for Applications
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                        <input type="radio" name="is_active" value="false"> ❌ Closed
+                    </label>
+                </div>
+                <p style="font-size: 12px; color: #888; margin-top: 8px;">When open, students can apply. When closed, no new applications will be accepted.</p>
+            </div>
+
+            <!-- Application Open Toggle -->
+            <div style="margin-bottom: 18px; background: #f7f9fc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 10px;">Application Status</label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                        <input type="radio" name="is_application_open" value="true" checked> ✅ Open
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                        <input type="radio" name="is_application_open" value="false"> 🔒 Closed
+                    </label>
+                </div>
+                <p style="font-size: 12px; color: #888; margin-top: 8px;">Manually control whether applications are being accepted.</p>
+            </div>
+
+            <div style="margin-top: 25px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button type="submit" style="background: #4f46e5; color: white; padding: 14px 40px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 15px;">
+                    <i class="fas fa-plus-circle"></i> Post Internship
+                </button>
+                <a href="{% url 'employer:manage_internships' %}" style="background: #f1f4f9; color: #1f2a44; padding: 14px 40px; border-radius: 40px; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Messages{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;"> Messages</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if messages_list %}
+            <div style="display: grid; gap: 15px;">
+                {% for msg in messages_list %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <strong style="color: #0b1a33;">{{ msg.sender.username }}</strong>
+                                <span style="color: #888; font-size: 13px; margin-left: 10px;">{{ msg.created_at|date:"Y-m-d H:i" }}</span>
+                            </div>
+                            <span style="background: {% if msg.is_read %}#d1fae5{% else %}#fef3c7{% endif %}; color: {% if msg.is_read %}#059669{% else %}#d97706{% endif %}; padding: 2px 10px; border-radius: 12px; font-size: 12px;">
+                                {% if msg.is_read %}Read{% else %}Unread{% endif %}
+                            </span>
+                        </div>
+                        <p style="color: #666; margin-top: 8px;">{{ msg.content|truncatechars:150 }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;"></div>
+                <p>No messages yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

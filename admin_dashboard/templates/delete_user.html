@@ -1,0 +1,45 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Delete User{% endblock %}
+{% block page_subtitle %}Confirm user deletion{% endblock %}
+
+{% block admin_content %}
+<div class="delete-confirm">
+    <h2>Are you sure you want to delete "{{ user.username }}"?</h2>
+    <p>This action cannot be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">Yes, Delete</button>
+        <a href="{% url 'admin_dashboard:users' %}" class="btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<style>
+    .delete-confirm {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .delete-confirm h2 {
+        color: #dc3545;
+    }
+    
+    .btn-danger {
+        padding: 12px 30px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+    
+    .btn-danger:hover { background: #c82333; }
+</style>
+{% endblock %}

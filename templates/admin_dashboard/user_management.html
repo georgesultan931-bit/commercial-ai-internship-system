@@ -1,0 +1,278 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<style>
+    .user-table {
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .user-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .user-table th {
+        background: #f8f9fa;
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 600;
+    }
+    .user-table td {
+        padding: 12px 16px;
+        border-top: 1px solid #f3f4f6;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .status-active { background: #d1fae5; color: #065f46; }
+    .status-inactive { background: #fee2e2; color: #991b1b; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-approved { background: #dbeafe; color: #1e40af; }
+    
+    .btn-sm {
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: none;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 4px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .btn-sm.approve { 
+        background: #22c55e; 
+        color: white; 
+    }
+    .btn-sm.approve:hover { 
+        background: #16a34a; 
+    }
+    .btn-sm.reject { 
+        background: #ef4444; 
+        color: white; 
+    }
+    .btn-sm.reject:hover { 
+        background: #dc2626; 
+    }
+    .btn-sm.edit { 
+        background: #3b82f6; 
+        color: white; 
+    }
+    .btn-sm.edit:hover { 
+        background: #2563eb; 
+    }
+    .btn-sm.delete { 
+        background: #ef4444; 
+        color: white; 
+    }
+    .btn-sm.delete:hover { 
+        background: #dc2626; 
+    }
+    .btn-sm.toggle { 
+        background: #f59e0b; 
+        color: white; 
+    }
+    .btn-sm.toggle:hover { 
+        background: #d97706; 
+    }
+    
+    .pending-row {
+        background: #fffbeb !important;
+    }
+    .pending-row:hover {
+        background: #fef3c7 !important;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }
+    
+    .no-actions {
+        color: #9ca3af;
+        font-size: 12px;
+        font-style: italic;
+    }
+    
+    .role-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .role-student { background: #dbeafe; color: #1e40af; }
+    .role-employer { background: #d1fae5; color: #065f46; }
+    .role-institution { background: #fef3c7; color: #92400e; }
+    .role-supervisor { background: #ede9fe; color: #5b21b6; }
+    .role-admin { background: #fce4ec; color: #c62828; }
+    
+    @media (max-width: 768px) {
+        .user-table {
+            overflow-x: auto;
+        }
+        .action-buttons {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .btn-sm {
+            margin-bottom: 4px;
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fas fa-users"></i> User Management</h2>
+        <span class="badge-count">{{ pending_count }} Pending</span>
+    </div>
+    
+    <div class="user-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Approval</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr class="{% if user.profile and user.profile.role not in 'student,admin' and not user.profile.is_approved %}pending-row{% endif %}">
+                    <td>
+                        <strong>{{ user.username }}</strong>
+                        {% if user.is_superuser %}
+                            <span style="background: #fce4ec; color: #c62828; padding: 1px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; margin-left: 5px;">SUPERUSER</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.profile %}
+                            <span class="role-badge role-{{ user.profile.role }}">
+                                {{ user.profile.get_role_display }}
+                            </span>
+                        {% else %}
+                            <span class="role-badge role-student">User</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="status-badge status-active">✅ Active</span>
+                        {% else %}
+                            <span class="status-badge status-inactive">❌ Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.profile %}
+                            {% if user.profile.role in 'student,admin' %}
+                                <span class="status-badge status-approved">✅ Auto-Approved</span>
+                            {% elif user.profile.is_approved %}
+                                <span class="status-badge status-approved">✅ Approved</span>
+                            {% else %}
+                                <span class="status-badge status-pending">⏳ Pending</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="status-badge status-approved">✅ Approved</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- APPROVE BUTTON - Only for pending non-student, non-admin users -->
+                            {% if user.profile and user.profile.role not in 'student,admin' and not user.profile.is_approved %}
+                                <a href="{% url 'admin_dashboard:approve_user' user.id %}" 
+                                   class="btn-sm approve" 
+                                   onclick="return confirm('Approve {{ user.username }}?')">
+                                    <i class="fas fa-check"></i> Approve
+                                </a>
+                                <a href="{% url 'admin_dashboard:reject_user' user.id %}" 
+                                   class="btn-sm reject" 
+                                   onclick="return confirm('Reject {{ user.username }}? This will delete the account.')">
+                                    <i class="fas fa-times"></i> Reject
+                                </a>
+                            {% endif %}
+                            
+                            <!-- Toggle Active/Inactive - For all users except superuser -->
+                            {% if not user.is_superuser %}
+                                <a href="{% url 'admin_dashboard:toggle_user_status' user.id %}" 
+                                   class="btn-sm toggle" 
+                                   onclick="return confirm('{{ user.username }} will be {% if user.is_active %}deactivated{% else %}activated{% endif %}. Continue?')">
+                                    {% if user.is_active %}
+                                        <i class="fas fa-pause"></i> Deactivate
+                                    {% else %}
+                                        <i class="fas fa-play"></i> Activate
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                            
+                            <!-- DELETE BUTTON - Only for non-superuser -->
+                            {% if not user.is_superuser %}
+                                <a href="{% url 'admin_dashboard:delete_user' user.id %}" 
+                                   class="btn-sm delete" 
+                                   onclick="return confirm('Delete {{ user.username }}? This action cannot be undone!')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            {% else %}
+                                <span class="no-actions">Protected</span>
+                            {% endif %}
+                            
+                            <!-- Show message if no actions available -->
+                            {% if user.profile and user.profile.role in 'student,admin' and user.profile.is_approved %}
+                                <span class="no-actions">Auto-approved</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
+                        <i class="fas fa-users" style="font-size: 40px; display: block; margin-bottom: 10px;"></i>
+                        No users found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Summary Stats -->
+    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 30px; flex-wrap: wrap;">
+        <div>
+            <span style="color: #6b7280; font-size: 13px;">Total Users:</span>
+            <span style="font-weight: 700; color: #0b1a33; font-size: 16px;">{{ users|length }}</span>
+        </div>
+        <div>
+            <span style="color: #6b7280; font-size: 13px;">Pending Approval:</span>
+            <span style="font-weight: 700; color: #f59e0b; font-size: 16px;">{{ pending_count }}</span>
+        </div>
+        <div>
+            <span style="color: #6b7280; font-size: 13px;">Active Users:</span>
+            <span style="font-weight: 700; color: #22c55e; font-size: 16px;">{{ users|length|add:pending_count|add:"-1" }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

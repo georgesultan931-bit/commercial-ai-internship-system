@@ -1,0 +1,293 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Upload Media{% endblock %}
+{% block page_subtitle %}Upload a new file to the media library{% endblock %}
+
+{% block admin_content %}
+<div class="upload-container">
+    <div class="upload-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-content">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #007bff;"></i>
+                    <p>Drag and drop your file here</p>
+                    <p class="drop-hint">or click to browse</p>
+                    <input type="file" name="file" id="fileInput" class="file-input" required>
+                </div>
+                <div class="file-preview" id="filePreview" style="display: none;">
+                    <i class="fas fa-file" id="fileIcon"></i>
+                    <span id="fileName"></span>
+                    <span id="fileSize"></span>
+                    <button type="button" onclick="clearFile()" class="btn-remove-file">×</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text" name="title" id="title" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="media_type">Media Type</label>
+                <select name="media_type" id="media_type" class="form-control">
+                    <option value="image">Image</option>
+                    <option value="document">Document</option>
+                    <option value="video">Video</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-upload-submit">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload
+                </button>
+                <a href="{% url 'admin_dashboard:media' %}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Drag and Drop
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const filePreview = document.getElementById('filePreview');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const fileIcon = document.getElementById('fileIcon');
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            showFilePreview(files[0]);
+        }
+    });
+
+    dropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            showFilePreview(fileInput.files[0]);
+        }
+    });
+
+    function showFilePreview(file) {
+        filePreview.style.display = 'flex';
+        document.querySelector('.drop-zone-content').style.display = 'none';
+        
+        const iconMap = {
+            'image': 'fa-file-image',
+            'pdf': 'fa-file-pdf',
+            'doc': 'fa-file-word',
+            'docx': 'fa-file-word',
+            'xls': 'fa-file-excel',
+            'xlsx': 'fa-file-excel',
+            'txt': 'fa-file-alt',
+            'zip': 'fa-file-archive',
+            'mp4': 'fa-file-video',
+            'mp3': 'fa-file-audio'
+        };
+        
+        const ext = file.name.split('.').pop().toLowerCase();
+        const iconClass = iconMap[ext] || 'fa-file';
+        
+        fileIcon.className = `fas ${iconClass}`;
+        fileName.textContent = file.name;
+        
+        const size = (file.size / 1024).toFixed(1);
+        fileSize.textContent = `${size} KB`;
+    }
+
+    function clearFile() {
+        filePreview.style.display = 'none';
+        document.querySelector('.drop-zone-content').style.display = 'block';
+        fileInput.value = '';
+    }
+</script>
+
+<style>
+    .upload-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .upload-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .drop-zone {
+        border: 2px dashed #e5e7eb;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 25px;
+        position: relative;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .drop-zone:hover {
+        border-color: #007bff;
+        background: #f8f9fa;
+    }
+
+    .drop-zone.drag-over {
+        border-color: #007bff;
+        background: #e3f2fd;
+    }
+
+    .drop-zone-content p {
+        margin: 10px 0;
+        color: #666;
+    }
+
+    .drop-hint {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .file-preview {
+        display: none;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .file-preview i {
+        font-size: 24px;
+        color: #007bff;
+    }
+
+    .file-preview span {
+        flex: 1;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .file-preview #fileSize {
+        flex: 0;
+        color: #888;
+        font-size: 12px;
+    }
+
+    .btn-remove-file {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #dc3545;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+
+    .btn-remove-file:hover {
+        color: #c82333;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-upload-submit {
+        padding: 12px 30px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-upload-submit:hover {
+        background: #218838;
+    }
+
+    .btn-upload-submit i {
+        margin-right: 8px;
+    }
+
+    .btn-secondary {
+        padding: 12px 30px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+</style>
+{% endblock %}

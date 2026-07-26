@@ -1,0 +1,117 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}{{ internship.title }}{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <!-- Company Header -->
+        <div style="display: flex; align-items: center; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; margin-bottom: 1.5rem;">
+            {% if internship.organization.logo %}
+            <img src="{{ internship.organization.logo.url }}" alt="{{ internship.organization.name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover;">
+            {% else %}
+            <div style="width: 80px; height: 80px; border-radius: 12px; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700;">
+                {{ internship.organization.name|slice:":2"|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.2rem;">{{ internship.title }}</h1>
+                <h2 style="font-size: 1.2rem; color: #2563eb; margin-bottom: 0.3rem;">{{ internship.organization.name }}</h2>
+                <p style="color: #6b7280;">Posted by {{ internship.posted_by.first_name|default:internship.posted_by.username }}</p>
+            </div>
+            <div style="margin-left: auto;">
+                <span style="padding: 0.3rem 1rem; border-radius: 20px; background: {% if internship.is_application_open %}#d1fae5; color: #065f46{% else %}#fee2e2; color: #991b1b{% endif %}; font-size: 0.9rem;">
+                    {% if internship.is_application_open %}Open{% else %}Closed{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Internship Details -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div>
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Description</h3>
+                <p style="color: #4b5563; line-height: 1.8; margin-bottom: 1.5rem;">{{ internship.description }}</p>
+                
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Requirements</h3>
+                <p style="color: #4b5563; line-height: 1.8; margin-bottom: 1.5rem;">{{ internship.requirements|default:"No specific requirements listed." }}</p>
+                
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Required Skills</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    {% for skill in internship.required_skills %}
+                    <span style="padding: 0.3rem 0.8rem; background: #e5e7eb; border-radius: 20px; font-size: 0.9rem;">{{ skill }}</span>
+                    {% empty %}
+                    <span style="color: #6b7280;">No required skills listed</span>
+                    {% endfor %}
+                </div>
+                
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Preferred Skills</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    {% for skill in internship.preferred_skills %}
+                    <span style="padding: 0.3rem 0.8rem; background: #dbeafe; border-radius: 20px; font-size: 0.9rem;">{{ skill }}</span>
+                    {% empty %}
+                    <span style="color: #6b7280;">No preferred skills listed</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div>
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Position Details</h3>
+                    <div style="display: grid; gap: 0.8rem;">
+                        <div>
+                            <span style="color: #6b7280; font-size: 0.9rem;">Location</span>
+                            <p style="font-weight: 500;">{{ internship.location }} {% if internship.is_remote %}(Remote){% endif %}</p>
+                        </div>
+                        <div>
+                            <span style="color: #6b7280; font-size: 0.9rem;">Category</span>
+                            <p style="font-weight: 500;">{{ internship.get_category_display }}</p>
+                        </div>
+                        <div>
+                            <span style="color: #6b7280; font-size: 0.9rem;">Stipend</span>
+                            <p style="font-weight: 500;">{% if internship.stipend %}{{ internship.currency }} {{ internship.stipend }}{% else %}Unpaid{% endif %}</p>
+                        </div>
+                        <div>
+                            <span style="color: #6b7280; font-size: 0.9rem;">Duration</span>
+                            <p style="font-weight: 500;">{{ internship.start_date|date:"M d, Y" }} - {{ internship.end_date|date:"M d, Y" }}</p>
+                        </div>
+                        <div>
+                            <span style="color: #6b7280; font-size: 0.9rem;">Application Deadline</span>
+                            <p style="font-weight: 500;">{{ internship.application_deadline|date:"M d, Y H:i" }}</p>
+                        </div>
+                        <div>
+                            <span style="color: #6b7280; font-size: 0.9rem;">Applicants</span>
+                            <p style="font-weight: 500;">{{ internship.current_applicants }} / {{ internship.max_applicants }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if user.is_authenticated and user.profile.role == 'STUDENT' %}
+                        {% if has_applied %}
+                        <div style="margin-top: 1.5rem; padding: 0.8rem; background: #d1fae5; border-radius: 8px; text-align: center; color: #065f46;">
+                            <i class="fas fa-check-circle"></i> You have already applied to this position
+                        </div>
+                        {% elif internship.is_application_open %}
+                        <a href="{% url 'internships:apply_internship' internship.pk %}" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 1.5rem; padding: 0.8rem;">
+                            <i class="fas fa-paper-plane"></i> Apply Now
+                        </a>
+                        {% else %}
+                        <div style="margin-top: 1.5rem; padding: 0.8rem; background: #fee2e2; border-radius: 8px; text-align: center; color: #991b1b;">
+                            This internship is no longer accepting applications
+                        </div>
+                        {% endif %}
+                    {% elif not user.is_authenticated %}
+                    <a href="{% url 'account_login' %}" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 1.5rem; padding: 0.8rem;">
+                        <i class="fas fa-sign-in-alt"></i> Login to Apply
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+            <a href="{% url 'internships:browse' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Back to Internships
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

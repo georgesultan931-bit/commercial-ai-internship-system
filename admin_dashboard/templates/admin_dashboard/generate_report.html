@@ -1,0 +1,56 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Generate Report{% endblock %}
+{% block page_subtitle %}Create custom reports{% endblock %}
+
+{% block admin_content %}
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Report Type *</label>
+            <select name="report_type" class="form-control" required>
+                <option value="users">User Report</option>
+                <option value="internships">Internship Report</option>
+                <option value="applications">Application Report</option>
+                <option value="summary">Summary Report</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <label>Date From</label>
+                <input type="date" name="date_from" class="form-control">
+            </div>
+            <div class="form-group half">
+                <label>Date To</label>
+                <input type="date" name="date_to" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Format *</label>
+            <select name="format" class="form-control" required>
+                <option value="html">HTML</option>
+                <option value="csv">CSV</option>
+                <option value="json">JSON</option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary"> Generate Report</button>
+            <a href="{% url 'admin_dashboard:reports' %}" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-container { max-width: 700px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin: 0 auto; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 5px; }
+    .form-control { width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; }
+    .form-row { display: flex; gap: 20px; }
+    .form-group.half { flex: 1; }
+    .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-primary { padding: 10px 25px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-secondary { padding: 10px 25px; background: #6c757d; color: white; border: none; border-radius: 6px; text-decoration: none; }
+</style>
+{% endblock %}

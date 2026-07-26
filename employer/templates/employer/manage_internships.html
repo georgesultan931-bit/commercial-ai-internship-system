@@ -1,0 +1,87 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Manage Internships{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;"> Manage Internships</h1>
+        <a href="{% url 'employer:post_internship' %}" style="background: #4f46e5; color: white; padding: 10px 24px; border-radius: 40px; text-decoration: none;">
+            <i class="fas fa-plus"></i> Post New
+        </a>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; overflow-x: auto;">
+        {% if internships %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f7f9fc; text-align: left;">
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Title</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Location</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Status</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Applications</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for internship in internships %}
+                        <tr style="border-bottom: 1px solid #eef2f6;">
+                            <td style="padding: 12px;">
+                                <strong><a href="{% url 'internships:detail' internship.id %}" style="color: #0b1a33; text-decoration: none;">{{ internship.title }}</a></strong>
+                            </td>
+                            <td style="padding: 12px;">{{ internship.location }}</td>
+                            <td style="padding: 12px;">
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <span style="background: {% if internship.is_active %}#d1fae5{% else %}#fee2e2{% endif %}; color: {% if internship.is_active %}#059669{% else %}#dc2626{% endif %}; padding: 2px 10px; border-radius: 12px; font-size: 12px; text-align: center;">
+                                        {% if internship.is_active %}✅ Open{% else %}❌ Closed{% endif %}
+                                    </span>
+                                    <span style="background: {% if internship.is_application_open %}#d1fae5{% else %}#fee2e2{% endif %}; color: {% if internship.is_application_open %}#059669{% else %}#dc2626{% endif %}; padding: 2px 10px; border-radius: 12px; font-size: 12px; text-align: center;">
+                                        {% if internship.is_application_open %}📥 Accepting{% else %}🔒 Not Accepting{% endif %}
+                                    </span>
+                                </div>
+                            </td>
+                            <td style="padding: 12px; text-align: center;">{{ internship.applications.count }}</td>
+                            <td style="padding: 12px;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                    <!-- Toggle Active Status -->
+                                    <form method="post" action="{% url 'employer:toggle_internship_status' internship.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: {% if internship.is_active %}#f59e0b{% else %}#22c55e{% endif %}; color: white; padding: 4px 12px; border: none; border-radius: 16px; cursor: pointer; font-size: 12px;">
+                                            {% if internship.is_active %}🔒 Close{% else %}🔓 Open{% endif %}
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Toggle Application Open -->
+                                    <form method="post" action="{% url 'employer:toggle_application_status' internship.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: {% if internship.is_application_open %}#ef4444{% else %}#22c55e{% endif %}; color: white; padding: 4px 12px; border: none; border-radius: 16px; cursor: pointer; font-size: 12px;">
+                                            {% if internship.is_application_open %}🚫 Stop Accepting{% else %}📥 Start Accepting{% endif %}
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Delete -->
+                                    <form method="post" action="{% url 'employer:delete_internship' internship.id %}" style="margin: 0;" onsubmit="return confirm('Delete this internship?')">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: #ef4444; color: white; padding: 4px 12px; border: none; border-radius: 16px; cursor: pointer; font-size: 12px;">
+                                            🗑️ Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 64px; margin-bottom: 15px;">📋</div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Internships Posted</h3>
+                <p>Start by posting your first internship.</p>
+                <a href="{% url 'employer:post_internship' %}" style="display: inline-block; margin-top: 15px; background: #4f46e5; color: white; padding: 10px 24px; border-radius: 40px; text-decoration: none;">
+                    Post Internship
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

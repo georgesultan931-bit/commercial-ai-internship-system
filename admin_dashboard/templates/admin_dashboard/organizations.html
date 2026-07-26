@@ -1,0 +1,41 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Organizations Management</h1>
+    <p>Manage all organizations on the platform</p>
+
+    <div style="background: white; padding: 20px; border-radius: 10px; overflow: auto; margin-top: 20px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb;">Organization</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb;">Email</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb;">Status</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb;">Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for org in organizations %}
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">{{ org.username }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">{{ org.email }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+                        {% if org.is_active %}
+                            <span style="background: #d4edda; color: #155724; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Active</span>
+                        {% else %}
+                            <span style="background: #f8d7da; color: #721c24; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Archived</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">{{ org.date_joined|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: #888;">No organizations found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

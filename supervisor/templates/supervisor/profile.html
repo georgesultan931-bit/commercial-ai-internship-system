@@ -1,0 +1,92 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 900px; margin: 0 auto;">
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h1 style="font-size: 24px; color: #0b1a33;"> My Profile</h1>
+            <a href="{% url 'supervisor:settings' %}" style="background: #4f46e5; color: white; padding: 10px 24px; border-radius: 40px; text-decoration: none;">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Full Name</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.get_full_name|default:request.user.username }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Supervisor ID</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.supervisor_id|default:"Not set" }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Email</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ request.user.email }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Department</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.department|default:"Not set" }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Specialization</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.specialization|default:"Not set" }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Phone</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.phone|default:"Not set" }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Office Location</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.office_location|default:"Not set" }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Office Hours</label>
+                <p style="font-size: 16px; color: #0b1a33; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.office_hours|default:"Not set" }}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Status</label>
+                <p style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {% if supervisor.is_verified %}
+                        <span style="color: #22c55e;">✅ Verified</span>
+                    {% else %}
+                        <span style="color: #f59e0b;">⏳ Pending</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Assigned Students</label>
+                <p style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #eef2f6;">
+                    {{ supervisor.assigned_students.count }} students
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eef2f6; display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="{% url 'supervisor:settings' %}" style="background: #4f46e5; color: white; padding: 10px 30px; border-radius: 40px; text-decoration: none;">
+                <i class="fas fa-cog"></i> Edit Settings
+            </a>
+            <a href="{% url 'supervisor:dashboard' %}" style="background: #f1f4f9; color: #1f2a44; padding: 10px 30px; border-radius: 40px; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

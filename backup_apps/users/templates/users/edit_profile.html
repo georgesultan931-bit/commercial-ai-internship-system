@@ -1,0 +1,109 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Edit Profile</h1>
+        <p style="color: #6b7280; margin-bottom: 2rem;">Update your personal information and documents.</p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">First Name</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Last Name</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number</label>
+                <input type="text" name="phone_number" value="{{ profile.phone_number }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bio</label>
+                <textarea name="bio" rows="3" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">{{ profile.bio }}</textarea>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Skills (comma separated)</label>
+                <input type="text" name="skills" value="{{ skills }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;" placeholder="e.g., Python, Django, React">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Registration Number</label>
+                    <input type="text" name="registration_number" value="{{ profile.registration_number }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Course</label>
+                    <input type="text" name="course" value="{{ profile.course }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Faculty</label>
+                    <input type="text" name="faculty" value="{{ profile.faculty }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Department</label>
+                    <input type="text" name="department" value="{{ profile.department }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Year of Study</label>
+                    <input type="number" name="year_of_study" value="{{ profile.year_of_study }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">GPA</label>
+                <input type="number" step="0.01" name="gpa" value="{{ profile.gpa }}" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+
+            <div style="margin-top: 1.5rem; border-top: 1px solid #e5e7eb; padding-top: 1.5rem;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Documents</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">CV</label>
+                        <input type="file" name="cv" accept=".pdf,.docx" style="width: 100%; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        {% if profile.cv %}<small style="color: #6b7280;">Current: {{ profile.cv.name }}</small>{% endif %}
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Transcript</label>
+                        <input type="file" name="transcript" accept=".pdf" style="width: 100%; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        {% if profile.transcript %}<small style="color: #6b7280;">Current: {{ profile.transcript.name }}</small>{% endif %}
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Certificates</label>
+                        <input type="file" name="certificates" accept=".pdf,.png,.jpg" style="width: 100%; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        {% if profile.certificates %}<small style="color: #6b7280;">Current: {{ profile.certificates.name }}</small>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Profile Picture</label>
+                <input type="file" name="profile_picture" accept=".png,.jpg,.jpeg" style="width: 100%; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                {% if profile.profile_picture %}<small style="color: #6b7280;">Current: {{ profile.profile_picture.name }}</small>{% endif %}
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="{% url 'users:profile' %}" class="btn btn-outline" style="padding: 0.8rem 2rem;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

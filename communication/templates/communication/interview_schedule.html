@@ -1,0 +1,103 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="interview-container">
+    <h1>📅 Interview Schedule</h1>
+    <p>Your upcoming and past interviews</p>
+    
+    <div class="interview-list">
+        {% for interview in interviews %}
+        <div class="interview-card status-{{ interview.status|lower }}">
+            <div class="interview-header">
+                <h3>{{ interview.position }}</h3>
+                <span class="status-badge">{{ interview.status }}</span>
+            </div>
+            <div class="interview-details">
+                <p><strong>Company:</strong> {{ interview.company }}</p>
+                <p><strong>Date:</strong> {{ interview.date }}</p>
+                <p><strong>Time:</strong> {{ interview.time }}</p>
+                <p><strong>Duration:</strong> {{ interview.duration }}</p>
+                <p><strong>Type:</strong> {{ interview.type }}</p>
+                <p><strong>Platform:</strong> {{ interview.platform }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p>No interviews scheduled</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .interview-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .interview-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .interview-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-left: 4px solid #6c757d;
+    }
+    
+    .status-scheduled {
+        border-left-color: #007bff;
+    }
+    
+    .status-pending {
+        border-left-color: #ffc107;
+    }
+    
+    .status-completed {
+        border-left-color: #28a745;
+    }
+    
+    .interview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .interview-header h3 {
+        margin: 0;
+        color: #1a1a2e;
+    }
+    
+    .status-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        background: #f0f2f5;
+        color: #666;
+    }
+    
+    .status-scheduled .status-badge {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .status-pending .status-badge {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .status-completed .status-badge {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .interview-details p {
+        margin: 5px 0;
+        color: #555;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Dashboard - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back, Adriel! Here's what's happening today.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-users"></i></div>
+        <div class="label">Total Students</div>
+        <div class="value">248</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> +12% this month</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="label">Total Internships</div>
+        <div class="value">142</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> +8% this month</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-file-alt"></i></div>
+        <div class="label">Total Applications</div>
+        <div class="value">86</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> +15% this month</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="label">Hired Interns</div>
+        <div class="value">34</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> +5% this month</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div>
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-clock"></i> Recent Applications</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight: 600;">Data Analyst Intern</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">Google • Applied 2 hours ago</div>
+                    </div>
+                    <span style="background: #dbeafe; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Reviewing</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight: 600;">Frontend Developer</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">Microsoft • Applied 1 day ago</div>
+                    </div>
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Interview</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0;">
+                    <div>
+                        <div style="font-weight: 600;">UX/UI Designer</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">Apple • Applied 3 days ago</div>
+                    </div>
+                    <span style="background: #d1fae5; color: #059669; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Accepted</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-robot"></i> AI Match Score</div>
+            <div style="text-align: center; padding: 1rem 0;">
+                <div style="font-size: 3rem; font-weight: 800; color: #2563eb;">85%</div>
+                <div style="color: #6b7280; font-size: 0.9rem;">Overall Match Rate</div>
+                <div style="width: 100%; height: 10px; background: #e5e7eb; border-radius: 10px; margin-top: 1rem;">
+                    <div style="width: 85%; height: 100%; background: #2563eb; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-chart-pie"></i> Quick Stats</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Profile Completion</span>
+                    <span style="font-weight: 600; color: #2563eb;">85%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Internship Progress</span>
+                    <span style="font-weight: 600; color: #10b981;">88%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                    <span style="color: #6b7280;">Recruited</span>
+                    <span style="font-weight: 600; color: #8b5cf6;">92%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

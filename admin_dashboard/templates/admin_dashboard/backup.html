@@ -1,0 +1,174 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Database Backup{% endblock %}
+{% block page_subtitle %}Manage your database backups{% endblock %}
+
+{% block admin_content %}
+<div class="backup-container">
+    <div class="backup-actions">
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create">
+            <button type="submit" class="btn-create">🔄 Create Backup</button>
+        </form>
+    </div>
+    
+    <div class="backup-info">
+        <h3>Backup Information</h3>
+        <p><strong>Last Backup:</strong> {{ backup_info.last_backup }}</p>
+        <p><strong>Total Backups:</strong> {{ backup_info.backup_count }}</p>
+        <p><strong>Total Size:</strong> {{ backup_info.total_size }}</p>
+    </div>
+    
+    <div class="backup-files">
+        <h3>Available Backups</h3>
+        {% if backup_files %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in backup_files %}
+                <tr>
+                    <td>{{ file.name }}</td>
+                    <td>{{ file.size }}</td>
+                    <td>{{ file.date }}</td>
+                    <td>
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="download">
+                            <input type="hidden" name="backup_file" value="{{ file.name }}">
+                            <button type="submit" class="btn-download">⬇️ Download</button>
+                        </form>
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="restore">
+                            <input type="hidden" name="backup_file" value="{{ file.name }}">
+                            <button type="submit" class="btn-restore">🔄 Restore</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-backups">No backups available. Create your first backup!</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .backup-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .backup-actions {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .btn-create {
+        padding: 15px 40px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-create:hover {
+        background: #218838;
+    }
+    
+    .backup-info {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+    
+    .backup-info h3 {
+        margin-top: 0;
+        color: #1a1a2e;
+    }
+    
+    .backup-info p {
+        margin: 8px 0;
+        color: #555;
+    }
+    
+    .backup-files {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .backup-files h3 {
+        margin-top: 0;
+        color: #1a1a2e;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .btn-download {
+        padding: 5px 15px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 5px;
+        transition: background 0.3s;
+    }
+    
+    .btn-download:hover {
+        background: #0056b3;
+    }
+    
+    .btn-restore {
+        padding: 5px 15px;
+        background: #fd7e14;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-restore:hover {
+        background: #e06b0a;
+    }
+    
+    .no-backups {
+        text-align: center;
+        padding: 30px;
+        color: #888;
+    }
+</style>
+{% endblock %}

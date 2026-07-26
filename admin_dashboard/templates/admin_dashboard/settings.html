@@ -1,0 +1,182 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}System Settings{% endblock %}
+{% block page_subtitle %}Configure system settings{% endblock %}
+
+{% block admin_content %}
+<div class="settings-container">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="settings-group">
+            <h3>General Settings</h3>
+            <div class="setting-item">
+                <label>Platform Name</label>
+                <input type="text" value="AI InternHub" class="form-control">
+            </div>
+            <div class="setting-item">
+                <label>Platform Tagline</label>
+                <input type="text" value="Commercial Grade AI Powered Platform" class="form-control">
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <h3>Registration Settings</h3>
+            <div class="setting-item">
+                <label>Allow Registration</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <label>Require Email Verification</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <h3>Email Settings</h3>
+            <div class="setting-item">
+                <label>SMTP Host</label>
+                <input type="text" value="smtp.gmail.com" class="form-control">
+            </div>
+            <div class="setting-item">
+                <label>SMTP Port</label>
+                <input type="text" value="587" class="form-control">
+            </div>
+            <div class="setting-item">
+                <label>Email Host User</label>
+                <input type="text" value="admin@example.com" class="form-control">
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-save"> Save Settings</button>
+    </form>
+</div>
+
+<style>
+    .settings-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .settings-group {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .settings-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .settings-group h3 {
+        color: #1a1a2e;
+        margin: 0 0 20px 0;
+        font-size: 18px;
+    }
+    
+    .setting-item {
+        margin-bottom: 20px;
+    }
+    
+    .setting-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .setting-item label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+        cursor: pointer;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #ccc;
+        transition: 0.4s;
+        border-radius: 26px;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider {
+        background: #007bff;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+    
+    .btn-save {
+        padding: 12px 30px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+        margin-top: 20px;
+    }
+    
+    .btn-save:hover {
+        background: #0056b3;
+    }
+</style>
+{% endblock %}

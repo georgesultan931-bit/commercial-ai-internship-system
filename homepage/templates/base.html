@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Commercial-Grade AI-Powered Internship Management System</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #f8fafc; }
+        
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: #2563eb; 
+            text-decoration: none;
+        }
+        .logo span { color: #1a1a2e; }
+        
+        /* Hide the word "InternHub" and show only the tagline */
+        .logo-text { display: none; }
+        .logo-tagline {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #4b5563; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #2563eb; }
+        
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        
+        .btn-outline { background: transparent; color: #2563eb; border: 2px solid #2563eb; }
+        .btn-outline:hover { background: #2563eb; color: white; }
+        
+        .btn-secondary { background: #10b981; color: white; }
+        .btn-secondary:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        
+        .main-content { margin-top: 80px; min-height: calc(100vh - 80px); }
+        
+        .footer {
+            background: #1a1a2e;
+            color: #9ca3af;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer h4 { color: white; margin-bottom: 1rem; }
+        .footer a { color: #9ca3af; text-decoration: none; display: block; margin-bottom: 0.5rem; }
+        .footer a:hover { color: white; }
+        
+        /* Remove footer-bottom completely - NO COPYRIGHT */
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .navbar { padding: 1rem; }
+            .logo-tagline { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'homepage:home' %}" class="logo">Intern<span>Hub</span></a>
+        <div class="nav-links">
+            <a href="{% url 'homepage:home' %}">Home</a>
+            <a href="{% url 'homepage:features' %}">Features</a>
+            <a href="{% url 'homepage:pricing' %}">Pricing</a>
+            <a href="{% url 'homepage:about' %}">About</a>
+            <a href="{% url 'homepage:contact' %}">Contact</a>
+            <a href="{% url 'users:login' %}" class="auth-link">Login</a>
+            <a href="{% url 'users:signup' %}" class="auth-link signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>About</h4>
+                <p>A Commercial-Grade AI-Powered Internship Management System</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Connecting students, companies, universities, and government agencies.</p>
+            </div>
+            <div>
+                <h4>Platform</h4>
+                <a href="#">Find Internships</a>
+                <a href="#">Post an Internship</a>
+                <a href="#">For Companies</a>
+                <a href="#">For Universities</a>
+            </div>
+            <div>
+                <h4>Resources</h4>
+                <a href="#">Blog</a>
+                <a href="#">FAQ</a>
+                <a href="#">Support</a>
+                <a href="#">Documentation</a>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#"><i class="fab fa-youtube"></i> YouTube</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

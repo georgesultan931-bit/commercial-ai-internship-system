@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commercial-Grade AI-Powered Internship Management System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* === YOUR EXISTING STYLES (unchanged) === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; display: flex; background: #f0f2f5; }
+        .sidebar { width: 280px; height: 100vh; background: #1a1a2e; color: white; padding: 20px 0; position: fixed; overflow-y: auto; z-index: 1000; }
+        .logo { padding: 0 20px 20px 20px; border-bottom: 1px solid #2a2a4e; margin-bottom: 20px; }
+        .logo a { text-decoration: none; color: inherit; }
+        .logo h1 { font-size: 24px; color: #00d4ff; }
+        .logo p { font-size: 12px; color: #888; margin-top: 5px; }
+        .user-info { padding: 15px 20px; border-bottom: 1px solid #2a2a4e; margin-bottom: 20px; }
+        .user-welcome { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+        .user-avatar { width: 35px; height: 35px; border-radius: 50%; background: #00d4ff; color: #1a1a2e; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+        .username { color: #fff; font-size: 14px; font-weight: 500; }
+        .user-role { margin-bottom: 10px; padding-left: 45px; }
+        .role-badge { display: inline-block; padding: 3px 15px; border-radius: 20px; font-size: 12px; font-weight: 500; background: #00d4ff; color: #1a1a2e; }
+        .auth-link { display: inline-block; padding: 8px 20px; color: #00d4ff; text-decoration: none; font-size: 14px; border-radius: 4px; margin-right: 8px; transition: background 0.3s; }
+        .auth-link:hover { background: #2a2a4e; }
+        .auth-link.signup { background: #00d4ff; color: #1a1a2e; }
+        .auth-link.signup:hover { background: #00c4e8; }
+        .logout-link { display: inline-block; padding: 8px 20px; color: #ff6b6b; text-decoration: none; font-size: 14px; border-radius: 4px; transition: background 0.3s; }
+        .logout-link:hover { background: rgba(255,107,107,0.1); }
+        .home-link { display: inline-block; padding: 8px 20px; color: #00d4ff; text-decoration: none; font-size: 14px; border-radius: 4px; transition: background 0.3s; }
+        .home-link:hover { background: rgba(0,212,255,0.1); }
+        .home-btn { display: block; padding: 10px 20px; color: #fff; text-decoration: none; font-size: 14px; border-bottom: 1px solid #2a2a4e; margin-bottom: 10px; transition: background 0.3s; }
+        .home-btn:hover { background: #2a2a4e; }
+        .nav-section { margin-bottom: 5px; }
+        .nav-header { font-size: 11px; color: #888; text-transform: uppercase; padding: 8px 20px; letter-spacing: 1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .nav-header:hover { color: #fff; }
+        .nav-header .arrow { transition: transform 0.3s; font-size: 12px; }
+        .nav-header .arrow.open { transform: rotate(90deg); }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; overflow: hidden; max-height: 0; transition: max-height 0.3s ease-out; }
+        .sidebar ul.open { max-height: 500px; transition: max-height 0.5s ease-in; }
+        .sidebar ul li { padding: 0; }
+        .sidebar ul li a { display: block; padding: 10px 20px 10px 35px; color: #ccc; text-decoration: none; transition: all 0.3s; font-size: 14px; position: relative; }
+        .sidebar ul li a::before { content: "›"; position: absolute; left: 20px; color: #666; font-size: 18px; }
+        .sidebar ul li a:hover:not(.disabled-link):not(.protected-link) { background: #2a2a4e; color: white; }
+        .sidebar ul li a.active { background: #00d4ff; color: #1a1a2e; }
+        .sidebar ul li a.active::before { color: #1a1a2e; }
+        .sidebar ul li a.active:hover { background: #00d4ff; color: #1a1a2e; }
+        .disabled-link { color: #666 !important; cursor: not-allowed !important; opacity: 0.5; }
+        .disabled-link:hover { background: none !important; color: #666 !important; }
+        .protected-link { color: #ffa500 !important; }
+        .protected-link:hover { background: rgba(255,165,0,0.1) !important; }
+        .badge { background: #ff4444; color: white; border-radius: 50%; padding: 2px 8px; font-size: 11px; float: right; }
+        .main-content { margin-left: 280px; padding: 30px; width: 100%; min-height: 100vh; }
+        .login-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; }
+        .login-overlay.show { display: flex; }
+        .login-modal { background: white; padding: 40px; border-radius: 12px; max-width: 400px; width: 90%; text-align: center; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .login-modal .lock-icon { font-size: 64px; margin-bottom: 20px; }
+        .login-modal h2 { color: #1a1a2e; margin-bottom: 10px; }
+        .login-modal p { color: #666; margin-bottom: 25px; }
+        .login-modal .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .login-modal .btn-login-modal { padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.3s; }
+        .login-modal .btn-login-modal:hover { background: #0056b3; }
+        .login-modal .btn-signup-modal { padding: 12px 30px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.3s; }
+        .login-modal .btn-signup-modal:hover { background: #218838; }
+        .login-modal .btn-close-modal { padding: 12px 30px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.3s; cursor: pointer; border: none; }
+        .login-modal .btn-close-modal:hover { background: #5a6268; }
+        @media (max-width: 768px) { .sidebar { width: 100%; height: auto; position: relative; } .main-content { margin-left: 0; } }
+    </style>
+</head>
+<body>
+    <!-- LOGIN OVERLAY -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-modal">
+            <div class="lock-icon">🔒</div>
+            <h2>Login Required</h2>
+            <p>Please login or create an account to access this feature.</p>
+            <div class="btn-group">
+                <a href="{% url 'users:login' %}" class="btn-login-modal">Login</a>
+                <a href="{% url 'users:signup' %}" class="btn-signup-modal">Sign Up</a>
+                <button class="btn-close-modal" onclick="closeLoginModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================== -->
+<!-- SIDEBAR - FIXED VERSION -->
+<!-- ===================================================== -->
+<div class="sidebar">
+    <div class="logo">
+        <a href="{% url 'homepage:home' %}">
+            <h1>Commercial-Grade AI-Powered Internship Management System</h1>
+            <p>Commercial Grade AI Powered Platform</p>
+        </a>
+    </div>
+    
+    <div class="user-info">
+        {% if user.is_authenticated %}
+            <div class="user-welcome">
+                <span class="user-avatar">{{ user.username|first|upper }}</span>
+                <span class="username">Welcome, {{ user.username }}</span>
+            </div>
+            <div class="user-role">
+                <span class="role-badge">{{ user.profile.get_role_display }}</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                <a href="{% url 'homepage:home' %}" class="home-link">Home</a>
+                <a href="{% url 'users:logout' %}" class="logout-link">Logout</a>
+            </div>
+        {% else %}
+            <a href="{% url 'users:login' %}" class="auth-link">Login</a>
+            <a href="{% url 'users:signup' %}" class="auth-link signup">Sign Up</a>
+        {% endif %}
+    </div>
+    
+    <a href="{% url 'homepage:home' %}" class="home-btn">Back to Home</a>
+
+    <!-- ===================================================== -->
+    <!-- 1. DASHBOARD (Visible to ALL authenticated users) -->
+    <!-- ===================================================== -->
+    {% if user.is_authenticated %}
+    <div class="nav-section">
+        <div class="nav-header" onclick="toggleDropdown(this)">
+            DASHBOARD <span class="arrow open">▶</span>
+        </div>
+        <ul class="open">
+            <li><a href="{% url 'homepage:dashboard' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+            <li><a href="{% url 'users:profile' %}" class="{% if active_menu == 'profile' %}active{% endif %}">My Profile</a></li>
+            <li><a href="{% url 'ai_engine:insights' %}" class="{% if active_menu == 'ai_insights' %}active{% endif %}">AI Insights</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ===================================================== -->
+    <!-- 2. ROLE-SPECIFIC MENUS (ONLY if NOT superuser) -->
+    <!-- ===================================================== -->
+    {% if user.is_authenticated and not user.is_superuser %}
+        <!-- STUDENT -->
+        {% if user.profile.role == 'student' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                STUDENT <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'student_dashboard:dashboard' %}" class="{% if active_menu == 'student_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'student_dashboard:profile' %}" class="{% if active_menu == 'student_profile' %}active{% endif %}">My Profile</a></li>
+                <li><a href="{% url 'student_dashboard:internships' %}" class="{% if active_menu == 'student_internships' %}active{% endif %}">Browse Internships</a></li>
+                <li><a href="{% url 'student_dashboard:applications' %}" class="{% if active_menu == 'student_applications' %}active{% endif %}">My Applications</a></li>
+                <li><a href="{% url 'student_dashboard:saved' %}" class="{% if active_menu == 'student_saved' %}active{% endif %}">Saved Internships</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- EMPLOYER -->
+        {% if user.profile.role == 'employer' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                EMPLOYER <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'employer:dashboard' %}" class="{% if active_menu == 'employer_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'employer:post_internship' %}" class="{% if active_menu == 'post_internship' %}active{% endif %}">Post Internship</a></li>
+                <li><a href="{% url 'employer:manage_internships' %}" class="{% if active_menu == 'manage_internships' %}active{% endif %}">Manage Listings</a></li>
+                <li><a href="{% url 'employer:applications' %}" class="{% if active_menu == 'employer_applications' %}active{% endif %}">Applications</a></li>
+                <li><a href="{% url 'employer:company_profile' %}" class="{% if active_menu == 'company_profile' %}active{% endif %}">Company Profile</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- INSTITUTION -->
+        {% if user.profile.role == 'institution' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                INSTITUTION <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'institution:dashboard' %}" class="{% if active_menu == 'institution_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{% url 'institution:students' %}" class="{% if active_menu == 'institution_students' %}active{% endif %}">Manage Students</a></li>
+                <li><a href="{% url 'institution:internships' %}" class="{% if active_menu == 'institution_internships' %}active{% endif %}">Internship Programs</a></li>
+                <li><a href="{% url 'institution:reports' %}" class="{% if active_menu == 'institution_reports' %}active{% endif %}">Reports</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- SUPERVISOR -->
+        {% if user.profile.role == 'supervisor' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                SUPERVISOR <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="#" class="disabled-link">Dashboard</a></li>
+                <li><a href="#" class="disabled-link">Assigned Students</a></li>
+                <li><a href="#" class="disabled-link">Internship Progress</a></li>
+                <li><a href="#" class="disabled-link">Logbooks</a></li>
+                <li><a href="#" class="disabled-link">Evaluations</a></li>
+                <li><a href="#" class="disabled-link">Reports</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- COORDINATOR -->
+        {% if user.profile.role == 'coordinator' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                COORDINATOR <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="#" class="disabled-link">Dashboard</a></li>
+                <li><a href="#" class="disabled-link">Student Allocation</a></li>
+                <li><a href="#" class="disabled-link">Internship Monitoring</a></li>
+                <li><a href="#" class="disabled-link">Reports</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- GOVERNMENT -->
+        {% if user.profile.role == 'government' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                GOVERNMENT <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'users:government_dashboard' %}" class="{% if active_menu == 'government_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="#" class="disabled-link">National Programs</a></li>
+                <li><a href="#" class="disabled-link">Statistics</a></li>
+                <li><a href="#" class="disabled-link">Reports</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- NGO -->
+        {% if user.profile.role == 'ngo' %}
+        <div class="nav-section">
+            <div class="nav-header" onclick="toggleDropdown(this)">
+                NGO <span class="arrow">▶</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'users:ngo_dashboard' %}" class="{% if active_menu == 'ngo_dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="#" class="disabled-link">Projects</a></li>
+                <li><a href="#" class="disabled-link">Partners</a></li>
+                <li><a href="#" class="disabled-link">Reports</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- ===================================================== -->
+    <!-- 3. 👑 ADMIN MENU (ONLY for superusers) -->
+    <!-- ===================================================== -->
+    {% if user.is_authenticated and user.is_superuser %}
+    <div class="nav-section">
+        <div class="nav-header" onclick="toggleDropdown(this)">
+            ADMIN <span class="arrow">▶</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'admin_dashboard:dashboard' %}" class="{% if active_menu == 'admin_dashboard' %}active{% endif %}">📊 Dashboard</a></li>
+            <li><a href="{% url 'admin_dashboard:pending_approvals' %}" class="{% if active_menu == 'pending_approvals' %}active{% endif %}">✅ Pending Approvals <span class="badge">{{ pending_count|default:0 }}</span></a></li>
+            <li><a href="{% url 'admin_dashboard:users' %}" class="{% if active_menu == 'admin_users' %}active{% endif %}">👥 User Management</a></li>
+            <li><a href="{% url 'admin_dashboard:institutions' %}" class="{% if active_menu == 'admin_institutions' %}active{% endif %}">🏛️ Institutions</a></li>
+            <li><a href="{% url 'admin_dashboard:employers' %}" class="{% if active_menu == 'admin_employers' %}active{% endif %}">🏢 Employers</a></li>
+            <li><a href="{% url 'admin_dashboard:students' %}" class="{% if active_menu == 'admin_students' %}active{% endif %}">🎓 Students</a></li>
+            <li><a href="{% url 'admin_dashboard:supervisors' %}" class="{% if active_menu == 'admin_supervisors' %}active{% endif %}">👨‍💼 Supervisors</a></li>
+            <li><a href="{% url 'admin_dashboard:government' %}" class="{% if active_menu == 'admin_government' %}active{% endif %}">🏛️ Government</a></li>
+            <li><a href="{% url 'admin_dashboard:ngo' %}" class="{% if active_menu == 'admin_ngo' %}active{% endif %}">🤝 NGOs</a></li>
+            <li><a href="{% url 'admin_dashboard:internships' %}" class="{% if active_menu == 'admin_internships' %}active{% endif %}">💼 All Internships</a></li>
+            <li><a href="{% url 'admin_dashboard:reports' %}" class="{% if active_menu == 'admin_reports' %}active{% endif %}">📊 Reports & Analytics</a></li>
+            <li><a href="{% url 'admin_dashboard:announcements' %}" class="{% if active_menu == 'admin_announcements' %}active{% endif %}">📢 Announcements</a></li>
+            <li><a href="{% url 'admin_dashboard:settings' %}" class="{% if active_menu == 'admin_settings' %}active{% endif %}">⚙️ System Settings</a></li>
+            <li><a href="{% url 'admin_dashboard:audit_logs' %}" class="{% if active_menu == 'admin_audit_logs' %}active{% endif %}">📋 Audit Logs</a></li>
+            <li><a href="{% url 'admin_dashboard:email_templates' %}" class="{% if active_menu == 'admin_email_templates' %}active{% endif %}">📧 Email Templates</a></li>
+            <li><a href="/admin/" target="_blank" class="{% if active_menu == 'django_admin' %}active{% endif %}">⚡ Django Admin</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ===================================================== -->
+    <!-- 4. INTERNSHIPS (Shared) -->
+    <!-- ===================================================== -->
+    {% if user.is_authenticated %}
+    <div class="nav-section">
+        <div class="nav-header" onclick="toggleDropdown(this)">
+            INTERNSHIPS <span class="arrow">▶</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'internships:browse' %}" class="{% if active_menu == 'browse_internships' %}active{% endif %}">Browse Internships</a></li>
+            <li><a href="{% url 'internships:recommended' %}" class="{% if active_menu == 'recommended' %}active{% endif %}">Recommended</a></li>
+            <li><a href="{% url 'internships:saved' %}" class="{% if active_menu == 'saved' %}active{% endif %}">Saved</a></li>
+            <li><a href="{% url 'internships:applications' %}" class="{% if active_menu == 'internship_applications' %}active{% endif %}">My Applications</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ===================================================== -->
+    <!-- 5. COMMUNICATION -->
+    <!-- ===================================================== -->
+    {% if user.is_authenticated %}
+    <div class="nav-section">
+        <div class="nav-header" onclick="toggleDropdown(this)">
+            COMMUNICATION <span class="arrow">▶</span>
+        </div>
+        <ul>
+            <li><a href="#" class="disabled-link">Messages</a></li>
+            <li><a href="#" class="disabled-link">Notifications</a></li>
+            <li><a href="#" class="disabled-link">Calendar</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ===================================================== -->
+    <!-- 6. DOCUMENTS -->
+    <!-- ===================================================== -->
+    {% if user.is_authenticated %}
+    <div class="nav-section">
+        <div class="nav-header" onclick="toggleDropdown(this)">
+            DOCUMENTS <span class="arrow">▶</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'documents:documents' %}" class="{% if active_menu == 'documents' %}active{% endif %}">Documents</a></li>
+            <li><a href="{% url 'documents:certificates' %}" class="{% if active_menu == 'certificates' %}active{% endif %}">Certificates</a></li>
+            <li><a href="{% url 'documents:portfolio' %}" class="{% if active_menu == 'portfolio' %}active{% endif %}">Portfolio</a></li>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+    <script>
+        function toggleDropdown(header) {
+            const ul = header.nextElementSibling;
+            const arrow = header.querySelector('.arrow');
+            
+            if (ul.classList.contains('open')) {
+                ul.classList.remove('open');
+                arrow.classList.remove('open');
+            } else {
+                ul.classList.add('open');
+                arrow.classList.add('open');
+            }
+        }
+        
+        function checkAuth(event, link) {
+            {% if not user.is_authenticated %}
+                event.preventDefault();
+                showLoginModal();
+                return false;
+            {% endif %}
+            return true;
+        }
+        
+        function showLoginModal() {
+            document.getElementById('loginOverlay').classList.add('show');
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginOverlay').classList.remove('show');
+        }
+        
+        document.getElementById('loginOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardHeader = document.querySelector('.nav-section:first-child .nav-header');
+            if (dashboardHeader) {
+                const arrow = dashboardHeader.querySelector('.arrow');
+                const ul = dashboardHeader.nextElementSibling;
+                ul.classList.add('open');
+                arrow.classList.add('open');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Internship Monitoring{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;"> Internship Monitoring</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if assignments %}
+            <div style="display: grid; gap: 15px;">
+                {% for assignment in assignments %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 style="color: #0b1a33; font-size: 16px;">
+                                    <a href="{% url 'supervisor:student_detail' assignment.student.id %}" style="color: #4f46e5; text-decoration: none;">
+                                        {{ assignment.student.get_full_name|default:assignment.student.user.username }}
+                                    </a>
+                                </h3>
+                                <p style="color: #888; font-size: 14px;">
+                                    <i class="fas fa-graduation-cap" style="margin-right: 5px;"></i>
+                                    {{ assignment.student.course|default:"No course" }}
+                                </p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="background: {% if assignment.status == 'active' %}#d1fae5{% elif assignment.status == 'pending' %}#fef3c7{% elif assignment.status == 'completed' %}#dbeafe{% else %}#fee2e2{% endif %}; color: {% if assignment.status == 'active' %}#059669{% elif assignment.status == 'pending' %}#d97706{% elif assignment.status == 'completed' %}#2563eb{% else %}#dc2626{% endif %}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">
+                                    {{ assignment.get_status_display }}
+                                </span>
+                                <div style="margin-top: 5px;">
+                                    <span style="font-size: 14px; color: #0b1a33; font-weight: 600;">
+                                        Progress: {{ assignment.progress_percentage }}%
+                                    </span>
+                                    <div style="width: 100%; height: 6px; background: #eef2f6; border-radius: 3px; margin-top: 3px; overflow: hidden;">
+                                        <div style="width: {{ assignment.progress_percentage }}%; height: 100%; background: linear-gradient(90deg, #4f46e5, #22c55e); border-radius: 3px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if assignment.start_date %}
+                            <p style="color: #888; font-size: 13px; margin-top: 10px;">
+                                <i class="fas fa-calendar-alt" style="margin-right: 5px;"></i>
+                                {{ assignment.start_date|date:"Y-m-d" }} 
+                                {% if assignment.end_date %} → {{ assignment.end_date|date:"Y-m-d" }}{% endif %}
+                            </p>
+                        {% endif %}
+                        {% if assignment.notes %}
+                            <p style="color: #666; font-size: 14px; margin-top: 8px; background: #f7f9fc; padding: 10px; border-radius: 8px;">
+                                <i class="fas fa-sticky-note" style="margin-right: 5px; color: #888;"></i>
+                                {{ assignment.notes }}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 64px; margin-bottom: 15px;"></div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Assignments Yet</h3>
+                <p>Students haven't been assigned to any internships yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'supervisor:dashboard' %}" style="color: #4f46e5; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

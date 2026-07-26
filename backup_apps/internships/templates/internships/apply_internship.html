@@ -1,0 +1,54 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Apply to {{ internship.title }}{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 700px; margin: 0 auto;">
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <!-- Company Header -->
+        <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; margin-bottom: 1.5rem;">
+            {% if internship.organization.logo %}
+            <img src="{{ internship.organization.logo.url }}" alt="{{ internship.organization.name }}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
+            {% else %}
+            <div style="width: 60px; height: 60px; border-radius: 12px; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700;">
+                {{ internship.organization.name|slice:":2"|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <h2 style="font-size: 1.2rem; margin-bottom: 0.2rem;">{{ internship.title }}</h2>
+                <p style="color: #2563eb; font-weight: 500;">{{ internship.organization.name }}</p>
+                <p style="color: #6b7280; font-size: 0.9rem;">{{ internship.location }} • {{ internship.get_category_display }}</p>
+            </div>
+        </div>
+
+        <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Submit Your Application</h1>
+        <p style="color: #6b7280; margin-bottom: 2rem;">Tell us why you're the perfect candidate for this position.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Cover Letter</label>
+                {{ form.cover_letter }}
+                <small style="color: #6b7280;">Explain why you're interested and what makes you a great fit.</small>
+            </div>
+            
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <p style="font-size: 0.9rem; color: #6b7280;">
+                    <i class="fas fa-info-circle"></i> 
+                    By submitting this application, you agree to our terms of service.
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+                <a href="{% url 'internships:internship_detail' internship.pk %}" class="btn btn-outline" style="padding: 0.8rem 2rem;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

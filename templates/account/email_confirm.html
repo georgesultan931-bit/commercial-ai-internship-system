@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Email - Commercial-Grade AI-Powered Internship Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #07080e 0%, #0e0913 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .confirm-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 480px;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confirm-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0d0f1a, #08050a);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+        
+        .logo h1 span {
+            color: #667eea;
+        }
+        
+        .logo p {
+            color: #888;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .welcome-text .icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .welcome-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        
+        .welcome-text p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .btn-confirm {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 16px;
+            transition: color 0.3s;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .btn-secondary:hover {
+            color: #667eea;
+        }
+        
+        .info-box {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+        
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        
+        .info-box i {
+            color: #667eea;
+        }
+        
+        @media (max-width: 480px) {
+            .confirm-container {
+                padding: 32px 20px;
+            }
+            .welcome-text h2 {
+                font-size: 20px;
+            }
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirm-container">
+        <div class="logo">
+            <h1>Commercial-Grade<span>AI-Powered Internship Management System</span></h1>
+            <p>Commercial Grade AI Powered Platform</p>
+        </div>
+
+        <div class="welcome-text">
+            <span class="icon">✅</span>
+            <h2>Confirm Your Email</h2>
+            <p>Please confirm your email address to complete your registration.</p>
+        </div>
+
+        <div class="info-box">
+            <p>
+                <i class="fas fa-envelope"></i> 
+                You are about to confirm the email address:
+            </p>
+            <p style="font-weight: 600; color: #1a1a2e; margin-top: 4px;">
+                {% if confirmation.email_address %}
+                    {{ confirmation.email_address }}
+                {% else %}
+                    your email address
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="post" action="{{ action_url }}">
+            {% csrf_token %}
+            <button type="submit" class="btn-confirm">
+                <i class="fas fa-check-circle"></i> Confirm Email
+            </button>
+        </form>
+
+        <a href="{% url 'homepage:home' %}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+</body>
+</html>

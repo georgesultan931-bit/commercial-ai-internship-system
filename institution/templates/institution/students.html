@@ -1,0 +1,49 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Student Management{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;">🎓 Student Management</h1>
+        <span style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Total: {{ students.count }}</span>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; overflow-x: auto;">
+        {% if students %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f7f9fc; text-align: left;">
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Name</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Email</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Course</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Year</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr style="border-bottom: 1px solid #eef2f6;">
+                            <td style="padding: 12px;">
+                                <strong>{{ student.get_full_name|default:student.user.username }}</strong>
+                            </td>
+                            <td style="padding: 12px;">{{ student.user.email }}</td>
+                            <td style="padding: 12px;">{{ student.course|default:"-" }}</td>
+                            <td style="padding: 12px;">{{ student.year_of_study|default:"-" }}</td>
+                            <td style="padding: 12px;">
+                                <a href="#" style="color: #4f46e5; text-decoration: none;">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;">👤</div>
+                <p>No students registered yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

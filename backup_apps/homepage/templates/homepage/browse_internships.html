@@ -1,0 +1,89 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Browse Internships - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Browse Internships{% endblock %}
+{% block page_subtitle %}Find the perfect internship opportunity for your career.{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <input type="text" placeholder="Search internships..." style="flex: 1; min-width: 200px; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+    <select style="padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+        <option>All Categories</option>
+        <option>Development</option>
+        <option>Design</option>
+        <option>Marketing</option>
+        <option>Data Science</option>
+    </select>
+    <select style="padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+        <option>All Locations</option>
+        <option>Remote</option>
+        <option>On-site</option>
+        <option>Hybrid</option>
+    </select>
+    <button style="padding: 0.8rem 2rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        <i class="fas fa-search"></i> Search
+    </button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h3 style="font-size: 1.2rem; font-weight: 600;">Data Science Internship</h3>
+                <div style="color: #6b7280; font-size: 0.95rem;">Google • Mountain View, CA</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Full-time</span>
+                    <span style="background: #d1fae5; color: #059669; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Remote</span>
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">$5,000/mo</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="background: #dbeafe; color: #2563eb; padding: 0.3rem 1rem; border-radius: 20px; font-weight: 600;">95% Match</span>
+                <button style="display: block; margin-top: 0.5rem; padding: 0.5rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Apply Now
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h3 style="font-size: 1.2rem; font-weight: 600;">Frontend Developer Intern</h3>
+                <div style="color: #6b7280; font-size: 0.95rem;">Microsoft • Seattle, WA</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Full-time</span>
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Hybrid</span>
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">$4,500/mo</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="background: #fef3c7; color: #d97706; padding: 0.3rem 1rem; border-radius: 20px; font-weight: 600;">88% Match</span>
+                <button style="display: block; margin-top: 0.5rem; padding: 0.5rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Apply Now
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h3 style="font-size: 1.2rem; font-weight: 600;">UI/UX Design Intern</h3>
+                <div style="color: #6b7280; font-size: 0.95rem;">Apple • Cupertino, CA</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Part-time</span>
+                    <span style="background: #d1fae5; color: #059669; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Remote</span>
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">$3,500/mo</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="background: #d1fae5; color: #059669; padding: 0.3rem 1rem; border-radius: 20px; font-weight: 600;">92% Match</span>
+                <button style="display: block; margin-top: 0.5rem; padding: 0.5rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Apply Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

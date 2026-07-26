@@ -1,0 +1,50 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Settings - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block page_subtitle %}Manage your account preferences.{% endblock %}
+
+{% block content %}
+<div class="content-grid">
+    <div class="content-card">
+        <div class="card-title"><i class="fas fa-lock"></i> Change Password</div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Current Password</label>
+                <input type="password" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">New Password</label>
+                <input type="password" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Confirm Password</label>
+                <input type="password" style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            <button style="padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                Update Password
+            </button>
+        </div>
+    </div>
+    
+    <div class="content-card">
+        <div class="card-title"><i class="fas fa-bell"></i> Notifications</div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0;">
+                <div>
+                    <div style="font-weight: 600;">Email Notifications</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Receive updates via email</div>
+                </div>
+                <span style="background: #2563eb; color: white; padding: 0.2rem 0.8rem; border-radius: 20px;">On</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                <div>
+                    <div style="font-weight: 600;">Application Updates</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Get notified about status</div>
+                </div>
+                <span style="background: #d1d5db; color: #6b7280; padding: 0.2rem 0.8rem; border-radius: 20px;">Off</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

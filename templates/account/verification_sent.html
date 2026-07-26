@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - Commercial-Grade AI-Powered Internship Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #06070c 0%, #08050a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .verify-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 480px;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .verify-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0c0f1b, #130c1a);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+        
+        .logo h1 span {
+            color: #667eea;
+        }
+        
+        .logo p {
+            color: #888;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .icon-success {
+            text-align: center;
+            font-size: 64px;
+            color: #28a745;
+            margin-bottom: 16px;
+        }
+        
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .welcome-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        
+        .welcome-text p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .info-box {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 8px;
+        }
+        
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-box i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+        
+        .btn-resend {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #040407 0%, #191120 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-resend:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(12, 14, 24, 0.4);
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 16px;
+            transition: color 0.3s;
+            justify-content: center;
+        }
+        
+        .btn-back:hover {
+            color: #667eea;
+        }
+        
+        .email-display {
+            background: #f0f4ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 600;
+            color: #667eea;
+            margin: 4px 0;
+        }
+        
+        @media (max-width: 480px) {
+            .verify-container {
+                padding: 32px 20px;
+            }
+            .welcome-text h2 {
+                font-size: 20px;
+            }
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="logo">
+            <h1>Commercial-Grade<span>AI-Powered Internship Management System</span></h1>
+            <p>Commercial Grade AI Powered Platform</p>
+        </div>
+
+        <div class="icon-success">
+            <i class="fas fa-envelope"></i>
+        </div>
+
+        <div class="welcome-text">
+            <h2>Check Your Email</h2>
+            <p>We've sent a verification link to your email address.</p>
+        </div>
+
+        <div class="info-box">
+            <p><i class="fas fa-info-circle"></i> We have sent an email to:</p>
+            <p style="text-align: center;">
+                <span class="email-display">
+                    {% if request.user.email %}
+                        {{ request.user.email }}
+                    {% else %}
+                        your email address
+                    {% endif %}
+                </span>
+            </p>
+            <p style="margin-top: 12px; font-size: 13px; color: #888;">
+                <i class="fas fa-envelope"></i> Follow the link provided to finalize the signup process.
+            </p>
+        </div>
+
+        <div class="info-box" style="background: #fff8e1; border-color: #ffe082;">
+            <p style="font-size: 13px; color: #6d5a00;">
+                <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> 
+                If you do not see the verification email in your main inbox, check your <strong>spam</strong> or <strong>junk</strong> folder.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 8px;">
+            <p style="color: #888; font-size: 13px;">
+                Didn't receive the email?
+                <a href="#" style="color: #667eea; font-weight: 600; text-decoration: none;">Resend verification email</a>
+            </p>
+        </div>
+
+        <a href="{% url 'account_login' %}" class="btn-resend">
+            <i class="fas fa-sign-in-alt"></i> Return to Sign In
+        </a>
+
+        <div style="text-align: center; margin-top: 16px;">
+            <a href="{% url 'homepage:home' %}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>

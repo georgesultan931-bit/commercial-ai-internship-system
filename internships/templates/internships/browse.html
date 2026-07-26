@@ -1,0 +1,192 @@
+{% extends 'student_dashboard/base.html' %}
+
+{% block page_title %}Browse Internships{% endblock %}
+
+{% block content %}
+<style>
+    .browse-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    .browse-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    .browse-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .browse-card .card-header h2 {
+        font-size: 20px;
+        color: #0b1a33;
+    }
+    .internship-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f7f9fc;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        transition: all 0.2s;
+    }
+    .internship-item:hover {
+        background: #eef2ff;
+        transform: translateX(5px);
+    }
+    .internship-item .item-info h4 {
+        font-size: 16px;
+        color: #0b1a33;
+        margin-bottom: 4px;
+    }
+    .internship-item .item-info p {
+        font-size: 13px;
+        color: #6b7280;
+    }
+    .internship-item .item-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .btn-sm {
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.2s;
+    }
+    .btn-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .btn-sm.apply {
+        background: #4f46e5;
+        color: white;
+    }
+    .btn-sm.apply:hover {
+        background: #4338ca;
+    }
+    .btn-sm.save {
+        background: #f3f4f6;
+        color: #1f2a44;
+        border: 1px solid #e5e7eb;
+    }
+    .btn-sm.save:hover {
+        background: #e5e7eb;
+    }
+    .btn-sm.saved {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .empty-state .icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+    .empty-state h3 {
+        font-size: 20px;
+        color: #0b1a33;
+        margin-bottom: 8px;
+    }
+    .empty-state p {
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .status-active { background: #d1fae5; color: #065f46; }
+    .status-closed { background: #fee2e2; color: #991b1b; }
+    @media (max-width: 480px) {
+        .internship-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .internship-item .item-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+</style>
+
+<div class="browse-container">
+    <div class="browse-card">
+        <div class="card-header">
+            <h2><i class="fas fa-search" style="color: #4f46e5;"></i> Browse Internships</h2>
+            <span style="background: #eef2ff; color: #4f46e5; padding: 4px 12px; border-radius: 20px; font-size: 13px;">
+                {{ internships|length }} Available
+            </span>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if internships %}
+            {% for internship in internships %}
+                <div class="internship-item">
+                    <div class="item-info">
+                        <h4>
+                            {{ internship.title }}
+                            {% if internship.is_active %}
+                                <span class="status-badge status-active">● Active</span>
+                            {% else %}
+                                <span class="status-badge status-closed">● Closed</span>
+                            {% endif %}
+                        </h4>
+                        <p>
+                            <i class="fas fa-building" style="color: #6b7280; margin-right: 4px;"></i>
+                            {{ internship.company }}
+                            <span style="margin: 0 8px;">•</span>
+                            <i class="fas fa-map-marker-alt" style="color: #6b7280; margin-right: 4px;"></i>
+                            {{ internship.location|default:"Remote" }}
+                            <span style="margin: 0 8px;">•</span>
+                            <i class="fas fa-calendar-alt" style="color: #6b7280; margin-right: 4px;"></i>
+                            Posted {{ internship.created_at|timesince }} ago
+                        </p>
+                    </div>
+                    <div class="item-actions">
+                        <a href="#" class="btn-sm apply">
+                            <i class="fas fa-paper-plane"></i> Apply
+                        </a>
+                        <button class="btn-sm save">
+                            <i class="fas fa-heart"></i> Save
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="icon"></div>
+                <h3>No Internships Available</h3>
+                <p>There are currently no active internships. Please check back later.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="{% url 'student_dashboard:dashboard' %}" style="color: #4f46e5; text-decoration: none; font-weight: 500;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

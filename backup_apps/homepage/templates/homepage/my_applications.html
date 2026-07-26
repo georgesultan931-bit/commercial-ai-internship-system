@@ -1,0 +1,50 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}My Applications - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}My Applications{% endblock %}
+{% block page_subtitle %}Track all your internship applications in one place.{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <button style="padding: 0.6rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">All</button>
+    <button style="padding: 0.6rem 1.5rem; background: transparent; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer;">Reviewing</button>
+    <button style="padding: 0.6rem 1.5rem; background: transparent; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer;">Interview</button>
+    <button style="padding: 0.6rem 1.5rem; background: transparent; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer;">Accepted</button>
+    <button style="padding: 0.6rem 1.5rem; background: transparent; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer;">Rejected</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3 style="font-weight: 600;">Data Analyst Intern</h3>
+            <div style="color: #6b7280; font-size: 0.9rem;">Google • Applied 2 hours ago</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <span style="background: #dbeafe; color: #2563eb; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem;">Reviewing</span>
+            <button style="padding: 0.4rem 1rem; background: transparent; color: #2563eb; border: 1px solid #2563eb; border-radius: 8px; cursor: pointer;">View Details</button>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3 style="font-weight: 600;">Frontend Developer</h3>
+            <div style="color: #6b7280; font-size: 0.9rem;">Microsoft • Applied 1 day ago</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <span style="background: #fef3c7; color: #d97706; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem;">Interview</span>
+            <button style="padding: 0.4rem 1rem; background: transparent; color: #2563eb; border: 1px solid #2563eb; border-radius: 8px; cursor: pointer;">View Details</button>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3 style="font-weight: 600;">UX/UI Designer</h3>
+            <div style="color: #6b7280; font-size: 0.9rem;">Apple • Applied 3 days ago</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <span style="background: #d1fae5; color: #059669; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem;">Accepted</span>
+            <button style="padding: 0.4rem 1rem; background: transparent; color: #2563eb; border: 1px solid #2563eb; border-radius: 8px; cursor: pointer;">View Details</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

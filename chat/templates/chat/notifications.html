@@ -1,0 +1,49 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 900px; margin: 0 auto;">
+    <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;"> Notifications</h1>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden;">
+        {% if notifications %}
+            <div style="display: grid; gap: 1px; background: #eef2f6;">
+                {% for notif in notifications %}
+                    <div style="padding: 16px 24px; background: {% if not notif.is_read %}#f8f9ff{% else %}white{% endif %}; border-left: 4px solid {% if not notif.is_read %}#4f46e5{% else %}transparent{% endif %};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <div style="font-weight: 600; color: #0b1a33;">{{ notif.title }}</div>
+                                <div style="color: #666; font-size: 14px; margin-top: 4px;">{{ notif.message }}</div>
+                                <div style="color: #888; font-size: 12px; margin-top: 4px;">
+                                    {{ notif.created_at|date:"Y-m-d H:i" }}
+                                    {% if notif.sender %}
+                                        - from {{ notif.sender.username }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if notif.link and notif.link != '#' %}
+                                <a href="{{ notif.link }}" style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; white-space: nowrap;">
+                                    View →
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 64px; margin-bottom: 15px;"></div>
+                <h3 style="color: #0b1a33; margin-bottom: 10px;">No Notifications</h3>
+                <p style="color: #888;">You're all caught up!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'chat:inbox' %}" style="color: #4f46e5; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Inbox
+        </a>
+    </div>
+</div>
+{% endblock %}

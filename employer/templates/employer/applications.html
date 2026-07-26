@@ -1,0 +1,80 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Applications{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;"> Applications</h1>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <span style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Total: {{ total }}</span>
+            <span style="background: #f59e0b; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Pending: {{ pending }}</span>
+            <span style="background: #22c55e; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Shortlisted: {{ shortlisted }}</span>
+            <span style="background: #3b82f6; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Accepted: {{ accepted }}</span>
+            <span style="background: #ef4444; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Rejected: {{ rejected }}</span>
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; overflow-x: auto;">
+        {% if applications %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f7f9fc; text-align: left;">
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Applicant</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Internship</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Status</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Applied Date</th>
+                        <th style="padding: 12px; font-weight: 600; color: #1f2a44;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr style="border-bottom: 1px solid #eef2f6;">
+                            <td style="padding: 12px;">
+                                <strong>{{ application.applicant.get_full_name|default:application.applicant.username }}</strong>
+                                <br>
+                                <span style="font-size: 12px; color: #888;">{{ application.applicant.email }}</span>
+                            </td>
+                            <td style="padding: 12px;">
+                                <strong>{{ application.internship.title }}</strong>
+                            </td>
+                            <td style="padding: 12px;">
+                                {% if application.status == 'pending' %}
+                                    <span style="background: #fef3c7; color: #d97706; padding: 4px 12px; border-radius: 20px; font-size: 12px;">⏳ Pending</span>
+                                {% elif application.status == 'shortlisted' %}
+                                    <span style="background: #dbeafe; color: #2563eb; padding: 4px 12px; border-radius: 20px; font-size: 12px;">⭐ Shortlisted</span>
+                                {% elif application.status == 'accepted' %}
+                                    <span style="background: #d1fae5; color: #059669; padding: 4px 12px; border-radius: 20px; font-size: 12px;">✅ Accepted</span>
+                                {% elif application.status == 'rejected' %}
+                                    <span style="background: #fee2e2; color: #dc2626; padding: 4px 12px; border-radius: 20px; font-size: 12px;">❌ Rejected</span>
+                                {% else %}
+                                    <span style="background: #f3f4f6; color: #6b7280; padding: 4px 12px; border-radius: 20px; font-size: 12px;">{{ application.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px;">{{ application.applied_date|date:"Y-m-d H:i" }}</td>
+                            <td style="padding: 12px;">
+                                <a href="{% url 'employer:view_application' application.id %}" 
+                                   style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 13px;">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;"></div>
+                <p>No applications received yet.</p>
+                <p style="font-size: 14px; margin-top: 5px;">When students apply to your internships, they will appear here.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'employer:dashboard' %}" style="color: #4f46e5; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

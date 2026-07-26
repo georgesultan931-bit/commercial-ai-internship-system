@@ -1,0 +1,30 @@
+{% extends 'supervisor/base.html' %}
+
+{% block title %}Company Visits{% endblock %}
+{% block page_title %}Company Visits{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h3>Visit Schedule</h3>
+    {% if visits %}
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Student</th><th>Organization</th><th>Date</th><th>Location</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for visit in visits %}
+                <tr>
+                    <td>{{ visit.student.get_full_name|default:visit.student.username }}</td>
+                    <td>{{ visit.organization }}</td>
+                    <td>{{ visit.visit_date }} at {{ visit.visit_time }}</td>
+                    <td>{{ visit.location }}</td>
+                    <td><span class="badge {% if visit.status == 'completed' %}good{% elif visit.status == 'cancelled' %}danger{% else %}warn{% endif %}">{{ visit.get_status_display }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">No company visits are scheduled.</div>
+    {% endif %}
+</div>
+{% endblock %}

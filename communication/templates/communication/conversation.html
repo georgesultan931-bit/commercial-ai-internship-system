@@ -1,0 +1,295 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="conversation-container">
+    <div class="conversation-header">
+        <div class="header-left">
+            <a href="{% url 'communication:messages' %}" class="btn-back">← Back</a>
+            <div class="conversation-user">
+                <div class="user-avatar">{{ other_user.username|first|upper }}</div>
+                <div>
+                    <h3>{{ other_user.username }}</h3>
+                    <p>{{ other_user.profile.get_role_display }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'communication:send_message_to_user' other_user.id %}" class="btn-new">New Message</a>
+        </div>
+    </div>
+
+    <div class="messages-list" id="messagesList">
+        {% for msg in messages %}
+        <div class="message-item {% if msg.sender == user %}sent{% else %}received{% endif %}">
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="sender-name">{{ msg.sender.username }}</span>
+                    <span class="message-time">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                <div class="message-body">{{ msg.content|linebreaks }}</div>
+                {% if msg.parent_message %}
+                <div class="reply-indicator">↩️ Replied to: {{ msg.parent_message.subject }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-messages">
+            <p>No messages yet. Start the conversation!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="message-input">
+        <form method="post" action="{% url 'communication:reply_message' conversation.last_message.id %}" id="replyForm">
+            {% csrf_token %}
+            <textarea name="content" placeholder="Type your message..." rows="3" required></textarea>
+            <button type="submit" class="btn-send">Send</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .conversation-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .conversation-header {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn-back {
+        padding: 8px 15px;
+        background: #6c757d;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+    }
+
+    .conversation-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #007bff, #00d4ff);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .conversation-user h3 {
+        margin: 0;
+        color: #1a1a2e;
+        font-size: 18px;
+    }
+
+    .conversation-user p {
+        margin: 0;
+        color: #888;
+        font-size: 13px;
+    }
+
+    .btn-new {
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .btn-new:hover {
+        background: #0056b3;
+    }
+
+    .messages-list {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        min-height: 300px;
+        max-height: 500px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+    }
+
+    .message-item {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .message-item.sent {
+        justify-content: flex-end;
+    }
+
+    .message-content {
+        max-width: 70%;
+        padding: 12px 18px;
+        border-radius: 12px;
+        background: #f0f2f5;
+    }
+
+    .message-item.sent .message-content {
+        background: #007bff;
+        color: white;
+    }
+
+    .message-item.sent .message-content .sender-name {
+        color: rgba(255,255,255,0.8);
+    }
+
+    .message-item.sent .message-content .message-time {
+        color: rgba(255,255,255,0.6);
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+        gap: 15px;
+    }
+
+    .sender-name {
+        font-weight: 600;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .message-time {
+        font-size: 11px;
+        color: #888;
+    }
+
+    .message-body {
+        font-size: 14px;
+        line-height: 1.5;
+        word-wrap: break-word;
+    }
+
+    .reply-indicator {
+        font-size: 12px;
+        color: #888;
+        margin-top: 8px;
+        padding: 5px 10px;
+        background: rgba(0,0,0,0.05);
+        border-radius: 4px;
+    }
+
+    .no-messages {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+    .message-input {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .message-input form {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+    }
+
+    .message-input textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+        font-family: inherit;
+        transition: border-color 0.3s;
+    }
+
+    .message-input textarea:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .btn-send {
+        padding: 12px 30px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+        align-self: flex-end;
+    }
+
+    .btn-send:hover {
+        background: #218838;
+    }
+
+    @media (max-width: 768px) {
+        .conversation-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .header-left {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .message-content {
+            max-width: 85%;
+        }
+    }
+</style>
+
+<script>
+    // Auto-scroll to bottom of messages
+    const messagesList = document.getElementById('messagesList');
+    if (messagesList) {
+        messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+    // Auto-submit form on Enter (Shift+Enter for new line)
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.querySelector('textarea[name="content"]');
+        const form = document.getElementById('replyForm');
+        
+        if (textarea && form) {
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    form.submit();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'student_dashboard/base_student.html' %}
+
+{% block page_title %}Apply for Internship{% endblock %}
+{% block page_subtitle %}Confirm your application{% endblock %}
+
+{% block student_content %}
+<div class="apply-container">
+    <div class="apply-card">
+        <h2>Confirm Application</h2>
+        
+        <div class="internship-summary">
+            <h3>{{ internship.title }}</h3>
+            <p class="company">{{ internship.company }}</p>
+            <p class="location">{{ internship.location }}</p>
+            <p class="stipend">{{ internship.stipend }}</p>
+            <p class="duration">{{ internship.duration }}</p>
+        </div>
+
+        <div class="application-form">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Cover Letter</label>
+                    <textarea name="cover_letter" class="form-control" rows="5" placeholder="Write a brief cover letter..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Submit Application</button>
+                    <a href="{% url 'student_dashboard:internships' %}" class="btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .apply-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .apply-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .apply-card h2 {
+        color: #1a1a2e;
+        margin: 0 0 20px 0;
+        border-bottom: 2px solid #f0f2f5;
+        padding-bottom: 15px;
+    }
+
+    .internship-summary {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+    }
+
+    .internship-summary h3 {
+        margin: 0 0 5px 0;
+        color: #1a1a2e;
+    }
+
+    .internship-summary .company {
+        color: #666;
+        font-weight: 500;
+        margin: 0 0 5px 0;
+    }
+
+    .internship-summary .location,
+    .internship-summary .stipend,
+    .internship-summary .duration {
+        color: #888;
+        font-size: 14px;
+        margin: 0 0 3px 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .btn-submit {
+        padding: 12px 35px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: #218838;
+    }
+
+    .btn-cancel {
+        padding: 12px 35px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+
+{% block page_title %}Approve Internships{% endblock %}
+{% block page_subtitle %}Review and approve pending internships{% endblock %}
+
+{% block admin_content %}
+<div class="approve-container">
+    {% if pending_internships %}
+    <div class="data-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Company</th>
+                    <th>Posted By</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for internship in pending_internships %}
+                <tr>
+                    <td><strong>{{ internship.title }}</strong></td>
+                    <td>{{ internship.company }}</td>
+                    <td>{{ internship.posted_by.username }}</td>
+                    <td>{{ internship.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <button class="btn-approve" onclick="approveInternship({{ internship.id }})">✅ Approve</button>
+                        <button class="btn-reject" onclick="rejectInternship({{ internship.id }})">❌ Reject</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p> No pending internships to approve!</p>
+        <p>All internships have been approved.</p>
+        <a href="{% url 'admin_dashboard:internships' %}" class="btn-primary">View All Internships</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function approveInternship(id) {
+        if(confirm('Approve this internship?')) {
+            // Handle approval via AJAX or form submission
+            alert('Internship approved! (Feature coming soon)');
+        }
+    }
+    
+    function rejectInternship(id) {
+        if(confirm('Reject this internship?')) {
+            alert('Internship rejected! (Feature coming soon)');
+        }
+    }
+</script>
+
+<style>
+    .approve-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .data-table-container {
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    thead {
+        background: #f8f9fa;
+    }
+    
+    th {
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+    
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .btn-approve {
+        padding: 6px 15px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 13px;
+        margin-right: 5px;
+        transition: background 0.3s;
+    }
+    
+    .btn-approve:hover { background: #218838; }
+    
+    .btn-reject {
+        padding: 6px 15px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.3s;
+    }
+    
+    .btn-reject:hover { background: #c82333; }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #888;
+    }
+    
+    .btn-primary {
+        display: inline-block;
+        padding: 10px 25px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-top: 15px;
+        transition: background 0.3s;
+    }
+    
+    .btn-primary:hover { background: #0056b3; }
+</style>
+{% endblock %}

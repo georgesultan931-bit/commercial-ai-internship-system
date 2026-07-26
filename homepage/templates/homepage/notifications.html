@@ -1,0 +1,91 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Notifications - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block page_subtitle %}Stay updated with your latest activity.{% endblock %}
+
+{% block content %}
+<div id="notificationsContainer">
+    <p style="color: #6b7280; text-align: center; padding: 2rem 0;">Loading notifications...</p>
+</div>
+
+<script>
+    async function loadNotifications() {
+        try {
+            const response = await fetch('/api/ai/notifications/');
+            const data = await response.json();
+            
+            if (data.success) {
+                const container = document.getElementById('notificationsContainer');
+                const notifications = data.notifications;
+                
+                // Update badge
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.textContent = data.unread_count;
+                    badge.style.display = data.unread_count > 0 ? 'inline' : 'none';
+                }
+                
+                if (notifications.length === 0) {
+                    container.innerHTML = `
+                        <div style="background: white; padding: 3rem; border-radius: 16px; border: 1px solid #e5e7eb; text-align: center;">
+                            <i class="fas fa-bell" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #6b7280;">No Notifications</h3>
+                            <p style="color: #9ca3af;">You're all caught up!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                for (const notif of notifications) {
+                    const typeColors = {
+                        'MESSAGE': 'border-left: 4px solid #2563eb;',
+                        'APPLICATION': 'border-left: 4px solid #10b981;',
+                        'INTERNSHIP': 'border-left: 4px solid #8b5cf6;',
+                        'USER_REGISTRATION': 'border-left: 4px solid #f59e0b;',
+                        'REPORT': 'border-left: 4px solid #ef4444;',
+                    };
+                    const bgColor = notif.is_read ? 'background: white;' : 'background: #eff6ff;';
+                    
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; ${bgColor} ${typeColors[notif.notification_type] || 'border-left: 4px solid #6b7280;'} border-radius: 8px; margin-bottom: 0.5rem;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">${notif.title}</div>
+                                <div style="font-size: 0.9rem; color: #4b5563;">${notif.message}</div>
+                                <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 0.2rem;">${notif.created_at}</div>
+                            </div>
+                            ${!notif.is_read ? `<button onclick="markRead(${notif.id})" style="padding: 0.3rem 0.8rem; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
+                                <i class="fas fa-check"></i> Mark Read
+                            </button>` : `<span style="color: #9ca3af; font-size: 0.8rem;">Read</span>`}
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+        }
+    }
+
+    async function markRead(id) {
+        try {
+            const response = await fetch(`/api/ai/mark-notification/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                }
+            });
+            if (response.ok) {
+                loadNotifications();
+            }
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    }
+
+    loadNotifications();
+    setInterval(loadNotifications, 30000);
+</script>
+{% endblock %}

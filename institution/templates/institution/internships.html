@@ -1,0 +1,44 @@
+
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Internship Opportunities{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h1 style="font-size: 24px; color: #0b1a33;">📋 Internship Opportunities</h1>
+        <span style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Total: {{ internships.count }}</span>
+    </div>
+
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px;">
+        {% if internships %}
+            <div style="display: grid; gap: 15px;">
+                {% for internship in internships %}
+                    <div style="border: 1px solid #eef2f6; border-radius: 12px; padding: 20px; transition: 0.3s;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 style="color: #0b1a33; font-size: 18px;">{{ internship.title }}</h3>
+                                <p style="color: #888; font-size: 14px;">{{ internship.location }}</p>
+                            </div>
+                            <span style="background: {% if internship.is_active %}#d1fae5{% else %}#fee2e2{% endif %}; color: {% if internship.is_active %}#059669{% else %}#dc2626{% endif %}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">
+                                {% if internship.is_active %}✅ Active{% else %}❌ Closed{% endif %}
+                            </span>
+                        </div>
+                        <p style="color: #666; margin-top: 10px; font-size: 14px;">{{ internship.description|truncatechars:150 }}</p>
+                        <div style="margin-top: 10px; display: flex; gap: 15px; flex-wrap: wrap; font-size: 13px; color: #888;">
+                            <span> {{ internship.posted_by.username }}</span>
+                            <span> Deadline: {{ internship.deadline|date:"Y-m-d" }}</span>
+                            <span> {{ internship.applications.count }} applications</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                <p>No internships available.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

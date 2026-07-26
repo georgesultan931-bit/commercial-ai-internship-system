@@ -1,0 +1,319 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="internships-container">
+    <div class="page-header">
+        <h1>Browse Internships</h1>
+        <p>Find the perfect internship opportunity</p>
+    </div>
+
+    <div class="filters-section">
+        <form method="get" action="{% url 'student_dashboard:internships' %}" class="filters-form">
+            <input type="text" name="search" placeholder="Search internships..." value="{{ search_query }}" class="search-input">
+            <select name="type" class="filter-select">
+                <option value="">All Types</option>
+                <option value="Full-time" {% if selected_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                <option value="Part-time" {% if selected_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                <option value="Remote" {% if selected_type == 'Remote' %}selected{% endif %}>Remote</option>
+            </select>
+            <select name="duration" class="filter-select">
+                <option value="">All Durations</option>
+                <option value="1 month" {% if selected_duration == '1 month' %}selected{% endif %}>1 month</option>
+                <option value="3 months" {% if selected_duration == '3 months' %}selected{% endif %}>3 months</option>
+                <option value="6 months" {% if selected_duration == '6 months' %}selected{% endif %}>6 months</option>
+            </select>
+            <button type="submit" class="filter-btn">Apply Filters</button>
+            <a href="{% url 'student_dashboard:internships' %}" class="clear-btn">Clear</a>
+        </form>
+    </div>
+
+    <div class="internships-grid">
+        {% if internships %}
+            {% for internship in internships %}
+            <div class="internship-card">
+                <div class="card-header">
+                    <div>
+                        <h3>{{ internship.title }}</h3>
+                        <p class="company-name">{{ internship.company }}</p>
+                    </div>
+                    <span class="internship-type">{{ internship.type }}</span>
+                </div>
+                <p class="description">{{ internship.description|truncatewords:20 }}</p>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="label">Location</span>
+                        <span class="detail-value">{{ internship.location }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Duration</span>
+                        <span class="detail-value">{{ internship.duration }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Stipend</span>
+                        <span class="detail-value">{{ internship.stipend|default:"Not specified" }}</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'student_dashboard:internship_detail' internship.pk %}" class="btn-view">View Details</a>
+                    <a href="{% url 'student_dashboard:save' internship.pk %}" class="btn-save">Save</a>
+                    <a href="{% url 'student_dashboard:apply' internship.pk %}" class="btn-apply">Apply Now</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-internships">
+                <p>No internships found matching your criteria.</p>
+                <a href="{% url 'student_dashboard:internships' %}" class="btn-clear-filters">Clear Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .internships-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    .page-header {
+        margin-bottom: 30px;
+    }
+    .page-header h1 {
+        color: #1a1a2e;
+        font-size: 28px;
+        margin: 0 0 5px 0;
+    }
+    .page-header p {
+        color: #666;
+        font-size: 16px;
+        margin: 0;
+    }
+    .filters-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+    }
+    .filters-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .search-input {
+        flex: 2;
+        min-width: 200px;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    .search-input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    .filter-select {
+        flex: 1;
+        min-width: 120px;
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+    }
+    .filter-select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    .filter-btn {
+        padding: 10px 25px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+    .filter-btn:hover {
+        background: #0056b3;
+    }
+    .clear-btn {
+        padding: 10px 25px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+    .clear-btn:hover {
+        background: #5a6268;
+        color: white;
+    }
+    .internships-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .internship-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .internship-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+    .card-header h3 {
+        margin: 0 0 5px 0;
+        font-size: 18px;
+        color: #1a1a2e;
+    }
+    .company-name {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+    .internship-type {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        background: #e5e7eb;
+        color: #333;
+    }
+    .description {
+        color: #555;
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 10px 0 15px 0;
+    }
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+    }
+    .detail-item .label {
+        font-size: 11px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .detail-item .detail-value {
+        font-size: 14px;
+        color: #1a1a2e;
+        font-weight: 500;
+    }
+    .card-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding-top: 15px;
+        border-top: 1px solid #f0f2f5;
+    }
+    .btn-view, .btn-save, .btn-apply {
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        border: none;
+    }
+    .btn-view {
+        background: transparent;
+        color: #007bff;
+        border: 2px solid #007bff;
+    }
+    .btn-view:hover {
+        background: #007bff;
+        color: white;
+    }
+    .btn-save {
+        background: #ffc107;
+        color: #1a1a2e;
+    }
+    .btn-save:hover {
+        background: #e0a800;
+    }
+    .btn-apply {
+        background: #28a745;
+        color: white;
+    }
+    .btn-apply:hover {
+        background: #218838;
+        color: white;
+    }
+    .no-internships {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+    }
+    .no-internships p {
+        color: #888;
+        font-size: 16px;
+    }
+    .btn-clear-filters {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 20px;
+        background: #6c757d;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+    .btn-clear-filters:hover {
+        background: #5a6268;
+        color: white;
+    }
+    @media (max-width: 768px) {
+        .filters-form {
+            flex-direction: column;
+        }
+        .search-input, .filter-select, .filter-btn, .clear-btn {
+            width: 100%;
+        }
+        .details-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    @media (max-width: 480px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+        .card-actions {
+            flex-direction: column;
+        }
+        .btn-view, .btn-save, .btn-apply {
+            width: 100%;
+            text-align: center;
+        }
+        .card-header {
+            flex-direction: column;
+        }
+        .internship-type {
+            margin-top: 5px;
+        }
+    }
+</style>
+{% endblock %}

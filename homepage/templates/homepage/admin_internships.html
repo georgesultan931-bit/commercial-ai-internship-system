@@ -1,0 +1,184 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Internship Management - Admin Dashboard{% endblock %}
+
+{% block page_title %}Internship Management{% endblock %}
+
+{% block page_subtitle %}Manage all internships on the platform.{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="label">Total Internships</div>
+        <div class="value">{{ total_internships }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> All</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-clock"></i></div>
+        <div class="label">Pending</div>
+        <div class="value" style="color: #d97706;">{{ pending_count }}</div>
+        <div class="change negative"><i class="fas fa-hourglass-half"></i> Needs review</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-check-circle"></i></div>
+        <div class="label">Approved</div>
+        <div class="value" style="color: #059669;">{{ approved_count }}</div>
+        <div class="change positive"><i class="fas fa-check"></i> Active</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-times-circle"></i></div>
+        <div class="label">Rejected/Closed</div>
+        <div class="value" style="color: #dc2626;">{{ rejected_count|add:closed_count }}</div>
+        <div class="change negative"><i class="fas fa-times"></i> Inactive</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;">
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
+        <input type="text" name="search" placeholder="Search internships..." value="{{ search }}" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px; min-width: 200px;">
+        
+        <select name="status" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Status</option>
+            {% for key, value in status_choices %}
+                <option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="category" style="padding: 0.6rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Categories</option>
+            {% for key, value in categories %}
+                <option value="{{ key }}" {% if category_filter == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit" style="padding: 0.6rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            <i class="fas fa-search"></i> Filter
+        </button>
+        
+        <a href="{% url 'homepage:admin_internships' %}" style="padding: 0.6rem 1.5rem; background: #e5e7eb; color: #1a1a2e; border: none; border-radius: 8px; text-decoration: none;">
+            <i class="fas fa-times"></i> Clear
+        </a>
+    </form>
+</div>
+
+<!-- Internships Table -->
+<div style="background: white; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Title</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Organization</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Category</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Status</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Featured</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151;">Posted</th>
+                    <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for internship in internships %}
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <td style="padding: 1rem;">
+                        <div>
+                            <div style="font-weight: 600;">{{ internship.title }}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">{{ internship.location }}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem; color: #4b5563;">{{ internship.organization.name }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">
+                            {{ internship.get_category_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;
+                            {% if internship.status == 'APPROVED' %}background: #d1fae5; color: #059669;
+                            {% elif internship.status == 'PENDING' %}background: #fef3c7; color: #d97706;
+                            {% elif internship.status == 'REJECTED' %}background: #fee2e2; color: #dc2626;
+                            {% else %}background: #e5e7eb; color: #6b7280;{% endif %}">
+                            {{ internship.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; text-align: center;">
+                        {% if internship.is_featured %}
+                            <span style="color: #f59e0b;"><i class="fas fa-star"></i></span>
+                        {% else %}
+                            <span style="color: #d1d5db;"><i class="fas fa-star"></i></span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem; color: #6b7280; font-size: 0.9rem;">{{ internship.created_at|date:"M d, Y" }}</td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <div style="display: flex; gap: 0.3rem; justify-content: center; flex-wrap: wrap;">
+                            <!-- View Detail -->
+                            <a href="{% url 'homepage:admin_internship_detail' internship.id %}" style="padding: 0.3rem 0.7rem; background: #eff6ff; color: #2563eb; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            
+                            <!-- Approve -->
+                            {% if internship.status == 'PENDING' %}
+                            <a href="{% url 'homepage:admin_approve_internship' internship.id %}" style="padding: 0.3rem 0.7rem; background: #d1fae5; color: #059669; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Approve this internship?')">
+                                <i class="fas fa-check"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- Reject -->
+                            {% if internship.status == 'PENDING' %}
+                            <a href="{% url 'homepage:admin_reject_internship' internship.id %}" style="padding: 0.3rem 0.7rem; background: #fee2e2; color: #dc2626; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Reject this internship?')">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- Feature/Unfeature -->
+                            <a href="{% url 'homepage:admin_feature_internship' internship.id %}" style="padding: 0.3rem 0.7rem; background: {% if internship.is_featured %}#fef3c7; color: #d97706;{% else %}#e5e7eb; color: #6b7280;{% endif %} border-radius: 6px; text-decoration: none; font-size: 0.8rem;" title="{% if internship.is_featured %}Unfeature{% else %}Feature{% endif %}">
+                                <i class="fas fa-star"></i>
+                            </a>
+                            
+                            <!-- Close -->
+                            {% if internship.status == 'APPROVED' %}
+                            <a href="{% url 'homepage:admin_close_internship' internship.id %}" style="padding: 0.3rem 0.7rem; background: #fef3c7; color: #d97706; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Close this internship?')">
+                                <i class="fas fa-times-circle"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <!-- Delete -->
+                            <a href="{% url 'homepage:admin_delete_internship' internship.id %}" style="padding: 0.3rem 0.7rem; background: #fee2e2; color: #dc2626; border-radius: 6px; text-decoration: none; font-size: 0.8rem;" onclick="return confirm('Delete this internship permanently?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2rem; text-align: center; color: #6b7280;">No internships found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if internships.has_other_pages %}
+<div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+    {% if internships.has_previous %}
+        <a href="?page={{ internships.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Previous</a>
+    {% endif %}
+    
+    {% for num in internships.paginator.page_range %}
+        {% if internships.number == num %}
+            <span style="padding: 0.5rem 1rem; background: #2563eb; color: white; border-radius: 8px;">{{ num }}</span>
+        {% else %}
+            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    
+    {% if internships.has_next %}
+        <a href="?page={{ internships.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" style="padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #1a1a2e;">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

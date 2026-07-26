@@ -1,0 +1,180 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Reports & Analytics - Admin Dashboard{% endblock %}
+
+{% block page_title %}Reports & Analytics{% endblock %}
+
+{% block page_subtitle %}View platform statistics and insights.{% endblock %}
+
+{% block content %}
+<!-- Stats Overview -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-users"></i></div>
+        <div class="label">Total Users</div>
+        <div class="value">{{ total_users }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> {{ total_students }} students</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="label">Total Internships</div>
+        <div class="value">{{ total_internships }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> {{ active_internships }} active</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-file-alt"></i></div>
+        <div class="label">Total Applications</div>
+        <div class="value">{{ total_applications }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> {{ accepted_applications }} placed</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-robot"></i></div>
+        <div class="label">AI Match Score</div>
+        <div class="value" style="color: #8b5cf6;">{{ avg_ai_match }}%</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> Average match</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <!-- Left Column -->
+    <div>
+        <!-- User Statistics -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-users"></i> User Statistics</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #2563eb;">{{ total_students }}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Students</div>
+                </div>
+                <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #10b981;">{{ total_employers }}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Employers</div>
+                </div>
+                <div style="background: #f5f3ff; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #8b5cf6;">{{ total_institutions }}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Institutions</div>
+                </div>
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #d97706;">{{ total_organizations }}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Organizations</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Monthly User Growth -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-chart-line"></i> Monthly User Growth</div>
+            <div style="display: flex; align-items: end; gap: 0.5rem; height: 150px; padding-top: 1rem;">
+                {% for data in monthly_users %}
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; background: #2563eb; border-radius: 4px 4px 0 0; height: {{ data.count|floatformat:0 }}px; min-height: 5px; max-height: 140px;"></div>
+                    <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.3rem;">{{ data.month }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Top Skills -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-code"></i> Top Skills</div>
+            {% if top_skills %}
+                {% for skill, count in top_skills %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="font-weight: 500;">{{ skill }}</span>
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">{{ count }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 0.5rem 0;">No skills data available.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div>
+        <!-- Internship Status -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-chart-pie"></i> Internship Status</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+                <div style="background: #d1fae5; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">{{ approved_internships }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Approved</div>
+                </div>
+                <div style="background: #fef3c7; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">{{ pending_internships }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Pending</div>
+                </div>
+                <div style="background: #fee2e2; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">{{ rejected_internships }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Rejected</div>
+                </div>
+                <div style="background: #e5e7eb; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #6b7280;">{{ active_internships }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Active</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Status -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-file-alt"></i> Application Status</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+                <div style="background: #fef3c7; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">{{ pending_applications }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Pending</div>
+                </div>
+                <div style="background: #d1fae5; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">{{ accepted_applications }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Accepted</div>
+                </div>
+                <div style="background: #fee2e2; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">{{ rejected_applications }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Rejected</div>
+                </div>
+                <div style="background: #eff6ff; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">{{ total_applications }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Total</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interview Statistics -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-calendar-check"></i> Interview Statistics</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem;">
+                <div style="background: #eff6ff; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">{{ total_interviews }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Total</div>
+                </div>
+                <div style="background: #fef3c7; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">{{ scheduled_interviews }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Scheduled</div>
+                </div>
+                <div style="background: #d1fae5; padding: 0.8rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">{{ completed_interviews }}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Completed</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-download"></i> Export Reports</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #eff6ff; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-file-pdf" style="color: #ef4444; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Export as PDF</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #f0fdf4; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-file-excel" style="color: #10b981; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Export as Excel</span>
+                </a>
+                <a href="#" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; background: #f5f3ff; border-radius: 10px; text-decoration: none; color: #1a1a2e;">
+                    <i class="fas fa-file-csv" style="color: #8b5cf6; font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Export as CSV</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

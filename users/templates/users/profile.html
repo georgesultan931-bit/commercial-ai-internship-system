@@ -1,0 +1,73 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 20px;">
+            <i class="fas fa-user" style="color: #4f46e5;"></i> My Profile
+        </h1>
+        
+        <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;">
+            <div style="text-align: center;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 4px solid #4f46e5; margin: 0 auto;">
+                    <img src="{{ profile.get_profile_image_url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <form action="{% url 'users:upload_profile_image' %}" method="post" enctype="multipart/form-data" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <input type="file" name="profile_image" accept="image/*" style="display: none;" id="profileImageInput" onchange="this.form.submit()">
+                    <input type="hidden" name="next" value="{% url 'users:profile' %}">
+                    <button type="button" onclick="document.getElementById('profileImageInput').click()" style="background: #4f46e5; color: white; padding: 6px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px;">
+                        <i class="fas fa-camera"></i> Change Photo
+                    </button>
+                </form>
+            </div>
+            <div>
+                <h2 style="font-size: 22px; color: #0b1a33;">{{ user.get_full_name|default:user.username }}</h2>
+                <p style="color: #6b7280; font-size: 14px;">{{ user.email }}</p>
+                <p style="color: #6b7280; font-size: 14px; margin-top: 4px;">
+                    <span style="background: #eef2ff; color: #4f46e5; padding: 2px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                        {{ profile.get_role_display }}
+                    </span>
+                </p>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <span style="color: #6b7280; font-size: 12px;">Username</span>
+                <p style="font-weight: 600; color: #0b1a33;">{{ user.username }}</p>
+            </div>
+            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <span style="color: #6b7280; font-size: 12px;">Email</span>
+                <p style="font-weight: 600; color: #0b1a33;">{{ user.email }}</p>
+            </div>
+            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <span style="color: #6b7280; font-size: 12px;">Role</span>
+                <p style="font-weight: 600; color: #0b1a33;">{{ profile.get_role_display }}</p>
+            </div>
+            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <span style="color: #6b7280; font-size: 12px;">Phone</span>
+                <p style="font-weight: 600; color: #0b1a33;">{{ profile.phone|default:"Not set" }}</p>
+            </div>
+            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <span style="color: #6b7280; font-size: 12px;">Location</span>
+                <p style="font-weight: 600; color: #0b1a33;">{{ profile.location|default:"Not set" }}</p>
+            </div>
+            <div style="padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <span style="color: #6b7280; font-size: 12px;">Account Status</span>
+                <p style="font-weight: 600; color: {% if profile.is_approved %}#22c55e{% else %}#ef4444{% endif %};">
+                    {% if profile.is_approved %}✅ Approved{% else %}⏳ Pending{% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{% url 'homepage:home' %}" style="color: #4f46e5; text-decoration: none; font-weight: 500;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

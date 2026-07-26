@@ -1,0 +1,84 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 700px; margin: 0 auto;">
+    <div style="background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 30px;">
+        <h1 style="font-size: 24px; color: #0b1a33; margin-bottom: 5px;">Edit Profile</h1>
+        <p style="color: #888; margin-bottom: 25px;">Update your personal information</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; background: {% if message.tags == 'success' %}#ecfdf3{% else %}#fef2f2{% endif %}; color: {% if message.tags == 'success' %}#0b9f6c{% else %}#dc2626{% endif %}; border: 1px solid {% if message.tags == 'success' %}#a7f3d0{% else %}#fecaca{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'student_dashboard:profile_update' %}">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                <div>
+                    <label for="first_name" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;">
+                </div>
+                <div>
+                    <label for="last_name" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;">
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="email" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Email Address</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="phone" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Phone Number</label>
+                <input type="text" id="phone" name="phone" value="{{ profile.phone|default:'' }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;" placeholder="+254700000000">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="location" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Location</label>
+                <input type="text" id="location" name="location" value="{{ profile.location|default:'' }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;" placeholder="Nairobi, Kenya">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="institution" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Institution</label>
+                <input type="text" id="institution" name="institution" value="{{ profile.institution|default:'' }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;" placeholder="University of Nairobi">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="course" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Course</label>
+                <input type="text" id="course" name="course" value="{{ profile.course|default:'' }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;" placeholder="Computer Science">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="year_of_study" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Year of Study</label>
+                <input type="number" id="year_of_study" name="year_of_study" value="{{ profile.year_of_study|default:1 }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;" min="1" max="6">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="skills" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Skills <span style="font-size: 12px; color: #888;">(comma separated)</span></label>
+                <input type="text" id="skills" name="skills" value="{{ profile.skills|join:', ' }}" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none;" placeholder="Python, Django, React, JavaScript">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <label for="bio" style="display: block; font-size: 13px; font-weight: 600; color: #1f2a44; margin-bottom: 6px;">Bio</label>
+                <textarea id="bio" name="bio" rows="4" style="width: 100%; padding: 12px 16px; font-size: 15px; background: #f7f9fc; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; resize: vertical; font-family: 'Inter', sans-serif;">{{ profile.bio|default:'' }}</textarea>
+            </div>
+
+            <div style="margin-top: 25px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button type="submit" style="background: #4f46e5; color: white; padding: 14px 40px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 15px;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="{% url 'student_dashboard:profile' %}" style="background: #f1f4f9; color: #1f2a44; padding: 14px 40px; border-radius: 40px; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

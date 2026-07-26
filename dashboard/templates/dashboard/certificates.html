@@ -1,0 +1,135 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Certificates - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Certificates{% endblock %}
+{% block page_subtitle %}View and manage your certificates and achievements.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-certificate"></i></div>
+        <div class="label">Total Certificates</div>
+        <div class="value" style="color: #2563eb;">{{ accepted_applications|length|add:2 }}</div>
+        <div class="change positive"><i class="fas fa-arrow-up"></i> Earned</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-check-circle"></i></div>
+        <div class="label">Internship Certificates</div>
+        <div class="value" style="color: #10b981;">{{ accepted_applications|length }}</div>
+        <div class="change positive"><i class="fas fa-check"></i> Completed</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon"><i class="fas fa-clock"></i></div>
+        <div class="label">Pending</div>
+        <div class="value" style="color: #f59e0b;">0</div>
+        <div class="change negative"><i class="fas fa-hourglass-half"></i> In progress</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div>
+        <!-- Internship Certificates -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-briefcase"></i> Internship Certificates</div>
+            {% if accepted_applications %}
+                {% for app in accepted_applications %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border-bottom: 1px solid #f3f4f6; margin-bottom: 0.5rem;">
+                    <div>
+                        <div style="font-weight: 600;">{{ app.internship.title }}</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">{{ app.internship.organization.name }}</div>
+                        <div style="font-size: 0.8rem; color: #10b981; margin-top: 0.2rem;">
+                            <i class="fas fa-check-circle"></i> Completed: {{ app.updated_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="background: #d1fae5; color: #059669; padding: 0.1rem 0.6rem; border-radius: 20px; font-size: 0.7rem;">Issued</span>
+                        <a href="#" style="padding: 0.3rem 1rem; background: #2563eb; color: white; border-radius: 8px; text-decoration: none; font-size: 0.8rem;">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6b7280; text-align: center; padding: 1rem 0;">No internship certificates yet. Complete an internship to earn one.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Professional Certificates -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-user-graduate"></i> Professional Certificates</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border-bottom: 1px solid #f3f4f6;">
+                    <div>
+                        <div style="font-weight: 600;">AI Career Essentials</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">Issued: Jan 15, 2026</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="background: #d1fae5; color: #059669; padding: 0.1rem 0.6rem; border-radius: 20px; font-size: 0.7rem;">Verified</span>
+                        <a href="#" style="padding: 0.3rem 1rem; background: #2563eb; color: white; border-radius: 8px; text-decoration: none; font-size: 0.8rem;">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem;">
+                    <div>
+                        <div style="font-weight: 600;">Professional Development</div>
+                        <div style="font-size: 0.85rem; color: #6b7280;">Issued: Mar 10, 2026</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="background: #d1fae5; color: #059669; padding: 0.1rem 0.6rem; border-radius: 20px; font-size: 0.7rem;">Verified</span>
+                        <a href="#" style="padding: 0.3rem 1rem; background: #2563eb; color: white; border-radius: 8px; text-decoration: none; font-size: 0.8rem;">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <!-- Certificate Requests -->
+        <div class="content-card" style="margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-file-certificate"></i> Request Certificate</div>
+            <form>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Certificate Type</label>
+                        <select style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            <option value="">Select Type</option>
+                            <option value="internship">Internship Completion</option>
+                            <option value="training">Training Certificate</option>
+                            <option value="achievement">Achievement Certificate</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem;">Reason for Request</label>
+                        <textarea rows="3" placeholder="Explain why you need this certificate..." style="width: 100%; padding: 0.6rem; border: 2px solid #e5e7eb; border-radius: 8px;"></textarea>
+                    </div>
+                    <button type="submit" style="padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-paper-plane"></i> Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="content-card">
+            <div class="card-title"><i class="fas fa-chart-pie"></i> Certificate Stats</div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Earned</span>
+                    <span style="font-weight: 600; color: #10b981;">{{ accepted_applications|length|add:2 }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280;">Pending</span>
+                    <span style="font-weight: 600; color: #f59e0b;">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                    <span style="color: #6b7280;">Total</span>
+                    <span style="font-weight: 600; color: #2563eb;">{{ accepted_applications|length|add:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

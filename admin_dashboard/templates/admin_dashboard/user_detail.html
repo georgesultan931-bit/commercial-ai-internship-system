@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+        <h1 style="color: #1a1a2e;">User Details</h1>
+        <p style="color: #666; margin-bottom: 20px;">Viewing: {{ user.username }}</p>
+
+        {% if messages %}
+            <div style="margin: 20px 0;">
+                {% for message in messages %}
+                    <div style="padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; 
+                        {% if message.tags == 'success' %}background: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                        {% elif message.tags == 'error' %}background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                        {% else %}background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">ID:</span>
+                <span>{{ user.id }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Username:</span>
+                <span>{{ user.username }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Email:</span>
+                <span>{{ user.email }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Full Name:</span>
+                <span>{{ user.get_full_name|default:"Not set" }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Role:</span>
+                <span>{{ user.profile.get_role_display|default:"User" }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Status:</span>
+                <span>
+                    {% if user.is_active %}
+                        <span style="background: #d4edda; color: #155724; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Active</span>
+                    {% else %}
+                        <span style="background: #f8d7da; color: #721c24; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Archived</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Joined:</span>
+                <span>{{ user.date_joined|date:"M d, Y H:i" }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #f0f2f5;">
+                <span style="width: 120px; font-weight: 600;">Last Login:</span>
+                <span>{{ user.last_login|date:"M d, Y H:i"|default:"Never" }}</span>
+            </div>
+            <div style="display: flex; padding: 10px 0;">
+                <span style="width: 120px; font-weight: 600;">Last Activity:</span>
+                <span>{{ last_activity|date:"M d, Y H:i"|default:"Never" }}</span>
+            </div>
+        </div>
+
+        {% if recent_applications %}
+        <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h3 style="margin: 0 0 15px 0;">Recent Applications</h3>
+            {% for app in recent_applications %}
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f2f5;">
+                <span>{{ app.internship.title }} at {{ app.internship.company }}</span>
+                <span style="font-size: 12px; color: #888;">{{ app.applied_date|date:"M d, Y" }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if recent_internships %}
+        <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h3 style="margin: 0 0 15px 0;">Recent Internships</h3>
+            {% for internship in recent_internships %}
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f2f5;">
+                <span>{{ internship.title }} at {{ internship.company }}</span>
+                <span style="font-size: 12px; color: #888;">{{ internship.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <a href="/admin-dashboard/users/edit/{{ user.id }}/" style="background: #ffc107; color: #212529; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 500;">Edit User</a>
+            <a href="/admin-dashboard/users/" style="background: #6c757d; color: white; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 500;">Back to Users</a>
+        </div>
+    </div>
+</body>
+</html>

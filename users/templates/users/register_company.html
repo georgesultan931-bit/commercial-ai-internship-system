@@ -1,0 +1,73 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Register as Company{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 2rem; max-width: 600px; margin: 0 auto;">
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h1 style="font-size: 2rem; margin-bottom: 1.5rem; text-align: center;">Company Registration</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div style="background: #fee2e2; color: #dc2626; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                Please correct the errors below.
+            </div>
+            {% endif %}
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email</label>
+                <input type="email" name="email" required style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Company Name</label>
+                <input type="text" name="company_name" required style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Company Type</label>
+                <select name="company_type" required style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="COMPANY">Private Company</option>
+                    <option value="NGO">Non-Governmental Organization</option>
+                    <option value="GOVERNMENT">Government Agency</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone (Optional)</label>
+                <input type="text" name="phone" style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Website (Optional)</label>
+                <input type="url" name="website" style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Address (Optional)</label>
+                <textarea name="address" rows="3" style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;"></textarea>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password</label>
+                <input type="password" name="password1" required style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Confirm Password</label>
+                <input type="password" name="password2" required style="width: 100%; padding: 0.8rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                Register as Company
+            </button>
+        </form>
+        
+        <p style="margin-top: 1.5rem; text-align: center; color: #6b7280;">
+            Already have an account? <a href="#" style="color: #2563eb; text-decoration: none;">Login here</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Contact - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+
+{% block content %}
+<!-- Splash Color Slideshow -->
+<section style="position: relative; overflow: hidden; height: 350px; margin-bottom: 3rem;">
+    <div style="display: flex; animation: slideContact 15s infinite; height: 100%;">
+        <div style="min-width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; padding: 2rem;">
+            <div style="text-align: center;">
+                <i class="fas fa-phone" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 2.5rem; font-weight: 800;">Get in Touch</h2>
+                <p style="font-size: 1.1rem; opacity: 0.9;">We're here to help you succeed</p>
+            </div>
+        </div>
+        <div style="min-width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; color: white; padding: 2rem;">
+            <div style="text-align: center;">
+                <i class="fas fa-envelope" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 2.5rem; font-weight: 800;">Email Us</h2>
+                <p style="font-size: 1.1rem; opacity: 0.9;">georgesultan931@gmail.com</p>
+            </div>
+        </div>
+        <div style="min-width: 100%; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center; color: white; padding: 2rem;">
+            <div style="text-align: center;">
+                <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 2.5rem; font-weight: 800;">Quick Response</h2>
+                <p style="font-size: 1.1rem; opacity: 0.9;">We reply within 24 hours</p>
+            </div>
+        </div>
+        <div style="min-width: 100%; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: flex; align-items: center; justify-content: center; color: #1a1a2e; padding: 2rem;">
+            <div style="text-align: center;">
+                <i class="fas fa-phone-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 2.5rem; font-weight: 800;">Call Us</h2>
+                <p style="font-size: 1.1rem; opacity: 0.8;">0796287859</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes slideContact {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(0); }
+    30% { transform: translateX(-100%); }
+    50% { transform: translateX(-100%); }
+    55% { transform: translateX(-200%); }
+    75% { transform: translateX(-200%); }
+    80% { transform: translateX(-300%); }
+    100% { transform: translateX(-300%); }
+}
+</style>
+
+<!-- Contact Content -->
+<section style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; color: #1a1a2e; margin-bottom: 0.5rem;">Contact Us</h2>
+    <p style="text-align: center; color: #6b7280; margin-bottom: 3rem;">Have questions? We're here to help. Reach out to us anytime.</p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+        <!-- Contact Form -->
+        <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;">Send us a Message</h3>
+            <form style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem; font-size: 0.9rem;">Your Name</label>
+                    <input type="text" placeholder="John Doe" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem; font-size: 0.9rem;">Email Address</label>
+                    <input type="email" placeholder="you@example.com" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem; font-size: 0.9rem;">Subject</label>
+                    <input type="text" placeholder="How can we help?" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.3rem; font-size: 0.9rem;">Message</label>
+                    <textarea rows="4" placeholder="Tell us about your inquiry..." style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" style="padding: 0.8rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+        
+        <!-- Contact Info -->
+        <div>
+            <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;">Contact Information</h3>
+                <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 45px; height: 45px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #2563eb;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;">Email</div>
+                            <div style="color: #6b7280; word-break: break-all;">georgesultan931@gmail.com</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 45px; height: 45px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981;">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;">Phone</div>
+                            <div style="color: #6b7280; font-weight: 600; font-size: 1.1rem;">0796 287 859</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 45px; height: 45px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #f59e0b;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;">Hours</div>
+                            <div style="color: #6b7280;">Mon-Fri, 9:00 AM - 6:00 PM</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 45px; height: 45px; background: #f5f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #8b5cf6;">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;">Location</div>
+                            <div style="color: #6b7280;">Nairobi, Kenya</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #2563eb, #7c3aed); padding: 2rem; border-radius: 16px; color: white; text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💬</div>
+                <h3 style="font-size: 1.2rem; font-weight: 700;">Live Chat Support</h3>
+                <p style="opacity: 0.9; font-size: 0.95rem;">Chat with our support team in real-time</p>
+                <a href="tel:+254796287859" style="display: inline-block; margin-top: 1rem; padding: 0.6rem 2rem; background: rgba(255,255,255,0.2); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-phone"></i> Call Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

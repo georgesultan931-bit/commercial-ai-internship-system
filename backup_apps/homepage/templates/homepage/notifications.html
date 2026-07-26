@@ -1,0 +1,43 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Notifications - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block page_subtitle %}Stay updated with your latest activity.{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 0.8rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #eff6ff; border-radius: 12px; border-left: 4px solid #2563eb;">
+        <div style="width: 40px; height: 40px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+            <i class="fas fa-check"></i>
+        </div>
+        <div style="flex: 1;">
+            <div style="font-weight: 600;">Application Accepted</div>
+            <div style="font-size: 0.9rem; color: #6b7280;">Your application for Data Analyst Intern at Google has been accepted!</div>
+            <div style="font-size: 0.8rem; color: #9ca3af;">2 hours ago</div>
+        </div>
+        <span style="background: #2563eb; color: white; font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 20px;">New</span>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: white; border-radius: 12px; border-left: 4px solid #10b981;">
+        <div style="width: 40px; height: 40px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+            <i class="fas fa-briefcase"></i>
+        </div>
+        <div style="flex: 1;">
+            <div style="font-weight: 600;">New Internship Posted</div>
+            <div style="font-size: 0.9rem; color: #6b7280;">New internship matches your skills.</div>
+            <div style="font-size: 0.8rem; color: #9ca3af;">1 day ago</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: white; border-radius: 12px; border-left: 4px solid #f59e0b;">
+        <div style="width: 40px; height: 40px; background: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div style="flex: 1;">
+            <div style="font-weight: 600;">AI Match Update</div>
+            <div style="font-size: 0.9rem; color: #6b7280;">Your AI match score increased to 92%!</div>
+            <div style="font-size: 0.8rem; color: #9ca3af;">3 days ago</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

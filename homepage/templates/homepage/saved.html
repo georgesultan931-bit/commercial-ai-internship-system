@@ -1,0 +1,38 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Saved Internships</h1>
+    <p>Your saved internship opportunities</p>
+
+    {% if saved_internships %}
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+            {% for item in saved_internships %}
+            <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0;">{{ item.internship.title }}</h3>
+                        <p style="color: #666; margin: 0;">{{ item.internship.company }} • {{ item.internship.location }}</p>
+                    </div>
+                    <span style="background: #fef3c7; color: #92400e; padding: 3px 12px; border-radius: 12px; font-size: 12px;">Saved</span>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0f2f5; display: flex; gap: 10px;">
+                    <a href="{% url 'internships:internship_detail' item.internship.id %}" style="background: #007bff; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">View Details</a>
+                    <form method="post" action="{% url 'internships:unsave_internship' item.internship.id %}">
+                        {% csrf_token %}
+                        <button type="submit" style="background: #dc3545; color: white; padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px;">Remove</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 10px; margin-top: 20px;">
+            <p style="font-size: 48px; margin-bottom: 15px;"></p>
+            <h3 style="color: #1a1a2e; margin-bottom: 10px;">No Saved Internships</h3>
+            <p style="color: #666; margin-bottom: 20px;">Save internships you're interested in!</p>
+            <a href="{% url 'internships:browse' %}" style="background: #007bff; color: white; padding: 10px 30px; border-radius: 6px; text-decoration: none; display: inline-block;">Browse Internships</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

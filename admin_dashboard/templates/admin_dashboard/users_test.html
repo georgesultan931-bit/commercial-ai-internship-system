@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+        <h1 style="color: #1a1a2e;">User Management</h1>
+        <p style="color: #666;">Manage all users on the platform</p>
+
+        <div style="background: white; padding: 20px; border-radius: 10px; overflow: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">ID</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Username</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Email</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Role</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Status</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">{{ user.id }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">{{ user.username }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">{{ user.email }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">{{ user.profile.get_role_display|default:"User" }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
+                            {% if user.is_active %}
+                                <span style="background: #d4edda; color: #155724; padding: 3px 12px; border-radius: 12px;">Active</span>
+                            {% else %}
+                                <span style="background: #f8d7da; color: #721c24; padding: 3px 12px; border-radius: 12px;">Archived</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
+                            <!-- Direct hardcoded URLs with onclick for debugging -->
+                            <button onclick="window.location.href='/admin-dashboard/users/detail/{{ user.id }}/'" style="background: #17a2b8; color: white; padding: 5px 14px; border: none; border-radius: 4px; cursor: pointer; margin: 2px;">View</button>
+                            <button onclick="window.location.href='/admin-dashboard/users/edit/{{ user.id }}/'" style="background: #ffc107; color: #212529; padding: 5px 14px; border: none; border-radius: 4px; cursor: pointer; margin: 2px;">Edit</button>
+                            {% if user.is_active %}
+                                <button onclick="if(confirm('Archive {{ user.username }}?')){window.location.href='/admin-dashboard/users/archive/{{ user.id }}/'}" style="background: #6c757d; color: white; padding: 5px 14px; border: none; border-radius: 4px; cursor: pointer; margin: 2px;">Archive</button>
+                            {% else %}
+                                <button onclick="if(confirm('Activate {{ user.username }}?')){window.location.href='/admin-dashboard/users/activate/{{ user.id }}/'}" style="background: #28a745; color: white; padding: 5px 14px; border: none; border-radius: 4px; cursor: pointer; margin: 2px;">Activate</button>
+                            {% endif %}
+                            <button onclick="if(confirm('Delete {{ user.username }} permanently?')){window.location.href='/admin-dashboard/users/delete/{{ user.id }}/'}" style="background: #dc3545; color: white; padding: 5px 14px; border: none; border-radius: 4px; cursor: pointer; margin: 2px;">Delete</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #888;">No users found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
+            <p><strong>Debug Info:</strong></p>
+            <p>Total Users: {{ users|length }}</p>
+            <p>Click on any button above. If it doesn't work, check the browser console (F12).</p>
+        </div>
+    </div>
+</body>
+</html>

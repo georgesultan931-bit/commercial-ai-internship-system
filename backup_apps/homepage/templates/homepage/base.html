@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial-Grade AI-Powered Internship Management System - {% block title %}Find the Perfect Internship{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1a1a2e;
+            background: #f8fafc;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: #1a1a2e;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+        
+        .btn-outline:hover {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .welcome-text {
+            color: #1a1a2e;
+            font-weight: 500;
+        }
+        
+        .welcome-text i {
+            color: #2563eb;
+            margin-right: 0.3rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a2e;
+            color: #9ca3af;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer h4 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .footer a {
+            color: #9ca3af;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 2rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .navbar {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{% url 'homepage:home' %}" class="logo">Commercial-Grade<span>AI-Powered Internship Management System</span></a>
+        <div class="nav-links">
+            <a href="{% url 'homepage:home' %}">Home</a>
+            <a href="{% url 'homepage:features' %}">Features</a>
+            <a href="{% url 'homepage:pricing' %}">Pricing</a>
+            <a href="{% url 'homepage:about' %}">About</a>
+            <a href="{% url 'homepage:contact' %}">Contact</a>
+            
+            {% if user.is_authenticated %}
+                <span class="welcome-text">
+                    <i class="fas fa-user-circle"></i> {{ user.first_name }} {{ user.last_name }}
+                </span>
+                <a href="{% url 'account_logout' %}" class="btn btn-outline" style="font-size: 0.9rem; padding: 0.4rem 1rem;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            {% else %}
+                <a href="{% url 'account_login' %}" class="btn btn-outline">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{% url 'users:choose_registration' %}" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4>InternHub</h4>
+                <p>Connecting talent with opportunity.</p>
+            </div>
+            <div>
+                <h4>Platform</h4>
+                <a href="{% url 'homepage:home' %}">Home</a>
+                <a href="{% url 'homepage:features' %}">Features</a>
+                <a href="{% url 'homepage:pricing' %}">Pricing</a>
+                <a href="{% url 'homepage:about' %}">About</a>
+            </div>
+            <div>
+                <h4>Resources</h4>
+                <a href="#">Blog</a>
+                <a href="#">FAQ</a>
+                <a href="#">Support</a>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block title %}Browse Internships - Commercial-Grade AI-Powered Internship Management System{% endblock %}
+{% block page_title %}Browse Internships{% endblock %}
+{% block page_subtitle %}Find the perfect internship opportunity.{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
+        <input type="text" name="search" placeholder="Search internships..." value="{{ search }}" style="flex: 1; min-width: 200px; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+        <select name="category" style="padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            <option value="">All Categories</option>
+            {% for key, value in categories %}
+                <option value="{{ key }}" {% if request.GET.category == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" style="padding: 0.8rem 2rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            <i class="fas fa-search"></i> Search
+        </button>
+    </form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% if internships %}
+        {% for internship in internships %}
+        <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h3 style="font-size: 1.2rem; font-weight: 600;">{{ internship.title }}</h3>
+                <div style="color: #6b7280; font-size: 0.95rem;">{{ internship.organization.name }} • {{ internship.location }}</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <span style="background: #eff6ff; color: #2563eb; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">{{ internship.get_category_display }}</span>
+                    {% if internship.stipend %}
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">${{ internship.stipend }}/mo</span>
+                    {% endif %}
+                    {% if internship.is_remote %}
+                    <span style="background: #d1fae5; color: #059669; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem;">Remote</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="text-align: right; display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="{% url 'dashboard:internship_detail' internship.id %}" style="padding: 0.5rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; text-decoration: none; text-align: center;">
+                    View Details
+                </a>
+                <span style="font-size: 0.8rem; color: #6b7280;">{{ internship.current_applicants }} applicants</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="background: white; padding: 3rem; border-radius: 16px; border: 1px solid #e5e7eb; text-align: center;">
+            <i class="fas fa-search" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+            <h3 style="color: #6b7280;">No Internships Found</h3>
+            <p style="color: #9ca3af;">Try adjusting your search filters.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

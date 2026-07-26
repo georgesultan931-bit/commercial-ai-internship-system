@@ -1,0 +1,53 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Schedule Interview{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Schedule Interview</h1>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">
+            Schedule an interview with <strong>{{ student.first_name }} {{ student.last_name }}</strong>
+            for <strong>{{ internship.title }}</strong>
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Date and Time</label>
+                <input type="datetime-local" name="scheduled_at" required style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Duration (minutes)</label>
+                <select name="duration" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                    <option value="30">30 minutes</option>
+                    <option value="60" selected>60 minutes</option>
+                    <option value="90">90 minutes</option>
+                    <option value="120">120 minutes</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Meeting Link (Optional)</label>
+                <input type="url" name="meeting_link" placeholder="https://meet.google.com/..." style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Notes (Optional)</label>
+                <textarea name="notes" rows="3" placeholder="Any additional information..." style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px;"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+                    <i class="fas fa-calendar-plus"></i> Schedule Interview
+                </button>
+                <a href="{% url 'internships:internship_applications' internship.pk %}" class="btn btn-outline" style="padding: 0.8rem 2rem;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

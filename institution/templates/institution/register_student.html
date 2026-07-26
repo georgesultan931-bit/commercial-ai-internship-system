@@ -1,0 +1,52 @@
+{% extends 'homepage/dashboard_base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div style="margin-bottom: 30px;">
+        <h1 style="color: #1a1a2e; font-size: 28px; margin: 0 0 5px 0;">Register Student</h1>
+        <p style="color: #666; font-size: 16px; margin: 0;">Add a new student to the system</p>
+    </div>
+
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">First Name</label>
+                    <input type="text" name="first_name" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Last Name</label>
+                    <input type="text" name="last_name" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Username</label>
+                    <input type="text" name="username" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Email</label>
+                    <input type="email" name="email" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Phone</label>
+                    <input type="text" name="phone" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Password</label>
+                    <input type="password" name="password" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;" required>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 5px;">Bio</label>
+                    <textarea name="bio" rows="3" style="width: 100%; padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;"></textarea>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f2f5; display: flex; gap: 10px;">
+                <button type="submit" style="padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">Register Student</button>
+                <a href="{% url 'institution:students' %}" style="padding: 12px 30px; background: #6c757d; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: 500;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

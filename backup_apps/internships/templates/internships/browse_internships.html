@@ -1,0 +1,112 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}Browse Internships{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Browse Internships</h1>
+    <p style="color: #6b7280; margin-bottom: 2rem;">Find the perfect internship opportunity</p>
+
+    <!-- Search and Filter -->
+    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+        <form method="get" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Search</label>
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search internships..." style="width: 100%; padding: 0.6rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Category</label>
+                <select name="category" style="width: 100%; padding: 0.6rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="ALL">All Categories</option>
+                    <option value="DEVELOPMENT" {% if category == 'DEVELOPMENT' %}selected{% endif %}>Development</option>
+                    <option value="DESIGN" {% if category == 'DESIGN' %}selected{% endif %}>Design</option>
+                    <option value="MARKETING" {% if category == 'MARKETING' %}selected{% endif %}>Marketing</option>
+                    <option value="BUSINESS" {% if category == 'BUSINESS' %}selected{% endif %}>Business</option>
+                    <option value="DATA_SCIENCE" {% if category == 'DATA_SCIENCE' %}selected{% endif %}>Data Science</option>
+                    <option value="OTHER" {% if category == 'OTHER' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Location</label>
+                <input type="text" name="location" value="{{ location|default:'' }}" placeholder="City or country" style="width: 100%; padding: 0.6rem; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.6rem;">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    {% if page_obj %}
+    <div style="display: grid; gap: 1.5rem;">
+        {% for internship in page_obj %}
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                <div style="flex: 1;">
+                    <!-- Company Branding -->
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                        {% if internship.organization.logo %}
+                        <img src="{{ internship.organization.logo.url }}" alt="{{ internship.organization.name }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                        {% else %}
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                            {{ internship.organization.name|slice:":2"|upper }}
+                        </div>
+                        {% endif %}
+                        <span style="font-weight: 500; color: #2563eb;">{{ internship.organization.name }}</span>
+                        <span style="color: #6b7280; font-size: 0.8rem;">• Posted by {{ internship.posted_by.first_name|default:internship.posted_by.username }}</span>
+                    </div>
+                    
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.3rem;">
+                        <a href="{% url 'internships:internship_detail' internship.pk %}" style="color: #1a1a2e; text-decoration: none;">
+                            {{ internship.title }}
+                        </a>
+                    </h3>
+                    <p style="color: #6b7280; margin-bottom: 0.5rem;">{{ internship.description|truncatewords:25 }}</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; color: #6b7280; font-size: 0.9rem;">
+                        <span><i class="fas fa-map-marker-alt"></i> {{ internship.location }}</span>
+                        <span><i class="fas fa-tag"></i> {{ internship.get_category_display }}</span>
+                        {% if internship.stipend %}
+                        <span><i class="fas fa-money-bill-wave"></i> {{ internship.currency }} {{ internship.stipend }}</span>
+                        {% endif %}
+                        <span><i class="fas fa-users"></i> {{ internship.current_applicants }}/{{ internship.max_applicants }}</span>
+                        <span><i class="fas fa-clock"></i> {{ internship.days_until_deadline }} days left</span>
+                    </div>
+                </div>
+                <div>
+                    <a href="{% url 'internships:internship_detail' internship.pk %}" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if location %}&location={{ location }}{% endif %}" class="btn btn-outline">Previous</a>
+        {% endif %}
+        
+        <span style="padding: 0.5rem 1rem; background: #2563eb; color: white; border-radius: 8px;">
+            {{ page_obj.number }}
+        </span>
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if location %}&location={{ location }}{% endif %}" class="btn btn-outline">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div style="background: white; padding: 4rem; border-radius: 12px; text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">No Internships Found</h2>
+        <p style="color: #6b7280;">Try adjusting your search filters or check back later.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
