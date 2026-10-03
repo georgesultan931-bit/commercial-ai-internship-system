@@ -1,11 +1,35 @@
 from django.contrib import admin
 
 from .models import (
+    InstitutionDirectory,
     InstitutionProfile,
     PlacementAssignment,
     PlacementProgressReport,
     SupervisorEvaluation,
 )
+
+
+@admin.register(InstitutionDirectory)
+class InstitutionDirectoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "institution_type",
+        "county",
+        "is_active",
+        "created_at",
+    )
+    list_filter = (
+        "institution_type",
+        "county",
+        "is_active",
+    )
+    search_fields = (
+        "name",
+        "county",
+    )
+    ordering = (
+        "name",
+    )
 
 
 @admin.register(InstitutionProfile)

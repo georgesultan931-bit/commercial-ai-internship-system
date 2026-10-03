@@ -1276,36 +1276,37 @@
 
         {% else %}
 
-            <div class="sidebar-section">
-                Account
-            </div>
+            {% if request.resolver_match.url_name != 'home' %}
+                <div class="sidebar-section">
+                    Account
+                </div>
 
-            <a class="sidebar-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
-               href="{% url 'login' %}">
-                <i class="bi bi-box-arrow-in-right"></i>
-                Login
-            </a>
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                   href="{% url 'login' %}">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Login
+                </a>
 
-            <a class="sidebar-link {% if request.resolver_match.url_name == 'account_start' %}active{% endif %}"
-               href="{% url 'account_start' %}">
-                <i class="bi bi-grid"></i>
-                Start Here
-            </a>
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'account_start' %}active{% endif %}"
+                   href="{% url 'account_start' %}">
+                    <i class="bi bi-grid"></i>
+                    Start Here
+                </a>
 
-            <a class="sidebar-link {% if request.resolver_match.url_name == 'student_register' %}active{% endif %}"
-               href="{% url 'student_register' %}">
-                <i class="bi bi-person-plus"></i>
-                Student Register
-            </a>
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'student_register' %}active{% endif %}"
+                   href="{% url 'student_register' %}">
+                    <i class="bi bi-person-plus"></i>
+                    Student Register
+                </a>
 
-            <a class="sidebar-link {% if request.resolver_match.url_name == 'employer_register' %}active{% endif %}"
-               href="{% url 'employer_register' %}">
-                <i class="bi bi-building-add"></i>
-                Employer Register
-            </a>
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'employer_register' %}active{% endif %}"
+                   href="{% url 'employer_register' %}">
+                    <i class="bi bi-building-add"></i>
+                    Employer Register
+                </a>
+            {% endif %}
 
         {% endif %}
-
     </aside>
 
     <div class="sidebar-backdrop"

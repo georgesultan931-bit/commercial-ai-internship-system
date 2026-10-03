@@ -2,7 +2,7 @@ import re
 
 from django import forms
 
-from institutions.models import InstitutionProfile
+from institutions.models import InstitutionDirectory, InstitutionProfile
 
 from .models import (
     StudentProfile,
@@ -103,6 +103,19 @@ KRA_PIN_PATTERN = re.compile(r'^[A-Z]\d{9}[A-Z]$')
 
 
 class StudentProfileForm(forms.ModelForm):
+
+    institution_name = forms.CharField(
+        required=False,
+        label="Institution",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "list": "institutionList",
+                "placeholder": "Search or type your institution",
+                "autocomplete": "off",
+            }
+        ),
+    )
 
     class Meta:
 
@@ -210,6 +223,30 @@ class StudentProfileForm(forms.ModelForm):
         )
         self.fields['institution_profile'].empty_label = 'Select your institution'
 
+        directory_names = InstitutionDirectory.objects.filter(
+            is_active=True
+        ).values_list('name', flat=True)
+
+        registered_names = InstitutionProfile.objects.values_list(
+            'institution_name',
+            flat=True,
+        )
+
+        self.institution_suggestions = sorted(
+            set(directory_names).union(registered_names),
+            key=str.casefold,
+        )
+
+        if self.instance and self.instance.pk:
+            if self.instance.institution_profile:
+                self.fields['institution_name'].initial = (
+                    self.instance.institution_profile.institution_name
+                )
+            else:
+                self.fields['institution_name'].initial = (
+                    self.instance.institution
+                )
+
         required_fields = [
             'salutation',
             'id_number',
@@ -255,6 +292,9 @@ class StudentProfileForm(forms.ModelForm):
         for field in optional_fields:
             if field in self.fields:
                 self.fields[field].required = False
+
+        self.fields['institution_profile'].required = False
+        self.fields['institution_name'].required = True
 
     def clean_id_number(self):
 
@@ -312,14 +352,43 @@ class StudentProfileForm(forms.ModelForm):
             self.add_error('salutation', message)
             self.add_error('gender', message)
 
+        institution_name = ' '.join(
+            (cleaned_data.get('institution_name') or '').split()
+        )
+
+        if not institution_name:
+            self.add_error(
+                'institution_name',
+                'Search for your institution or type its full name.',
+            )
+        else:
+            matched_institution = InstitutionProfile.objects.filter(
+                institution_name__iexact=institution_name
+            ).first()
+
+            cleaned_data['institution_profile'] = matched_institution
+            cleaned_data['institution_name'] = institution_name
+
         return cleaned_data
 
 
     def save(self, commit=True):
         student = super().save(commit=False)
 
-        if student.institution_profile:
-            student.institution = student.institution_profile.institution_name
+        institution_name = (
+            self.cleaned_data.get('institution_name') or ''
+        ).strip()
+
+        matched_institution = self.cleaned_data.get(
+            'institution_profile'
+        )
+
+        student.institution_profile = matched_institution
+
+        if matched_institution:
+            student.institution = matched_institution.institution_name
+        else:
+            student.institution = institution_name
 
         if commit:
             student.save()

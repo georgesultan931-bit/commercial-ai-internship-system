@@ -264,20 +264,44 @@
             <div class="row">
 
                 <div class="col-md-6 mb-3">
-                    <label for="{{ form.institution_profile.id_for_label }}">
-                        Institution
+                    <label for="institutionDirectorySelect">
+                        Select institution
                     </label>
 
-                    {{ form.institution_profile }}
+                    <select
+                        class="form-select mb-2"
+                        id="institutionDirectorySelect"
+                        onchange="document.getElementById('{{ form.institution_name.id_for_label }}').value = this.value;"
+                    >
+                        <option value="">
+                            Select from the institution list
+                        </option>
 
-                    {% if form.institution_profile.errors %}
+                        {% for institution_name in form.institution_suggestions %}
+                            <option
+                                value="{{ institution_name }}"
+                                {% if form.institution_name.value == institution_name %}selected{% endif %}
+                            >
+                                {{ institution_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="{{ form.institution_name.id_for_label }}">
+                        Or type your institution
+                    </label>
+
+                    {{ form.institution_name }}
+                    {{ form.institution_profile.as_hidden }}
+
+                    {% if form.institution_name.errors %}
                         <div class="text-danger small mt-1">
-                            {{ form.institution_profile.errors|striptags }}
+                            {{ form.institution_name.errors|striptags }}
                         </div>
                     {% endif %}
 
                     <div class="form-text">
-                        Select the institution where you are currently enrolled.
+                        Choose from the list or type the full institution name.
                     </div>
                 </div>
 

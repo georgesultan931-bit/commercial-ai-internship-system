@@ -11,7 +11,6 @@
         <div class="text-center mb-4">
             <img id="profilePicturePreview"
                  class="rounded-circle d-none"
-                 style="width: 150px; height: 150px; object-fit: cover;"
                  alt="Profile picture preview">
 
             <div id="profilePicturePlaceholder"
@@ -26,7 +25,74 @@
 
             {% csrf_token %}
 
-            {{ form.as_p }}
+            {% for field in form %}
+
+                {% if field.name == "institution_profile" %}
+
+                    <div class="mb-3">
+                        <label for="institutionDirectorySelect">
+                            Select institution
+                        </label>
+
+                        <select
+                            class="form-select mb-2"
+                            id="institutionDirectorySelect"
+                            onchange="document.getElementById('id_institution_name').value = this.value;"
+                        >
+                            <option value="">
+                                Select from the institution list
+                            </option>
+
+                            {% for institution_name in form.institution_suggestions %}
+                                <option value="{{ institution_name }}">
+                                    {{ institution_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="id_institution_name">
+                            Or type your institution
+                        </label>
+
+                        {{ form.institution_name }}
+                        {{ form.institution_profile.as_hidden }}
+
+                        {% if form.institution_name.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.institution_name.errors|striptags }}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-text">
+                            Choose from the list or type the full institution name.
+                        </div>
+                    </div>
+
+                {% elif field.name != "institution_name" %}
+
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <div class="form-text">
+                                {{ field.help_text }}
+                            </div>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ field.errors|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
 
             <button class="btn btn-primary" type="submit">
                 Save Profile

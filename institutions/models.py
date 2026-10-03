@@ -102,6 +102,35 @@ class InstitutionProfile(models.Model):
         return self.institution_name
 
 
+class InstitutionDirectory(models.Model):
+    INSTITUTION_TYPE_CHOICES = (
+        ("university", "University"),
+        ("college", "College"),
+        ("polytechnic", "National Polytechnic"),
+        ("tvet", "TVET Institution"),
+        ("technical_college", "Technical College"),
+        ("other", "Other"),
+    )
+
+    name = models.CharField(max_length=255, unique=True)
+    institution_type = models.CharField(
+        max_length=30,
+        choices=INSTITUTION_TYPE_CHOICES,
+        default="college",
+    )
+    county = models.CharField(max_length=100, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = "Institution directory"
+
+    def __str__(self):
+        return self.name
+
+
 class PlacementAssignment(models.Model):
 
     STATUS_CHOICES = (
