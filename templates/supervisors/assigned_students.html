@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Assigned Students{% endblock %}
+
+{% block content %}
+<style>
+    .supervision-page{max-width:1220px;margin:0 auto;padding:8px 0 32px}
+    .supervision-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px}
+    .supervision-head h1{font-size:2rem;font-weight:800;color:#101828;margin:0}
+    .supervision-head p{color:#667085;margin:4px 0 0}
+    .student-list{display:grid;gap:18px}
+    .student-card{background:#fffef4;border:1px solid #ebe7d6;border-radius:12px;padding:22px;box-shadow:0 2px 5px rgba(16,24,40,.08)}
+    .student-row{display:flex;align-items:center;gap:18px}
+    .student-photo{width:78px;height:78px;border-radius:50%;object-fit:cover;border:4px solid #eef4ff;box-shadow:0 4px 14px rgba(16,24,40,.10);flex-shrink:0}
+    .student-fallback{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#175cd3,#101828);color:#fff;font-size:25px;font-weight:800;flex-shrink:0}
+    .student-main{min-width:0;flex:1}
+    .student-main h2{font-size:1.12rem;font-weight:800;color:#101828;margin:0 0 4px}
+    .student-main p{color:#667085;margin:0}
+    .student-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .meta-pill{display:inline-flex;padding:5px 10px;border-radius:999px;font-size:.78rem;font-weight:700;background:#f2f4f7;color:#344054}
+    .status-pill{background:#eef4ff;color:#175cd3}
+    .student-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+    .empty-state{padding:34px;text-align:center;border:1px dashed #d0d5dd;border-radius:12px;color:#667085;background:#fff}
+    @media(max-width:760px){
+        .supervision-head{display:block}
+        .student-row{align-items:flex-start;flex-wrap:wrap}
+        .student-main{flex-basis:calc(100% - 100px)}
+        .student-actions{width:100%;justify-content:flex-start;padding-left:96px}
+    }
+    @media(max-width:520px){
+        .student-main{flex-basis:100%}
+        .student-actions{padding-left:0}
+    }
+</style>
+
+<div class="supervision-page">
+    <div class="supervision-head">
+        <div>
+            <h1>Assigned Students</h1>
+            <p>View and manage the students currently assigned to your supervision.</p>
+        </div>
+    </div>
+
+    <div class="student-list">
+        {% for assignment in assignments %}
+            <article class="student-card">
+                <div class="student-row">
+                    {% if assignment.student.profile_picture %}
+                        <img
+                            src="{{ assignment.student.profile_picture.url }}"
+                            alt="{{ assignment.student }}"
+                            class="student-photo"
+                        >
+                    {% elif assignment.student.user.profile_picture %}
+                        <img
+                            src="{{ assignment.student.user.profile_picture.url }}"
+                            alt="{{ assignment.student }}"
+                            class="student-photo"
+                        >
+                    {% else %}
+                        <div class="student-fallback" aria-hidden="true">
+                            {{ assignment.student.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+
+                    <div class="student-main">
+                        <h2>
+                            {% if assignment.student.first_name or assignment.student.surname %}
+                                {{ assignment.student.first_name }} {{ assignment.student.surname }}
+                            {% else %}
+                                {{ assignment.student.user.get_full_name|default:assignment.student.user.username }}
+                            {% endif %}
+                        </h2>
+
+                        <p>{{ assignment.student.user.email }}</p>
+
+                        <div class="student-meta">
+                            <span class="meta-pill status-pill">
+                                {{ assignment.get_status_display }}
+                            </span>
+
+                            {% if assignment.student.course %}
+                                <span class="meta-pill">{{ assignment.student.course }}</span>
+                            {% endif %}
+
+                            {% if assignment.institution %}
+                                <span class="meta-pill">{{ assignment.institution }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="student-actions">
+                        {% if assignment.pk %}
+                            <a
+                                href="{% url 'supervisor_student_detail' assignment.pk %}"
+                                class="btn btn-primary btn-sm"
+                            >
+                                View Student
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h2 class="h5 mb-2">No assigned students yet</h2>
+                <p class="mb-0">Students assigned to you will appear here.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

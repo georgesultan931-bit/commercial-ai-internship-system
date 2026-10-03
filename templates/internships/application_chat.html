@@ -1,0 +1,493 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .chat-wrapper { max-width: 950px; margin: 0 auto; }
+    .chat-card { border: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
+    .chat-header { background: linear-gradient(135deg,#111827,#1e3a5f); color:#fff; padding:22px 25px; }
+    .chat-body { height:500px; overflow-y:auto; padding:25px; background:#f8fafc; }
+    .message-row { display:flex; margin-bottom:16px; align-items:center; gap:10px; }
+    .message-row.mine { justify-content:flex-end; }
+    .message-row.other { justify-content:flex-start; }
+    .message-bubble { max-width:72%; padding:12px 16px; border-radius:16px; overflow-wrap:anywhere; position:relative; }
+    .message-row.mine .message-bubble { background:#2563eb; color:#fff; border-bottom-right-radius:4px; }
+    .message-row.other .message-bubble { background:#fff; color:#1f2937; border:1px solid #e5e7eb; border-bottom-left-radius:4px; }
+    .message-name { font-size:12px; font-weight:700; margin-bottom:4px; }
+    .message-time { font-size:11px; margin-top:6px; opacity:.7; }
+    .chat-footer { padding:18px; background:#fff; border-top:1px solid #e5e7eb; }
+    .chat-input-row { display:flex; gap:10px; }
+    .chat-input { flex:1; border-radius:30px; padding:12px 18px; }
+    .send-btn { border-radius:30px; padding-left:22px; padding-right:22px; }
+    .chat-status { min-height:22px; margin-top:8px; font-size:13px; }
+
+    .selection-toolbar {
+        display:none;
+        align-items:center;
+        gap:8px;
+        flex-wrap:wrap;
+        padding:12px 16px;
+        background:#fff;
+        border-bottom:1px solid #e5e7eb;
+    }
+
+    .selection-toolbar.active { display:flex; }
+
+    .message-checkbox-wrap {
+        display:none;
+        flex:0 0 auto;
+    }
+
+    .select-mode .message-checkbox-wrap {
+        display:block;
+    }
+
+    .message-checkbox {
+        width:18px;
+        height:18px;
+        cursor:pointer;
+    }
+
+    .select-mode .message-row {
+        cursor:pointer;
+    }
+
+    .select-mode .message-row.selected .message-bubble {
+        box-shadow:0 0 0 3px rgba(37,99,235,.18);
+    }
+
+    @media (max-width:768px) {
+        .chat-body { height:430px; padding:15px; }
+        .message-bubble { max-width:88%; }
+    }
+</style>
+
+<div class="chat-wrapper">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+        <div>
+            <h2 class="fw-bold mb-1">Chat Box</h2>
+            <span class="text-muted">Student &amp; Employer Communication</span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-primary"
+                    id="selectButton">
+                <i class="bi bi-check2-square"></i>
+                Select
+            </button>
+
+            {% if request.user == application.student.user %}
+                <a href="{% url 'my_applications' %}" class="btn btn-outline-secondary">
+                    Back to Applications
+                </a>
+            {% else %}
+                <a href="{% url 'employer_applications' %}" class="btn btn-outline-secondary">
+                    Back to Applications
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card chat-card">
+
+        <div class="chat-header">
+            <h4 class="mb-1 fw-bold">{{ application.opportunity.title }}</h4>
+            <div class="opacity-75">
+                {{ application.opportunity.employer.company_name }}
+                &nbsp;•&nbsp;
+                {{ application.student.user.username }}
+            </div>
+        </div>
+
+        <div class="selection-toolbar" id="selectionToolbar">
+            <strong id="selectedCount">0 selected</strong>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-warning"
+                    id="markUnreadButton">
+                <i class="bi bi-envelope"></i>
+                Mark Unread
+            </button>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    id="deleteButton">
+                <i class="bi bi-trash"></i>
+                Delete
+            </button>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    id="cancelSelectionButton">
+                Cancel
+            </button>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            {% for chat in chat_messages %}
+                <div class="message-row {% if chat.sender == request.user %}mine{% else %}other{% endif %}"
+                     data-message-id="{{ chat.id }}"
+                     data-is-mine="{% if chat.sender == request.user %}1{% else %}0{% endif %}">
+
+                    <div class="message-checkbox-wrap">
+                        <input type="checkbox"
+                               class="message-checkbox"
+                               value="{{ chat.id }}"
+                               aria-label="Select message {{ chat.id }}">
+                    </div>
+
+                    <div class="message-bubble">
+                        <div class="message-name">
+                            {% if chat.sender == request.user %}
+                                You
+                            {% else %}
+                                {{ chat.sender.username }}
+                            {% endif %}
+                        </div>
+
+                        <div class="message-text">{{ chat.message|linebreaksbr }}</div>
+
+                        <div class="message-time">
+                            {{ chat.created_at|date:"M d, Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center text-muted py-5" id="emptyChat">
+                    <h5>No messages yet</h5>
+                    <p class="mb-0">Start the conversation about this application.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="chat-footer">
+            <form method="post" id="chatForm">
+                {% csrf_token %}
+
+                <div class="chat-input-row">
+                    <input
+                        type="text"
+                        name="message"
+                        id="messageInput"
+                        class="form-control chat-input"
+                        placeholder="Type your message..."
+                        maxlength="2000"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <button type="submit"
+                            class="btn btn-primary send-btn"
+                            id="sendButton">
+                        <i class="bi bi-send"></i>
+                        Send
+                    </button>
+                </div>
+
+                <div class="chat-status text-muted" id="chatStatus"></div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    const chatBody = document.getElementById('chatBody');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const chatStatus = document.getElementById('chatStatus');
+
+    const selectButton = document.getElementById('selectButton');
+    const selectionToolbar = document.getElementById('selectionToolbar');
+    const selectedCount = document.getElementById('selectedCount');
+    const markUnreadButton = document.getElementById('markUnreadButton');
+    const deleteButton = document.getElementById('deleteButton');
+    const cancelSelectionButton = document.getElementById('cancelSelectionButton');
+
+    const messagesUrl = "{% url 'application_chat_messages' application.id %}";
+    const sendUrl = "{% url 'application_chat' application.id %}";
+    const actionsUrl = "{% url 'application_chat_actions' application.id %}";
+
+    let loading = false;
+    let selectMode = false;
+
+    function getCsrfToken() {
+        const input = chatForm.querySelector('input[name="csrfmiddlewaretoken"]');
+        return input ? input.value : '';
+    }
+
+    function scrollToBottom() {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function escapeHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = value;
+        return div.innerHTML;
+    }
+
+    function getLastMessageId() {
+        const rows = chatBody.querySelectorAll('[data-message-id]');
+        if (!rows.length) return 0;
+        return Number(rows[rows.length - 1].dataset.messageId || 0);
+    }
+
+    function getSelectedIds() {
+        return Array.from(
+            chatBody.querySelectorAll('.message-checkbox:checked')
+        ).map(function (checkbox) {
+            return checkbox.value;
+        });
+    }
+
+    function updateSelectedState() {
+        let count = 0;
+
+        chatBody.querySelectorAll('.message-row').forEach(function (row) {
+            const checkbox = row.querySelector('.message-checkbox');
+
+            if (checkbox && checkbox.checked) {
+                row.classList.add('selected');
+                count += 1;
+            } else {
+                row.classList.remove('selected');
+            }
+        });
+
+        selectedCount.textContent = `${count} selected`;
+    }
+
+    function setSelectMode(enabled) {
+        selectMode = enabled;
+        chatBody.classList.toggle('select-mode', enabled);
+        selectionToolbar.classList.toggle('active', enabled);
+
+        selectButton.innerHTML = enabled
+            ? '<i class="bi bi-x-lg"></i> Cancel'
+            : '<i class="bi bi-check2-square"></i> Select';
+
+        if (!enabled) {
+            chatBody.querySelectorAll('.message-checkbox').forEach(function (checkbox) {
+                checkbox.checked = false;
+            });
+
+            updateSelectedState();
+        }
+    }
+
+    function appendMessage(item) {
+        if (chatBody.querySelector(`[data-message-id="${item.id}"]`)) return;
+
+        const emptyChat = document.getElementById('emptyChat');
+        if (emptyChat) emptyChat.remove();
+
+        const row = document.createElement('div');
+        row.className = `message-row ${item.is_mine ? 'mine' : 'other'}`;
+        row.dataset.messageId = item.id;
+        row.dataset.isMine = item.is_mine ? '1' : '0';
+
+        const senderName = item.is_mine ? 'You' : item.sender_name;
+
+        row.innerHTML = `
+            <div class="message-checkbox-wrap">
+                <input type="checkbox"
+                       class="message-checkbox"
+                       value="${item.id}"
+                       aria-label="Select message ${item.id}">
+            </div>
+
+            <div class="message-bubble">
+                <div class="message-name">${escapeHtml(senderName)}</div>
+                <div class="message-text">${escapeHtml(item.message).replace(/\n/g, '<br>')}</div>
+                <div class="message-time">${escapeHtml(item.created_at)}</div>
+            </div>
+        `;
+
+        chatBody.appendChild(row);
+    }
+
+    async function loadMessages() {
+        if (loading) return;
+        loading = true;
+
+        try {
+            const after = getLastMessageId();
+
+            const response = await fetch(`${messagesUrl}?after=${after}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                cache: 'no-store'
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            if (data.success && data.messages.length) {
+                data.messages.forEach(appendMessage);
+
+                if (!selectMode) {
+                    scrollToBottom();
+                }
+            }
+        } catch (error) {
+            console.error('Chat refresh failed:', error);
+        } finally {
+            loading = false;
+        }
+    }
+
+    async function performAction(action) {
+        const ids = getSelectedIds();
+
+        if (!ids.length) {
+            chatStatus.textContent = 'Select at least one message.';
+            return;
+        }
+
+        if (action === 'delete_for_me') {
+            const confirmed = window.confirm(
+                'Delete the selected message(s) from your chat? The other person will still keep their copy.'
+            );
+
+            if (!confirmed) return;
+        }
+
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', getCsrfToken());
+        formData.append('action', action);
+
+        ids.forEach(function (id) {
+            formData.append('message_ids[]', id);
+        });
+
+        try {
+            const response = await fetch(actionsUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Action failed.');
+            }
+
+            chatStatus.textContent = data.message || 'Action completed.';
+
+            if (action === 'delete_for_me') {
+                ids.forEach(function (id) {
+                    const row = chatBody.querySelector(`[data-message-id="${id}"]`);
+                    if (row) row.remove();
+                });
+            }
+
+            setSelectMode(false);
+
+            setTimeout(function () {
+                chatStatus.textContent = '';
+            }, 3500);
+
+        } catch (error) {
+            chatStatus.textContent = error.message;
+        }
+    }
+
+    chatBody.addEventListener('click', function (event) {
+        if (!selectMode) return;
+
+        const row = event.target.closest('.message-row');
+        if (!row) return;
+
+        const checkbox = row.querySelector('.message-checkbox');
+        if (!checkbox) return;
+
+        if (event.target !== checkbox) {
+            checkbox.checked = !checkbox.checked;
+        }
+
+        updateSelectedState();
+    });
+
+    chatBody.addEventListener('change', function (event) {
+        if (event.target.classList.contains('message-checkbox')) {
+            updateSelectedState();
+        }
+    });
+
+    selectButton.addEventListener('click', function () {
+        setSelectMode(!selectMode);
+    });
+
+    cancelSelectionButton.addEventListener('click', function () {
+        setSelectMode(false);
+    });
+
+    markUnreadButton.addEventListener('click', function () {
+        performAction('mark_unread');
+    });
+
+    deleteButton.addEventListener('click', function () {
+        performAction('delete_for_me');
+    });
+
+    chatForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        sendButton.disabled = true;
+        chatStatus.textContent = 'Sending...';
+
+        const formData = new FormData(chatForm);
+
+        try {
+            const response = await fetch(sendUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Message could not be sent.');
+            }
+
+            messageInput.value = '';
+
+            chatStatus.textContent = data.email_sent
+                ? 'Message sent. Email notification delivered.'
+                : 'Message sent. In-app notification created.';
+
+            await loadMessages();
+
+            setTimeout(function () {
+                chatStatus.textContent = '';
+            }, 3500);
+
+        } catch (error) {
+            chatStatus.textContent = error.message;
+        } finally {
+            sendButton.disabled = false;
+            messageInput.focus();
+        }
+    });
+
+    scrollToBottom();
+    setInterval(loadMessages, 3000);
+})();
+</script>
+
+{% endblock %}

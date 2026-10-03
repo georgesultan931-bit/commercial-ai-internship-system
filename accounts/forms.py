@@ -1,0 +1,816 @@
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.exceptions import ValidationError
+import re
+
+from .models import User
+from .auth_flow import clean_login_value, find_user_by_identifier
+
+
+def can_replace_pending_user(user):
+
+    return (
+        user.role in [
+            'student',
+            'employer',
+            'institution',
+            'supervisor',
+            'hod',
+            'dean',
+        ]
+        and not user.is_email_verified
+        and not user.is_approved
+    )
+
+
+class ReplacePendingAccountMixin:
+
+    def clean(self):
+
+        cleaned_data = super().clean()
+
+        self.replace_pending_conflict(
+            cleaned_data,
+            'email',
+            'email__iexact'
+        )
+
+        self.replace_pending_conflict(
+            cleaned_data,
+            'username',
+            'username__iexact'
+        )
+
+        return cleaned_data
+
+    def replace_pending_conflict(self, cleaned_data, field_name, lookup):
+
+        value = cleaned_data.get(field_name)
+
+        if not value:
+            return
+
+        existing_user = User.objects.filter(
+            **{
+                lookup: value
+            }
+        ).first()
+
+        if existing_user is None:
+            return
+
+        if can_replace_pending_user(existing_user):
+            existing_user.delete()
+            return
+
+        if field_name == 'email':
+            self.add_error(
+                field_name,
+                'This email is already registered to an active or verified account. Please log in or use another email.'
+            )
+
+        if field_name == 'username':
+            self.add_error(
+                field_name,
+                'This username is already registered to an active or verified account. Please choose another username.'
+            )
+
+
+class CustomLoginForm(AuthenticationForm):
+
+    username = forms.CharField(
+        label='Username or Email',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter username or email',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'username',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter password',
+                'autocomplete': 'current-password',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    error_messages = {
+        'invalid_login': (
+            'Enter the correct username/email and password. '
+            'Check that your phone keyboard did not add spaces or capital letters.'
+        ),
+        'inactive': (
+            'This account is not active yet. Please complete OTP verification '
+            'and wait for admin approval.'
+        ),
+    }
+
+    def clean_username(self):
+
+        return clean_login_value(
+            self.cleaned_data.get(
+                'username',
+                ''
+            ),
+            is_password=False
+        )
+
+    def clean(self):
+
+        username_or_email = clean_login_value(
+            self.cleaned_data.get(
+                'username',
+                ''
+            ),
+            is_password=False
+        )
+
+        password = clean_login_value(
+            self.cleaned_data.get(
+                'password',
+                ''
+            ),
+            is_password=True
+        )
+
+        if username_or_email and password:
+
+            matching_user = find_user_by_identifier(username_or_email)
+
+            if matching_user is None or not matching_user.check_password(password):
+
+                raise ValidationError(
+                    self.error_messages['invalid_login'],
+                    code='invalid_login',
+                    params={
+                        'username': self.username_field.verbose_name
+                    },
+                )
+
+            self.user_cache = matching_user
+            self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
+
+class StudentRegistrationForm(ReplacePendingAccountMixin, UserCreationForm):
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your email address',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'email',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    phone_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your phone number',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'tel',
+                'inputmode': 'tel',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            'username',
+            'email',
+            'phone_number',
+            'password1',
+            'password2',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose username',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'username',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+    def clean_email(self):
+
+        email = self.cleaned_data.get('email', '').strip().lower()
+
+        return email
+
+    def clean_username(self):
+
+        return self.cleaned_data.get(
+            'username',
+            ''
+        ).strip()
+
+    def clean_phone_number(self):
+
+        return self.cleaned_data.get(
+            'phone_number',
+            ''
+        ).strip()
+
+    def save(self, commit=True):
+
+        user = super().save(commit=False)
+
+        user.role = 'student'
+        user.email = self.cleaned_data['email']
+        user.phone_number = self.cleaned_data['phone_number']
+
+        user.is_active = False
+        user.is_email_verified = False
+        user.is_approved = False
+
+        if commit:
+            user.save()
+
+        return user
+
+class EmployerRegistrationForm(ReplacePendingAccountMixin, UserCreationForm):
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter company email address',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'email',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    phone_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter company phone number',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'tel',
+                'inputmode': 'tel',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            'username',
+            'email',
+            'phone_number',
+            'password1',
+            'password2',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose employer username',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'username',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+    def clean_email(self):
+
+        email = self.cleaned_data.get('email', '').strip().lower()
+
+        return email
+
+    def clean_username(self):
+
+        return self.cleaned_data.get(
+            'username',
+            ''
+        ).strip()
+
+    def clean_phone_number(self):
+
+        return self.cleaned_data.get(
+            'phone_number',
+            ''
+        ).strip()
+
+    def save(self, commit=True):
+
+        user = super().save(commit=False)
+
+        user.role = 'employer'
+        user.email = self.cleaned_data['email']
+        user.phone_number = self.cleaned_data['phone_number']
+
+        user.is_active = False
+        user.is_email_verified = False
+        user.is_approved = False
+
+        if commit:
+            user.save()
+
+        return user
+
+
+class OTPVerificationForm(forms.Form):
+
+    otp_code = forms.CharField(
+        max_length=32,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter 6-digit OTP',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'one-time-code',
+                'inputmode': 'numeric',
+                'pattern': '[0-9]*',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    def clean_otp_code(self):
+
+        otp_code = self.cleaned_data.get(
+            'otp_code',
+            ''
+        )
+
+        otp_code = re.sub(
+            r'\D',
+            '',
+            otp_code
+        )
+
+        if len(otp_code) != 6:
+            raise ValidationError(
+                'Enter the 6-digit verification code.'
+            )
+
+        return otp_code
+
+class AdminProfileImageForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = [
+            'profile_picture',
+        ]
+        widgets = {
+            'profile_picture': forms.ClearableFileInput(
+                attrs={
+                    'class': 'form-control',
+                    'accept': 'image/*',
+                }
+            ),
+        }
+
+    def clean_profile_picture(self):
+        image = self.cleaned_data.get('profile_picture')
+
+        if not image:
+            return image
+
+        max_size = 3 * 1024 * 1024
+
+        if image.size > max_size:
+            raise ValidationError('Profile image must be 3MB or smaller.')
+
+        content_type = getattr(image, 'content_type', '')
+
+        if content_type and not content_type.startswith('image/'):
+            raise ValidationError('Please upload a valid image file.')
+
+        return image
+
+class InstitutionRegistrationForm(ReplacePendingAccountMixin, UserCreationForm):
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter institution email address',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'email',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    phone_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter institution phone number',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'tel',
+                'inputmode': 'tel',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            'username',
+            'email',
+            'phone_number',
+            'password1',
+            'password2',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose institution username',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'username',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+    def clean_email(self):
+
+        return self.cleaned_data.get(
+            'email',
+            ''
+        ).strip().lower()
+
+    def clean_username(self):
+
+        return self.cleaned_data.get(
+            'username',
+            ''
+        ).strip()
+
+    def clean_phone_number(self):
+
+        return self.cleaned_data.get(
+            'phone_number',
+            ''
+        ).strip()
+
+    def save(self, commit=True):
+
+        user = super().save(commit=False)
+
+        user.role = 'institution'
+        user.email = self.cleaned_data['email']
+        user.phone_number = self.cleaned_data['phone_number']
+
+        user.is_active = False
+        user.is_email_verified = False
+        user.is_approved = False
+
+        if commit:
+            user.save()
+
+        return user
+
+
+class SupervisorRegistrationForm(ReplacePendingAccountMixin, UserCreationForm):
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter supervisor email address',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'email',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    phone_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter supervisor phone number',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'tel',
+                'inputmode': 'tel',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            'username',
+            'email',
+            'phone_number',
+            'password1',
+            'password2',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose supervisor username',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'username',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+    def clean_email(self):
+
+        return self.cleaned_data.get(
+            'email',
+            ''
+        ).strip().lower()
+
+    def clean_username(self):
+
+        return self.cleaned_data.get(
+            'username',
+            ''
+        ).strip()
+
+    def clean_phone_number(self):
+
+        return self.cleaned_data.get(
+            'phone_number',
+            ''
+        ).strip()
+
+    def save(self, commit=True):
+
+        user = super().save(commit=False)
+
+        user.role = 'supervisor'
+        user.email = self.cleaned_data['email']
+        user.phone_number = self.cleaned_data['phone_number']
+
+        user.is_active = False
+        user.is_email_verified = False
+        user.is_approved = False
+
+        if commit:
+            user.save()
+
+        return user
+
+
+class AcademicStaffRegistrationForm(ReplacePendingAccountMixin, UserCreationForm):
+
+    ACADEMIC_ROLE_CHOICES = (
+        ('hod', 'Head of Department (HOD)'),
+        ('dean', 'Dean'),
+    )
+
+    academic_role = forms.ChoiceField(
+        label='Academic role',
+        choices=ACADEMIC_ROLE_CHOICES,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-select',
+                'autocomplete': 'organization-title',
+            }
+        )
+    )
+
+    email = forms.EmailField(
+        label='Official email address',
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your official email address',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'email',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    phone_number = forms.CharField(
+        label='Phone number',
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your phone number',
+                'autocapitalize': 'none',
+                'autocorrect': 'off',
+                'autocomplete': 'tel',
+                'inputmode': 'tel',
+                'spellcheck': 'false',
+            }
+        )
+    )
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            'username',
+            'email',
+            'phone_number',
+            'academic_role',
+            'password1',
+            'password2',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose username',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'username',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm password',
+            'autocapitalize': 'none',
+            'autocorrect': 'off',
+            'autocomplete': 'new-password',
+            'spellcheck': 'false',
+        })
+
+    def clean_email(self):
+
+        return self.cleaned_data.get(
+            'email',
+            ''
+        ).strip().lower()
+
+    def clean_username(self):
+
+        return self.cleaned_data.get(
+            'username',
+            ''
+        ).strip()
+
+    def clean_phone_number(self):
+
+        return self.cleaned_data.get(
+            'phone_number',
+            ''
+        ).strip()
+
+    def save(self, commit=True):
+
+        user = super().save(commit=False)
+
+        user.role = self.cleaned_data['academic_role']
+        user.email = self.cleaned_data['email']
+        user.phone_number = self.cleaned_data['phone_number']
+
+        user.is_active = False
+        user.is_email_verified = False
+        user.is_approved = False
+
+        if commit:
+            user.save()
+
+        return user

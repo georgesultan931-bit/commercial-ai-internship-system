@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+                    <h2 class="fw-bold mb-1">
+                        Weekly Progress Report
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        Record your attachment activities and learning progress.
+                    </p>
+                </div>
+
+                <a
+                    href="{% url 'placement_logbook' assignment.id %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Back
+                </a>
+
+            </div>
+
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="row">
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Week Number
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="week_number"
+                                    min="1"
+                                    max="60"
+                                    class="form-control"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Period Start
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="period_start"
+                                    class="form-control"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Period End
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="period_end"
+                                    class="form-control"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Activities Completed
+                            </label>
+
+                            <textarea
+                                name="activities"
+                                rows="5"
+                                class="form-control"
+                                required
+                                placeholder="Describe the work and activities completed during the week..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Skills Gained
+                            </label>
+
+                            <textarea
+                                name="skills_gained"
+                                rows="3"
+                                class="form-control"
+                                placeholder="What new skills or knowledge did you gain?"
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Challenges
+                            </label>
+
+                            <textarea
+                                name="challenges"
+                                rows="3"
+                                class="form-control"
+                                placeholder="Describe any challenges encountered."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Student Reflection
+                            </label>
+
+                            <textarea
+                                name="student_reflection"
+                                rows="3"
+                                class="form-control"
+                                placeholder="Reflect on what you learned during this period."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Hours Worked
+                            </label>
+
+                            <input
+                                type="number"
+                                name="hours_worked"
+                                min="0"
+                                step="0.5"
+                                value="0"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Submit Weekly Report
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

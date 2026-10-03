@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Student Supervision{% endblock %}
+
+{% block content %}
+<style>
+    .supervision-page{max-width:1220px;margin:0 auto;padding:8px 0 32px}
+    .supervision-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px}
+    .supervision-head h1{font-size:2rem;font-weight:800;color:#101828;margin:0}
+    .supervision-head p{color:#667085;margin:4px 0 0}
+    .supervision-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.95fr);gap:22px}
+    .panel-card{background:#fffef4;border:1px solid #ebe7d6;border-radius:12px;padding:24px;box-shadow:0 2px 5px rgba(16,24,40,.08)}
+    .panel-card h2{font-size:1.25rem;font-weight:800;color:#101828;margin:0 0 20px}
+    .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px}
+    .info-item small{display:block;color:#667085;margin-bottom:4px}
+    .info-item strong,.info-item span{color:#101828}
+    .placement-note{padding:16px;border:1px solid #e7e1cc;border-radius:9px;background:#fffdf7;margin-bottom:18px}
+    .status-pill{display:inline-flex;padding:5px 10px;border-radius:999px;font-size:.78rem;font-weight:800;background:#eef4ff;color:#175cd3}
+    .review-card{border:1px solid #eaecf0;border-radius:10px;padding:18px;margin-bottom:14px;background:#fff}
+    .review-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+    .review-card h3{font-size:1rem;font-weight:800;margin:0 0 5px}
+    .review-meta{font-size:.84rem;color:#667085}
+    .review-body{margin-top:14px;display:grid;gap:10px}
+    .review-body strong{display:block;font-size:.82rem;color:#475467;margin-bottom:2px}
+    .empty-state{padding:24px;text-align:center;border:1px dashed #d0d5dd;border-radius:10px;color:#667085;background:#fff}
+    .score-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}
+    .score-box{padding:10px;border-radius:9px;background:#f8fafc;text-align:center}
+    .score-box small{display:block;color:#667085;font-size:.72rem}
+    .score-box strong{font-size:1.1rem}
+    .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    @media(max-width:900px){.supervision-grid{grid-template-columns:1fr}.score-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.supervision-head{flex-direction:column}.info-grid{grid-template-columns:1fr}.panel-card{padding:18px}.score-grid{grid-template-columns:1fr 1fr}}
+</style>
+
+<div class="supervision-page">
+    <div class="supervision-head">
+        <div>
+            <h1>Student Supervision</h1>
+            <p>Placement, logbook and evaluation information.</p>
+        </div>
+        <a href="{% url 'supervisor_assigned_students' %}" class="btn btn-outline-secondary">Back to Students</a>
+    </div>
+
+    <div class="supervision-grid">
+        <div>
+            <section class="panel-card mb-4">
+                <h2>Student Information</h2>
+                <div class="info-grid">
+                    <div class="info-item"><small>Student</small><strong>{{ assignment.student.full_name|default:assignment.student.user.username }}</strong></div>
+                    <div class="info-item"><small>Email</small><span>{{ assignment.student.user.email }}</span></div>
+                    <div class="info-item"><small>Course</small><span>{{ assignment.student.course|default:"Not provided" }}</span></div>
+                    <div class="info-item"><small>Phone</small><span>{{ assignment.student.phone_number|default:"Not provided" }}</span></div>
+                    <div class="info-item"><small>Location</small><span>{{ assignment.student.location|default:assignment.student.town|default:"Not provided" }}</span></div>
+                    <div class="info-item"><small>Institution</small><span>{{ assignment.institution.institution_name }}</span></div>
+                </div>
+            </section>
+
+            <section class="panel-card mb-4">
+                <h2>Placement Information</h2>
+
+                {% if assignment.application %}
+                    <div class="placement-note">
+                        <strong>{{ assignment.application.opportunity.title }}</strong><br>
+                        <span class="text-muted">{{ assignment.application.opportunity.display_company_name }}</span>
+                    </div>
+                {% else %}
+                    <div class="placement-note">No accepted application has been linked to this placement.</div>
+                {% endif %}
+
+                <div class="info-grid">
+                    <div class="info-item"><small>Start Date</small><span>{{ assignment.start_date|default:"Not set" }}</span></div>
+                    <div class="info-item"><small>End Date</small><span>{{ assignment.end_date|default:"Not set" }}</span></div>
+                    <div class="info-item"><small>Status</small><span class="status-pill">{{ assignment.get_status_display }}</span></div>
+                    <div class="info-item"><small>Logbook Reports</small><span>{{ progress_reports|length }}</span></div>
+                </div>
+            </section>
+
+            <section class="panel-card mb-4">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h2 class="mb-1">Progress / Logbook Reports</h2>
+                        <p class="text-muted mb-0">Review student submissions and return corrections when needed.</p>
+                    </div>
+                    <span class="status-pill">{{ submitted_reports }} awaiting review</span>
+                </div>
+
+                {% for report in progress_reports %}
+                    <div class="review-card">
+                        <div class="review-top">
+                            <div>
+                                <h3>Week {{ report.week_number }}</h3>
+                                <div class="review-meta">{{ report.period_start }} – {{ report.period_end }} · {{ report.hours_worked }} hours</div>
+                            </div>
+                            <span class="status-pill">{{ report.get_status_display }}</span>
+                        </div>
+
+                        <div class="review-body">
+                            <div><strong>Activities</strong>{{ report.activities|linebreaksbr }}</div>
+                            {% if report.skills_gained %}<div><strong>Skills Gained</strong>{{ report.skills_gained|linebreaksbr }}</div>{% endif %}
+                            {% if report.challenges %}<div><strong>Challenges</strong>{{ report.challenges|linebreaksbr }}</div>{% endif %}
+                            {% if report.student_reflection %}<div><strong>Student Reflection</strong>{{ report.student_reflection|linebreaksbr }}</div>{% endif %}
+                            {% if report.supervisor_comment %}<div><strong>Supervisor Comment</strong>{{ report.supervisor_comment|linebreaksbr }}</div>{% endif %}
+                        </div>
+
+                        <div class="action-row">
+                            <a href="{% url 'supervisor_review_report' report.id %}" class="btn btn-primary btn-sm">
+                                {% if report.status == 'submitted' %}Review Report{% else %}Update Review{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">The student has not submitted any progress reports yet.</div>
+                {% endfor %}
+            </section>
+
+            <section class="panel-card">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h2 class="mb-1">Supervisor Evaluations</h2>
+                        <p class="text-muted mb-0">Record midterm and final performance evaluations.</p>
+                    </div>
+                    <a href="{% url 'supervisor_add_evaluation' assignment.id %}" class="btn btn-primary btn-sm">Add Evaluation</a>
+                </div>
+
+                {% for evaluation in evaluations %}
+                    <div class="review-card">
+                        <div class="review-top">
+                            <div>
+                                <h3>{{ evaluation.get_evaluation_type_display }} Evaluation</h3>
+                                <div class="review-meta">{{ evaluation.created_at }}</div>
+                            </div>
+                            <a href="{% url 'supervisor_edit_evaluation' evaluation.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                        </div>
+
+                        <div class="score-grid">
+                            <div class="score-box"><small>Punctuality</small><strong>{{ evaluation.punctuality_score }}/5</strong></div>
+                            <div class="score-box"><small>Technical</small><strong>{{ evaluation.technical_skills_score }}/5</strong></div>
+                            <div class="score-box"><small>Communication</small><strong>{{ evaluation.communication_score }}/5</strong></div>
+                            <div class="score-box"><small>Teamwork</small><strong>{{ evaluation.teamwork_score }}/5</strong></div>
+                            <div class="score-box"><small>Initiative</small><strong>{{ evaluation.initiative_score }}/5</strong></div>
+                        </div>
+
+                        <div class="review-body">
+                            {% if evaluation.strengths %}<div><strong>Strengths</strong>{{ evaluation.strengths|linebreaksbr }}</div>{% endif %}
+                            {% if evaluation.areas_for_improvement %}<div><strong>Areas for Improvement</strong>{{ evaluation.areas_for_improvement|linebreaksbr }}</div>{% endif %}
+                            {% if evaluation.general_comments %}<div><strong>General Comments</strong>{{ evaluation.general_comments|linebreaksbr }}</div>{% endif %}
+                            <div><strong>Recommendation</strong>{{ evaluation.get_recommendation_display }}</div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">No supervisor evaluation has been recorded yet.</div>
+                {% endfor %}
+            </section>
+        </div>
+
+        <aside>
+            <section class="panel-card">
+                <h2>Progress Update</h2>
+                <p class="text-muted">Update the student's attachment or internship progress.</p>
+
+                <form method="post" action="{% url 'supervisor_update_assignment' assignment.id %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Placement Status</label>
+                        <select name="status" class="form-select">
+                            <option value="assigned" {% if assignment.status == "assigned" %}selected{% endif %}>Assigned</option>
+                            <option value="ongoing" {% if assignment.status == "ongoing" %}selected{% endif %}>Ongoing</option>
+                            <option value="completed" {% if assignment.status == "completed" %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Supervisor Notes</label>
+                        <textarea name="supervisor_notes" class="form-control" rows="6" placeholder="Add progress observations or supervision notes...">{{ assignment.supervisor_notes }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Save Progress</button>
+                </form>
+            </section>
+        </aside>
+    </div>
+</div>
+{% endblock %}

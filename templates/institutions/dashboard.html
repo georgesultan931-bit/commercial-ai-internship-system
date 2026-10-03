@@ -1,0 +1,727 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <span class="badge bg-primary mb-2">
+                Institution Dashboard
+            </span>
+
+            <h2 class="fw-bold mb-1">
+                {{ profile.institution_name }}
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage student placements, supervisors, reports and attachment progress.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+
+            <a
+                href="{% url 'institution_students' %}"
+                class="btn btn-outline-primary"
+            >
+                Student Placements
+            </a>
+
+            <a
+                href="{% url 'create_placement_assignment' %}"
+                class="btn btn-primary"
+            >
+                Add Placement
+            </a>
+
+            <a
+                href="{% url 'institution_reports' %}"
+                class="btn btn-outline-success"
+            >
+                Reports & Analytics
+            </a>
+
+            <a
+                href="{% url 'edit_institution_profile' %}"
+                class="btn btn-outline-secondary"
+            >
+                Edit Profile
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Institution summary cards -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Institution Type
+                    </small>
+
+                    <h5 class="fw-bold mt-2 mb-0">
+                        {{ profile.get_institution_type_display|default:profile.institution_type }}
+                    </h5>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Location
+                    </small>
+
+                    <h5 class="fw-bold mt-2 mb-0">
+
+                        {% if profile.town and profile.county %}
+                            {{ profile.town }}, {{ profile.county }}
+                        {% elif profile.town %}
+                            {{ profile.town }}
+                        {% elif profile.county %}
+                            {{ profile.county }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+
+                    </h5>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Assigned Students
+                    </small>
+
+                    <h2 class="fw-bold mt-2 mb-0">
+                        {{ total_students }}
+                    </h2>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Supervisors
+                    </small>
+
+                    <h2 class="fw-bold mt-2 mb-0">
+                        {{ total_supervisors }}
+                    </h2>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Placement Overview -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Placement Overview
+                    </h5>
+
+                    <small class="text-muted">
+                        Current student attachment assignment statistics.
+                    </small>
+                </div>
+
+                <a
+                    href="{% url 'institution_students' %}"
+                    class="btn btn-sm btn-outline-primary mt-2 mt-md-0"
+                >
+                    Manage Placements
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="row g-3">
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Total Placements
+                        </small>
+
+                        <h3 class="fw-bold mb-0 mt-2">
+                            {{ total_assignments }}
+                        </h3>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Pending
+                        </small>
+
+                        <h3 class="fw-bold mb-0 mt-2">
+                            {{ pending_assignments }}
+                        </h3>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Ongoing
+                        </small>
+
+                        <h3 class="fw-bold mb-0 mt-2">
+                            {{ ongoing_assignments }}
+                        </h3>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="border rounded p-3 h-100">
+
+                        <small class="text-muted">
+                            Completed
+                        </small>
+
+                        <h3 class="fw-bold mb-0 mt-2">
+                            {{ completed_assignments }}
+                        </h3>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- Recent Placements -->
+        <div class="col-xl-8">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+                        <div>
+                            <h5 class="fw-bold mb-1">
+                                Recent Student Placements
+                            </h5>
+
+                            <small class="text-muted">
+                                Latest student attachment records under your institution.
+                            </small>
+                        </div>
+
+                        <a
+                            href="{% url 'institution_students' %}"
+                            class="btn btn-sm btn-outline-primary mt-2 mt-md-0"
+                        >
+                            View All
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Supervisor</th>
+                                <th>Opportunity</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for assignment in recent_assignments %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            {{ assignment.student.full_name|default:assignment.student.user.username }}
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ assignment.student.user.email }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <td>
+                                        {{ assignment.student.course|default:"Not provided" }}
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if assignment.supervisor %}
+
+                                            {{ assignment.supervisor.full_name }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                Not assigned
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if assignment.application and assignment.application.opportunity %}
+
+                                            {{ assignment.application.opportunity.title }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                Not linked
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if assignment.status == "completed" %}
+
+                                            <span class="badge bg-success">
+                                                Completed
+                                            </span>
+
+                                        {% elif assignment.status == "ongoing" %}
+
+                                            <span class="badge bg-primary">
+                                                Ongoing
+                                            </span>
+
+                                        {% elif assignment.status == "assigned" %}
+
+                                            <span class="badge bg-info text-dark">
+                                                Assigned
+                                            </span>
+
+                                        {% elif assignment.status == "suspended" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Suspended
+                                            </span>
+
+                                        {% elif assignment.status == "cancelled" %}
+
+                                            <span class="badge bg-danger">
+                                                Cancelled
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td class="text-end">
+
+                                        <div class="d-flex flex-wrap gap-1 justify-content-end">
+
+                                            <a
+                                                href="{% url 'institution_placement_detail' assignment.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >
+                                                View
+                                            </a>
+
+                                            <a
+                                                href="{% url 'edit_placement_assignment' assignment.id %}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                            >
+                                                Edit
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="6"
+                                        class="text-center py-5"
+                                    >
+
+                                        <h6 class="fw-bold">
+                                            No student placements yet
+                                        </h6>
+
+                                        <p class="text-muted mb-3">
+                                            Start by assigning a student to a supervisor.
+                                        </p>
+
+                                        <a
+                                            href="{% url 'create_placement_assignment' %}"
+                                            class="btn btn-primary btn-sm"
+                                        >
+                                            Add First Placement
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Right side -->
+        <div class="col-xl-4">
+
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-1">
+                        Institution Workspace
+                    </h5>
+
+                    <p class="text-muted">
+                        Quickly manage your attachment programme.
+                    </p>
+
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{% url 'create_placement_assignment' %}"
+                            class="btn btn-primary"
+                        >
+                            Add Student Placement
+                        </a>
+
+
+                        <a
+                            href="{% url 'institution_students' %}"
+                            class="btn btn-outline-primary"
+                        >
+                            Manage Student Placements
+                        </a>
+
+
+                        <a
+                            href="{% url 'institution_reports' %}"
+                            class="btn btn-outline-success"
+                        >
+                            Reports & Analytics
+                        </a>
+
+
+                        <a
+                            href="{% url 'edit_institution_profile' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Update Institution Profile
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Workflow -->
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-3">
+                        Attachment Workflow
+                    </h5>
+
+
+                    <div class="border-start border-primary border-3 ps-3 mb-4">
+
+                        <small class="text-muted">
+                            Step 1
+                        </small>
+
+                        <div class="fw-semibold">
+                            Assign Student
+                        </div>
+
+                        <small class="text-muted">
+                            Create the student's placement record.
+                        </small>
+
+                    </div>
+
+
+                    <div class="border-start border-primary border-3 ps-3 mb-4">
+
+                        <small class="text-muted">
+                            Step 2
+                        </small>
+
+                        <div class="fw-semibold">
+                            Assign Supervisor
+                        </div>
+
+                        <small class="text-muted">
+                            Connect the student with an approved supervisor.
+                        </small>
+
+                    </div>
+
+
+                    <div class="border-start border-primary border-3 ps-3 mb-4">
+
+                        <small class="text-muted">
+                            Step 3
+                        </small>
+
+                        <div class="fw-semibold">
+                            Monitor Logbooks
+                        </div>
+
+                        <small class="text-muted">
+                            Follow weekly reports and supervisor reviews.
+                        </small>
+
+                    </div>
+
+
+                    <div class="border-start border-primary border-3 ps-3 mb-4">
+
+                        <small class="text-muted">
+                            Step 4
+                        </small>
+
+                        <div class="fw-semibold">
+                            Review Evaluations
+                        </div>
+
+                        <small class="text-muted">
+                            Monitor midterm and final supervisor assessments.
+                        </small>
+
+                    </div>
+
+
+                    <div class="border-start border-success border-3 ps-3">
+
+                        <small class="text-muted">
+                            Step 5
+                        </small>
+
+                        <div class="fw-semibold">
+                            Complete Placement
+                        </div>
+
+                        <small class="text-muted">
+                            Finalize the placement after all requirements are met.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Management Features -->
+    <div class="card border-0 shadow-sm mt-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-4">
+                Attachment Management
+            </h5>
+
+            <div class="row g-4">
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="h-100 border rounded p-3">
+
+                        <h6 class="fw-bold">
+                            Student Placements
+                        </h6>
+
+                        <p class="text-muted small mb-3">
+                            Assign, edit and monitor students undertaking attachment.
+                        </p>
+
+                        <a
+                            href="{% url 'institution_students' %}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            Manage
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="h-100 border rounded p-3">
+
+                        <h6 class="fw-bold">
+                            Supervisors
+                        </h6>
+
+                        <p class="text-muted small mb-3">
+                            Monitor supervisors linked to your student placements.
+                        </p>
+
+                        <span class="badge bg-light text-dark">
+                            {{ total_supervisors }} Assigned
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="h-100 border rounded p-3">
+
+                        <h6 class="fw-bold">
+                            Logbooks & Evaluations
+                        </h6>
+
+                        <p class="text-muted small mb-3">
+                            Follow student reports, supervisor feedback and assessments.
+                        </p>
+
+                        <a
+                            href="{% url 'institution_reports' %}"
+                            class="btn btn-sm btn-outline-success"
+                        >
+                            View Reports
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="h-100 border rounded p-3">
+
+                        <h6 class="fw-bold">
+                            Analytics
+                        </h6>
+
+                        <p class="text-muted small mb-3">
+                            Review completion rates, reports and evaluation performance.
+                        </p>
+
+                        <a
+                            href="{% url 'institution_reports' %}"
+                            class="btn btn-sm btn-outline-success"
+                        >
+                            Analytics
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

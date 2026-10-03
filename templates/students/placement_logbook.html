@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">Attachment Logbook</h2>
+
+            <p class="text-muted mb-0">
+                {{ assignment.institution.institution_name }}
+            </p>
+        </div>
+
+        <div class="mt-3 mt-md-0">
+
+            <a href="{% url 'my_placement' %}"
+               class="btn btn-outline-secondary me-2">
+                Back
+            </a>
+
+            {% if assignment.status != "completed" and assignment.status != "cancelled" and assignment.status != "suspended" %}
+
+                <a
+                    href="{% url 'submit_progress_report' assignment.id %}"
+                    class="btn btn-primary"
+                >
+                    Submit Weekly Report
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Status</small>
+                    <strong>{{ assignment.get_status_display }}</strong>
+                </div>
+
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Supervisor</small>
+
+                    <strong>
+                        {% if assignment.supervisor %}
+                            {{ assignment.supervisor.full_name }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Period</small>
+
+                    <strong>
+                        {{ assignment.start_date|default:"-" }}
+                        —
+                        {{ assignment.end_date|default:"-" }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white pt-4 px-4 border-0">
+            <h5 class="fw-bold">Weekly Reports</h5>
+        </div>
+
+        <div class="card-body">
+
+            {% for report in reports %}
+
+                <div class="border rounded p-3 mb-3">
+
+                    <div class="d-flex justify-content-between">
+
+                        <h6 class="fw-bold">
+                            Week {{ report.week_number }}
+                        </h6>
+
+                        <span class="badge bg-secondary">
+                            {{ report.get_status_display }}
+                        </span>
+
+                    </div>
+
+                    <small class="text-muted">
+                        {{ report.period_start }} — {{ report.period_end }}
+                    </small>
+
+                    <hr>
+
+                    <strong>Activities</strong>
+
+                    <p>
+                        {{ report.activities|linebreaksbr }}
+                    </p>
+
+                    {% if report.skills_gained %}
+                        <strong>Skills Gained</strong>
+                        <p>{{ report.skills_gained|linebreaksbr }}</p>
+                    {% endif %}
+
+                    {% if report.supervisor_comment %}
+
+                        <div class="alert alert-light border mb-0">
+
+                            <strong>Supervisor Feedback</strong>
+
+                            <p class="mb-0 mt-2">
+                                {{ report.supervisor_comment|linebreaksbr }}
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-muted">
+                    No weekly reports submitted yet.
+                </p>
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white pt-4 px-4 border-0">
+            <h5 class="fw-bold">Supervisor Evaluations</h5>
+        </div>
+
+        <div class="card-body">
+
+            {% for evaluation in evaluations %}
+
+                <div class="border rounded p-3 mb-3">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            {{ evaluation.get_evaluation_type_display }}
+                        </strong>
+
+                        <span class="badge bg-primary">
+                            {{ evaluation.average_score }}/5
+                        </span>
+
+                    </div>
+
+                    <p class="mt-3 mb-1">
+                        <strong>Recommendation:</strong>
+                        {{ evaluation.get_recommendation_display }}
+                    </p>
+
+                    {% if evaluation.general_comments %}
+                        <p class="mb-0">
+                            {{ evaluation.general_comments }}
+                        </p>
+                    {% endif %}
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-muted mb-0">
+                    No supervisor evaluations have been submitted yet.
+                </p>
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

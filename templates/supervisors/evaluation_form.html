@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:920px;">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h2 fw-bold mb-1">{{ page_title }}</h1>
+            <p class="text-muted mb-0">{{ assignment.student.full_name|default:assignment.student.user.username }}</p>
+        </div>
+        <a href="{% url 'supervisor_student_detail' assignment.id %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    {% for field in form %}
+                        <div class="{% if field.name == 'strengths' or field.name == 'areas_for_improvement' or field.name == 'general_comments' %}col-12{% else %}col-md-6{% endif %}">
+                            <label class="form-label fw-semibold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-primary mt-4" type="submit">Save Evaluation</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

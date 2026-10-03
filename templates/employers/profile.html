@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Employer Dashboard{% endblock %}
+
+{% block content %}
+<style>
+.employer-hero{background:#fff;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:24px;overflow:hidden;box-shadow:0 16px 36px rgba(15,23,42,.08)}
+.employer-copy{padding:clamp(24px,4vw,38px);height:100%}
+.employer-console{height:100%;min-height:300px;padding:clamp(24px,3vw,34px);background:linear-gradient(145deg,#eff6ff 0%,#f8fafc 55%,#ecfeff 100%);display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.company-logo,.logo-placeholder{width:96px;height:96px;border-radius:12px;border:4px solid #fff;box-shadow:0 10px 24px rgba(15,23,42,.14);flex:0 0 96px}
+.company-logo{object-fit:cover}.logo-placeholder{display:flex;align-items:center;justify-content:center;background:#e0f2fe;color:#0369a1;font-size:40px}
+.company-title{font-size:clamp(2rem,3.5vw,3rem);line-height:1.05;overflow-wrap:anywhere}
+.console-kicker{font-size:.82rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0369a1}
+.console-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.console-item{background:rgba(255,255,255,.82);border:1px solid #dbeafe;border-radius:10px;padding:13px;min-width:0}
+.console-item i{color:#0284c7}.console-item strong{display:block;font-size:1.15rem}.console-item small{display:block;color:#64748b;font-size:.76rem}
+.kpi-card{border-radius:10px;padding:22px;color:#fff;min-height:145px;box-shadow:0 14px 28px rgba(15,23,42,.10);position:relative;overflow:hidden}
+.kpi-card:after{content:'';position:absolute;width:120px;height:120px;background:rgba(255,255,255,.14);border-radius:50%;right:-34px;bottom:-45px}.kpi-icon{font-size:36px}.dashboard-card{border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 14px 30px rgba(15,23,42,.06)}
+.small-stat{background:#f8fafc;border-radius:8px;padding:13px 15px;margin-bottom:10px}.score-pill{border-radius:8px;padding:7px 12px;font-weight:700}
+.chart-wrap{position:relative;height:300px;max-height:300px}.candidate-name{text-transform:capitalize}.status-pill{white-space:nowrap}
+body.dark-mode .employer-hero,body.dark-mode .dashboard-card{background:#1e293b;border-color:#334155}body.dark-mode .employer-console{background:linear-gradient(145deg,#0f172a,#172554)}body.dark-mode .console-item,body.dark-mode .small-stat{background:#0f172a;border-color:#334155}
+@media(max-width:1199.98px){.employer-console{min-height:0}}
+@media(max-width:575.98px){.company-logo,.logo-placeholder{width:78px;height:78px;flex-basis:78px}.company-title{font-size:2rem}.console-grid{grid-template-columns:1fr}.employer-copy,.employer-console{padding:22px}.chart-wrap{height:260px}}
+</style>
+
+<div class="employer-hero">
+  <div class="row g-0 align-items-stretch">
+    <div class="col-xl-7">
+      <div class="employer-copy">
+        <div class="d-flex align-items-center gap-4 flex-wrap">
+          {% if profile.logo %}
+            <img src="{{ profile.logo.url }}" class="company-logo" alt="{{ profile.company_name }} logo">
+          {% else %}
+            <div class="logo-placeholder"><i class="bi bi-building"></i></div>
+          {% endif %}
+          <div class="flex-grow-1 min-w-0">
+            <span class="badge text-bg-info mb-3 px-3 py-2">Employer Intelligence Dashboard</span>
+            <h1 class="company-title fw-bold mb-1">{{ profile.company_name }}</h1>
+            <p class="text-muted mb-0">Hiring pipeline, candidate quality and interview analytics.</p>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-3 flex-wrap mt-4">
+          <a href="{% url 'edit_employer_profile' %}" class="btn btn-dark"><i class="bi bi-pencil-square me-1"></i>Edit Company Profile</a>
+          <a href="{% url 'create_opportunity' %}" class="btn btn-outline-dark"><i class="bi bi-plus-circle me-1"></i>Post Opportunity</a>
+          <div class="ms-xl-2"><h2 class="fw-bold mb-0">{{ acceptance_rate }}%</h2><small class="text-muted">Hiring Success Rate</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-5">
+      <div class="employer-console">
+        <span class="console-kicker mb-2">Employer Console</span>
+        <h2 class="h4 fw-bold mb-1">Live recruitment pipeline</h2>
+        <p class="text-muted small mb-3">Current metrics from your own opportunities and candidates.</p>
+        <div class="console-grid">
+          <div class="console-item"><i class="bi bi-briefcase-fill"></i><strong>{{ total_opportunities }}</strong><small>{{ open_opportunities }} open opportunities</small></div>
+          <div class="console-item"><i class="bi bi-people-fill"></i><strong>{{ total_applications }}</strong><small>Total applications</small></div>
+          <div class="console-item"><i class="bi bi-calendar2-check-fill"></i><strong>{{ interview_scheduled_count }}</strong><small>Interview scheduled</small></div>
+          <div class="console-item"><i class="bi bi-check-circle-fill"></i><strong>{{ accepted_count }}</strong><small>Accepted candidates</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-xl-3 col-md-6"><div class="kpi-card" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><div class="d-flex justify-content-between"><div><p class="mb-1">Total Opportunities</p><h1 class="fw-bold">{{ total_opportunities }}</h1><small>{{ open_opportunities }} open</small></div><i class="bi bi-briefcase-fill kpi-icon"></i></div></div></div>
+  <div class="col-xl-3 col-md-6"><div class="kpi-card" style="background:linear-gradient(135deg,#10b981,#22c55e)"><div class="d-flex justify-content-between"><div><p class="mb-1">Applications</p><h1 class="fw-bold">{{ total_applications }}</h1><small>{{ pending_count }} pending</small></div><i class="bi bi-file-earmark-text-fill kpi-icon"></i></div></div></div>
+  <div class="col-xl-3 col-md-6"><div class="kpi-card" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)"><div class="d-flex justify-content-between"><div><p class="mb-1">Interviews</p><h1 class="fw-bold">{{ interview_scheduled_count }}</h1><small>{{ shortlisted_count }} shortlisted</small></div><i class="bi bi-calendar-event-fill kpi-icon"></i></div></div></div>
+  <div class="col-xl-3 col-md-6"><div class="kpi-card" style="background:linear-gradient(135deg,#f97316,#ef4444)"><div class="d-flex justify-content-between"><div><p class="mb-1">Accepted</p><h1 class="fw-bold">{{ accepted_count }}</h1><small>{{ acceptance_rate }}% success rate</small></div><i class="bi bi-check-circle-fill kpi-icon"></i></div></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-4"><div class="card dashboard-card h-100"><div class="card-body p-4">
+    <h4 class="fw-bold mb-4">Recruitment Summary</h4>
+    <div class="small-stat d-flex justify-content-between"><span>Pending</span><strong>{{ pending_count }}</strong></div>
+    <div class="small-stat d-flex justify-content-between"><span>Reviewed</span><strong>{{ reviewed_count }}</strong></div>
+    <div class="small-stat d-flex justify-content-between"><span>Shortlisted</span><strong>{{ shortlisted_count }}</strong></div>
+    <div class="small-stat d-flex justify-content-between"><span>Interviews</span><strong>{{ interview_scheduled_count }}</strong></div>
+    <div class="small-stat d-flex justify-content-between"><span>Accepted</span><strong>{{ accepted_count }}</strong></div>
+    <div class="small-stat d-flex justify-content-between"><span>Rejected</span><strong>{{ rejected_count }}</strong></div>
+  </div></div></div>
+  <div class="col-lg-8"><div class="card dashboard-card h-100"><div class="card-body p-4">
+    <h4 class="fw-bold mb-4">Company Profile</h4>
+    <div class="row">
+      <div class="col-md-4 mb-3"><strong>Company</strong><p>{{ profile.company_name|default:"Not provided" }}</p></div>
+      <div class="col-md-4 mb-3"><strong>Location</strong><p>{{ profile.company_location|default:"Not provided" }}</p></div>
+      <div class="col-md-4 mb-3"><strong>Industry</strong><p>{{ profile.industry|default:"Not provided" }}</p></div>
+      <div class="col-md-4 mb-3"><strong>Email</strong><p class="text-break">{{ profile.company_email|default:"Not provided" }}</p></div>
+      <div class="col-md-4 mb-3"><strong>Phone</strong><p>{{ profile.company_phone|default:"Not provided" }}</p></div>
+      <div class="col-md-4 mb-3"><strong>Website</strong><br>{% if profile.website %}<a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">Visit Website</a>{% else %}<span class="text-muted">Not provided</span>{% endif %}</div>
+    </div>
+    <hr><p class="mb-0">{{ profile.company_description|default:"No company description provided yet." }}</p>
+  </div></div></div>
+</div>
+
+{% if top_candidate %}
+<div class="card dashboard-card mb-4"><div class="card-body p-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div><span class="badge text-bg-success mb-2"><i class="bi bi-trophy-fill me-1"></i>Top Match</span><h4 class="fw-bold mb-1 candidate-name">{{ top_candidate.application.student.full_name }}</h4><p class="mb-0"><strong>Opportunity:</strong> {{ top_candidate.application.opportunity.title }}</p></div>
+    <div class="text-end"><h1 class="fw-bold text-success mb-1">{{ top_candidate.score }}%</h1><span class="badge bg-success rounded-pill">AI Match Score</span></div>
+  </div>
+  <hr>
+  <div class="mb-2"><strong class="small">Matched skills</strong></div>
+  <div class="d-flex gap-2 flex-wrap">
+    {% for skill in top_candidate.matched_skills %}<span class="badge bg-success">{{ skill }}</span>{% empty %}<span class="text-muted">No required-skill overlap detected. The score still includes the other explainable matching components.</span>{% endfor %}
+  </div>
+  {% if top_candidate.missing_skills %}<div class="mt-3"><small class="text-muted">Missing required skills: {{ top_candidate.missing_skills|join:", " }}</small></div>{% endif %}
+  <div class="mt-4 d-flex gap-2 flex-wrap">
+    <a href="{% url 'application_detail' top_candidate.application.id %}" class="btn btn-dark">View Candidate</a>
+    {% if top_candidate.application.status != 'accepted' and top_candidate.application.status != 'rejected' %}
+      <a href="{% url 'schedule_interview' top_candidate.application.id %}" class="btn btn-primary">Schedule Interview</a>
+      <a href="{% url 'update_application_status' top_candidate.application.id 'accepted' %}" class="btn btn-success">Accept</a>
+    {% endif %}
+  </div>
+</div></div>
+{% endif %}
+
+<div class="card dashboard-card mb-4"><div class="card-body p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2"><div><h4 class="fw-bold mb-1">AI Ranked Candidates</h4><small class="text-muted">Candidates ranked using the platform's explainable skill and profile matching engine.</small></div><a href="{% url 'employer_applications' %}" class="btn btn-dark">View All Applications</a></div>
+  <div class="table-responsive"><table class="table table-hover align-middle">
+    <thead class="table-dark"><tr><th>Rank</th><th>Student</th><th>Opportunity</th><th>Status</th><th>AI Score</th><th>Matched Skills</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for item in ranked_applications %}
+      <tr>
+        <td><span class="badge bg-dark">#{{ forloop.counter }}</span></td>
+        <td><strong class="candidate-name">{{ item.application.student.full_name }}</strong></td>
+        <td>{{ item.application.opportunity.title }}</td>
+        <td><span class="badge bg-secondary status-pill">{{ item.application.get_status_display }}</span></td>
+        <td>{% if item.score >= 80 %}<span class="badge bg-success score-pill">{{ item.score }}%</span>{% elif item.score >= 50 %}<span class="badge bg-warning text-dark score-pill">{{ item.score }}%</span>{% else %}<span class="badge bg-danger score-pill">{{ item.score }}%</span>{% endif %}</td>
+        <td>{% for skill in item.matched_skills|slice:":3" %}<span class="badge bg-success">{{ skill }}</span>{% empty %}<span class="text-muted">None</span>{% endfor %}</td>
+        <td><a href="{% url 'application_detail' item.application.id %}" class="btn btn-sm btn-outline-dark">View</a></td>
+      </tr>
+    {% empty %}<tr><td colspan="7" class="text-center text-muted py-4">No ranked candidates available.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div></div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6"><div class="card dashboard-card h-100"><div class="card-body p-4"><h4 class="fw-bold mb-3">Application Status</h4><div class="chart-wrap"><canvas id="statusChart"></canvas></div></div></div></div>
+  <div class="col-lg-6"><div class="card dashboard-card h-100"><div class="card-body p-4"><h4 class="fw-bold mb-3">Hiring Funnel</h4><div class="chart-wrap"><canvas id="funnelChart"></canvas></div></div></div></div>
+</div>
+
+<div class="card dashboard-card mb-4"><div class="card-body p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 gap-2 flex-wrap"><h4 class="fw-bold mb-0">Recent Applications</h4><a href="{% url 'employer_applications' %}" class="btn btn-dark">View All</a></div>
+  <div class="table-responsive"><table class="table table-hover align-middle">
+    <thead class="table-dark"><tr><th>Student</th><th>Opportunity</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody>{% for application in recent_applications %}<tr><td class="candidate-name">{{ application.student.full_name }}</td><td>{{ application.opportunity.title }}</td><td><span class="badge bg-secondary">{{ application.get_status_display }}</span></td><td>{{ application.applied_at|date:"M j, Y, g:i a" }}</td><td><a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-outline-dark">View</a></td></tr>{% empty %}<tr><td colspan="5" class="text-center text-muted py-4">No recent applications.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div></div>
+
+<div class="card dashboard-card"><div class="card-body p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 gap-2 flex-wrap"><h4 class="fw-bold mb-0">My Notifications</h4><a href="{% url 'notification_list' %}" class="btn btn-dark">View All</a></div>
+  {% for notification in recent_notifications %}<div class="border-bottom pb-3 mb-3">{% if not notification.is_read %}<span class="badge bg-success rounded-pill mb-2">New</span>{% endif %}<p class="mb-1">{{ notification.message }}</p><small class="text-muted">{{ notification.created_at|date:"M j, Y, g:i a" }}</small></div>{% empty %}<p class="text-muted mb-0">No notifications available for your account.</p>{% endfor %}
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof Chart === 'undefined') return;
+  const statusCtx = document.getElementById('statusChart');
+  if (statusCtx) new Chart(statusCtx, {
+    type:'doughnut',
+    data:{labels:['Pending','Reviewed','Shortlisted','Interview','Accepted','Rejected'],datasets:[{data:[{{ pending_count }},{{ reviewed_count }},{{ shortlisted_count }},{{ interview_scheduled_count }},{{ accepted_count }},{{ rejected_count }}],backgroundColor:['#64748b','#94a3b8','#f59e0b','#0ea5e9','#22c55e','#ef4444'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom'}}}
+  });
+  const funnelCtx = document.getElementById('funnelChart');
+  if (funnelCtx) new Chart(funnelCtx, {
+    type:'bar',
+    data:{labels:['Applications','Shortlisted','Interviews','Accepted'],datasets:[{data:[{{ total_applications }},{{ shortlisted_count }},{{ interview_scheduled_count }},{{ accepted_count }}],backgroundColor:['#6366f1','#f59e0b','#0ea5e9','#22c55e'],borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{grid:{display:false}}}}
+  });
+});
+</script>
+{% endblock %}

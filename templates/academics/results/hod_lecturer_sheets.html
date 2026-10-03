@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .queue-shell { max-width: 1250px; margin: 0 auto; }
+    .queue-card { background: var(--card-bg, #fff); border: 1px solid rgba(15, 23, 42, .08); border-radius: 18px; box-shadow: 0 10px 28px rgba(15, 23, 42, .06); margin-bottom: 18px; padding: 22px; }
+    .queue-title { font-size: clamp(1.55rem, 3vw, 2.1rem); font-weight: 800; margin: 0 0 6px; }
+    .queue-stats { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); margin-top: 18px; }
+    .queue-stat { background: #f8fafc; border-radius: 13px; padding: 15px; }
+    .queue-stat strong { display: block; font-size: 1.5rem; }
+    .queue-filter { display: flex; gap: 10px; margin-bottom: 18px; }
+    .queue-filter select { border: 1px solid #cbd5e1; border-radius: 11px; min-height: 44px; padding: 9px 12px; }
+    .queue-button { background: #173f43; border: 0; border-radius: 11px; color: #fff; font-weight: 800; padding: 10px 14px; text-decoration: none; }
+    .queue-list { display: grid; gap: 13px; }
+    .queue-item { align-items: center; border: 1px solid #dbe4e8; border-radius: 14px; display: flex; gap: 18px; justify-content: space-between; padding: 17px; }
+    .queue-muted { color: #64748b; }
+    @media (max-width: 700px) { .queue-stats { grid-template-columns: 1fr; } .queue-item { align-items: flex-start; flex-direction: column; } }
+</style>
+
+<div class="queue-shell">
+    <section class="queue-card">
+        <div style="color:#0f766e;font-size:.8rem;font-weight:800;text-transform:uppercase;">HOD Verification</div>
+        <h1 class="queue-title">Lecturer Mark Sheets</h1>
+        <p class="queue-muted">Approve complete unit marks before student semester results proceed to the Dean.</p>
+        <div class="queue-stats">
+            <div class="queue-stat">Awaiting review<strong>{{ counts.submitted }}</strong></div>
+            <div class="queue-stat">Approved<strong>{{ counts.approved }}</strong></div>
+            <div class="queue-stat">Returned<strong>{{ counts.returned }}</strong></div>
+        </div>
+    </section>
+
+    <section class="queue-card">
+        <form class="queue-filter" method="get">
+            <select name="status">
+                <option value="submitted" {% if selected_status == 'submitted' %}selected{% endif %}>Awaiting review</option>
+                <option value="approved" {% if selected_status == 'approved' %}selected{% endif %}>Approved</option>
+                <option value="returned" {% if selected_status == 'returned' %}selected{% endif %}>Returned</option>
+                <option value="all" {% if selected_status == 'all' %}selected{% endif %}>All statuses</option>
+            </select>
+            <button class="queue-button" type="submit">Filter</button>
+        </form>
+        <div class="queue-list">
+            {% for sheet in sheets %}
+                <article class="queue-item">
+                    <div>
+                        <strong>{{ sheet.lecturer_assignment.unit.code }} — {{ sheet.lecturer_assignment.unit.title }}</strong>
+                        <div class="queue-muted">{{ sheet.lecturer_assignment.lecturer.user.get_full_name|default:sheet.lecturer_assignment.lecturer.user.username }} · {{ sheet.lecturer_assignment.semester }} · {{ sheet.get_status_display }}</div>
+                    </div>
+                    <a class="queue-button" href="{% url 'academics:hod_review_lecturer_sheet' sheet.id %}">Review Marks</a>
+                </article>
+            {% empty %}
+                <div style="padding:40px;text-align:center;" class="queue-muted">No Lecturer mark sheets match this filter.</div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

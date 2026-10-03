@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .messages-page {
+        max-width: 1050px;
+        margin: 0 auto;
+    }
+
+    .messages-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .messages-count {
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-weight: 700;
+    }
+
+    .conversation-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 12px;
+        transition: .2s;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .05);
+    }
+
+    .conversation-card:hover {
+        color: inherit;
+        transform: translateY(-2px);
+        border-color: #93c5fd;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .09);
+    }
+
+    .conversation-card.unread {
+        border-left: 5px solid #2563eb;
+        background: #f8fbff;
+    }
+
+    .conversation-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        flex: 0 0 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .conversation-main {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .conversation-title {
+        font-weight: 800;
+        font-size: 16px;
+        color: #0f172a;
+    }
+
+    .conversation-opportunity {
+        color: #64748b;
+        font-size: 13px;
+        margin-top: 2px;
+    }
+
+    .conversation-preview {
+        color: #475569;
+        margin-top: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 650px;
+    }
+
+    .conversation-meta {
+        text-align: right;
+        flex: 0 0 auto;
+    }
+
+    .conversation-time {
+        font-size: 12px;
+        color: #64748b;
+        white-space: nowrap;
+    }
+
+    .unread-pill {
+        margin-top: 8px;
+        display: inline-flex;
+        min-width: 24px;
+        height: 24px;
+        padding: 0 8px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: #dc2626;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    body.dark-mode .conversation-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .conversation-card.unread {
+        background: #172033;
+    }
+
+    body.dark-mode .conversation-title {
+        color: #f8fafc;
+    }
+
+    body.dark-mode .conversation-preview,
+    body.dark-mode .conversation-opportunity,
+    body.dark-mode .conversation-time {
+        color: #cbd5e1;
+    }
+
+    @media (max-width: 700px) {
+        .conversation-card {
+            padding: 14px;
+        }
+
+        .conversation-avatar {
+            width: 44px;
+            height: 44px;
+            flex-basis: 44px;
+        }
+
+        .conversation-meta {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .conversation-preview {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="messages-page">
+
+    <div class="messages-header">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-chat-dots-fill me-2 text-primary"></i>
+                Messages
+            </h2>
+
+            <div class="text-muted">
+                All your student-employer conversations in one place.
+            </div>
+        </div>
+
+        {% if total_unread > 0 %}
+
+            <span class="badge bg-danger messages-count">
+                {{ total_unread }} unread
+            </span>
+
+        {% else %}
+
+            <span class="badge bg-success messages-count">
+                All caught up
+            </span>
+
+        {% endif %}
+
+    </div>
+
+    {% for item in conversations %}
+
+        <a href="{% url 'application_chat' item.application.id %}"
+           class="conversation-card {% if item.unread_count > 0 %}unread{% endif %}">
+
+            <div class="d-flex align-items-center gap-3 flex-wrap flex-md-nowrap">
+
+                <div class="conversation-avatar">
+                    {{ item.participant_name|slice:":1"|upper }}
+                </div>
+
+                <div class="conversation-main">
+
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                        <div class="conversation-title">
+                            {{ item.participant_name }}
+                        </div>
+
+                        <span class="badge bg-secondary">
+                            {{ item.participant_label }}
+                        </span>
+
+                    </div>
+
+                    <div class="conversation-opportunity">
+                        {{ item.application.opportunity.title }}
+                    </div>
+
+                    <div class="conversation-preview">
+
+                        {% if item.latest_message %}
+
+                            {% if item.latest_message.sender == request.user %}
+                                <strong>You:</strong>
+                            {% endif %}
+
+                            {{ item.latest_message.message|truncatechars:100 }}
+
+                        {% else %}
+
+                            No messages yet — open the conversation to start chatting.
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="conversation-meta">
+
+                    <div class="conversation-time">
+
+                        {% if item.latest_message %}
+
+                            {{ item.latest_message.created_at|date:"M d, H:i" }}
+
+                        {% else %}
+
+                            {{ item.application.applied_at|date:"M d" }}
+
+                        {% endif %}
+
+                    </div>
+
+                    {% if item.unread_count > 0 %}
+
+                        <span class="unread-pill">
+                            {{ item.unread_count }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </a>
+
+    {% empty %}
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-chat-square-text display-4 text-muted"></i>
+
+                <h4 class="mt-3">
+                    No conversations yet
+                </h4>
+
+                {% if request.user.role == 'student' %}
+
+                    <p class="text-muted mb-3">
+                        Your conversations will appear here after you apply for an opportunity.
+                    </p>
+
+                    <a href="{% url 'opportunity_list' %}"
+                       class="btn btn-primary">
+                        Browse Opportunities
+                    </a>
+
+                {% elif request.user.role == 'employer' %}
+
+                    <p class="text-muted mb-3">
+                        Applicant conversations will appear here when students apply to your opportunities.
+                    </p>
+
+                    <a href="{% url 'employer_applications' %}"
+                       class="btn btn-primary">
+                        View Applications
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

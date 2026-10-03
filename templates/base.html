@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Commercial-Grade AI-Powered Internship Management System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background: #eef3f7;
+            color: #0f172a;
+            font-family: "Segoe UI", Arial, sans-serif;
+            transition: .3s;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 268px;
+            background: linear-gradient(180deg, #102027, #12343b 58%, #0f766e);
+            color: white;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            padding: 22px 16px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-box {
+            background: rgba(255,255,255,.13);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 22px;
+        }
+
+        .avatar-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .avatar-image {
+            object-fit: cover;
+            background: #ffffff;
+        }
+
+        .sidebar-section {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.55);
+            margin: 18px 12px 8px;
+            letter-spacing: .08em;
+        }
+
+        .sidebar-link {
+            color: rgba(255,255,255,.85);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            transition: .22s;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,.15);
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .sidebar-link.active {
+            background: white;
+            color: #0f172a;
+            box-shadow: 0 12px 28px rgba(0,0,0,.18);
+        }
+
+        .sidebar-link i {
+            font-size: 18px;
+        }
+
+        .quick-panel {
+            background: rgba(255,255,255,.12);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 22px;
+        }
+
+        .quick-panel small {
+            color: rgba(255,255,255,.7);
+        }
+
+        .logout-btn {
+            background: #ffffff;
+            color: #0f172a !important;
+            margin-top: 15px;
+        }
+
+        .main-content {
+            margin-left: 268px;
+            width: calc(100% - 268px);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 26px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .content-wrapper {
+            padding: 26px;
+        }
+
+        .card {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        footer {
+            padding: 25px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        body.dark-mode {
+            background: #0b1220;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .topbar,
+        body.dark-mode .card {
+            background: #1e293b;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .table {
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .bg-light {
+            background: #1e293b !important;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .text-muted {
+            color: #cbd5e1 !important;
+        }
+
+        body.dark-mode input,
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background: #0f172a;
+            color: #e5e7eb;
+            border-color: #334155;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 14px;
+                white-space: normal;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+                overflow: visible;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .topbar {
+                position: relative;
+                height: auto;
+                gap: 12px;
+                flex-wrap: wrap;
+                padding: 16px;
+            }
+
+            .content-wrapper {
+                padding: 16px;
+            }
+
+            .sidebar-brand {
+                flex-basis: 100%;
+                margin-bottom: 8px;
+            }
+
+            .sidebar-section,
+            .user-box,
+            .quick-panel {
+                display: none;
+            }
+
+            .sidebar-link {
+                display: inline-flex;
+                flex: 1 1 150px;
+                justify-content: center;
+                margin-right: 0;
+                margin-bottom: 0;
+                padding: 10px 12px;
+                vertical-align: middle;
+                min-height: 44px;
+            }
+
+            .logout-btn {
+                margin-top: 0;
+            }
+        }
+
+        img,
+        canvas,
+        svg {
+            max-width: 100%;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+        }
+
+        .table {
+            min-width: 760px;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+                background: #f4f7fb;
+            }
+
+            .layout {
+                display: block;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                min-height: 0;
+                padding: 10px;
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                gap: 8px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                box-shadow: 0 12px 30px rgba(15, 23, 42, .16);
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .sidebar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .sidebar-brand {
+                flex: 0 0 auto;
+                margin: 0 4px 0 0;
+                padding: 10px 12px;
+                border-radius: 8px;
+                background: rgba(255,255,255,.12);
+                font-size: 16px;
+            }
+
+            .sidebar-section,
+            .user-box,
+            .quick-panel {
+                display: none !important;
+            }
+
+            .sidebar-link {
+                flex: 0 0 auto;
+                min-height: 42px;
+                margin: 0;
+                padding: 10px 12px;
+                gap: 8px;
+                font-size: 14px;
+                transform: none !important;
+            }
+
+            .sidebar-link.active {
+                box-shadow: none;
+            }
+
+            .logout-btn {
+                margin: 0;
+            }
+
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .topbar {
+                position: sticky;
+                top: 62px;
+                z-index: 850;
+                min-height: 0;
+                height: auto;
+                padding: 12px 14px;
+                gap: 10px;
+                flex-wrap: nowrap;
+                align-items: flex-start;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
+            }
+
+            .topbar > div:first-child {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            .topbar > div:last-child {
+                flex: 0 0 auto;
+            }
+
+            .topbar h5 {
+                font-size: 16px;
+                line-height: 1.25;
+            }
+
+            .topbar small {
+                display: block;
+                font-size: 12px;
+                line-height: 1.35;
+            }
+
+            .topbar > .d-flex {
+                gap: 8px !important;
+            }
+
+            .content-wrapper {
+                padding: 14px;
+            }
+
+            footer {
+                padding: 18px 14px 28px;
+                font-size: 13px;
+            }
+
+            .card,
+            .premium-card,
+            .dashboard-card,
+            .hero-banner,
+            .dashboard-header {
+                border-radius: 10px !important;
+                box-shadow: 0 12px 28px rgba(15, 23, 42, .08) !important;
+            }
+
+            .card-body,
+            .dashboard-header-copy,
+            .hero-copy {
+                padding: 18px !important;
+            }
+
+            .dashboard-header,
+            .hero-banner {
+                margin-bottom: 18px !important;
+            }
+
+            .dashboard-header h1,
+            .hero-banner h1 {
+                font-size: clamp(28px, 8vw, 38px);
+                line-height: 1.08;
+            }
+
+            .dashboard-header p,
+            .hero-banner p {
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            .dashboard-header-visual,
+            .hero-visual {
+                min-height: auto !important;
+                max-height: 220px;
+                overflow: hidden;
+            }
+
+            .dashboard-header-visual img,
+            .hero-visual img {
+                min-height: 0 !important;
+                height: auto !important;
+                object-fit: contain !important;
+                background: #f8fafc;
+            }
+
+            .kpi-card {
+                min-height: 118px !important;
+                padding: 18px !important;
+            }
+
+            .kpi-card h1,
+            .kpi-card h2 {
+                font-size: 30px;
+            }
+
+            .kpi-icon {
+                font-size: 30px !important;
+            }
+
+            .btn {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                white-space: normal;
+            }
+
+            .d-flex.justify-content-between {
+                gap: 10px;
+            }
+
+            .table-responsive {
+                overflow: visible;
+            }
+
+            .table.mobile-card-table {
+                min-width: 0;
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 12px;
+            }
+
+            .table.mobile-card-table thead {
+                display: none;
+            }
+
+            .table.mobile-card-table tbody,
+            .table.mobile-card-table tr,
+            .table.mobile-card-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .table.mobile-card-table tr {
+                padding: 12px;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                background: #ffffff;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
+            }
+
+            .table.mobile-card-table td {
+                padding: 9px 4px;
+                border: 0;
+                border-bottom: 1px solid #eef2f7;
+                white-space: normal;
+                word-break: break-word;
+            }
+
+            .table.mobile-card-table td:last-child {
+                border-bottom: 0;
+            }
+
+            .table.mobile-card-table td::before {
+                content: attr(data-label);
+                display: block;
+                margin-bottom: 4px;
+                color: #64748b;
+                font-size: 12px;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: .04em;
+            }
+
+            .table.mobile-card-table td[colspan]::before {
+                content: "";
+                display: none;
+            }
+
+            .table.mobile-card-table td .btn {
+                width: 100%;
+                margin: 4px 0;
+            }
+
+            body.dark-mode .table.mobile-card-table tr {
+                background: #1e293b;
+                border-color: #334155;
+            }
+
+            body.dark-mode .table.mobile-card-table td {
+                border-bottom-color: #334155;
+            }
+
+            body.dark-mode .table.mobile-card-table td::before {
+                color: #cbd5e1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+
+            .topbar {
+                top: 58px;
+            }
+
+            .sidebar-brand {
+                font-size: 14px;
+            }
+
+            .sidebar-link {
+                font-size: 13px;
+                padding: 9px 10px;
+            }
+
+            .card-body,
+            .dashboard-header-copy,
+            .hero-copy {
+                padding: 15px !important;
+            }
+        }
+
+        .announcement-topbar-button {
+            position: relative;
+            min-width: 40px;
+        }
+        .announcement-topbar-button .announcement-count {
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .announcement-drawer {
+            position: fixed;
+            top: 84px;
+            right: 22px;
+            width: min(430px, calc(100vw - 28px));
+            max-height: 72vh;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 24px 60px rgba(15,23,42,.2);
+            z-index: 1200;
+            display: none;
+        }
+        .announcement-drawer.show { display: block; }
+        .announcement-drawer-header {
+            padding: 18px 18px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid #eef2f7;
+        }
+        .announcement-item {
+            display: block;
+            padding: 16px 18px;
+            border-bottom: 1px solid #eef2f7;
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .announcement-item:hover { background: #f8fafc; color: inherit; }
+        .announcement-item.unread { background: #eff6ff; }
+        .announcement-item-title { font-weight: 800; margin-bottom: 4px; }
+        .announcement-item-message { color: #475569; font-size: 14px; line-height: 1.45; }
+        .announcement-item-meta { margin-top: 8px; color: #64748b; font-size: 12px; }
+        .announcement-priority-urgent { color: #b91c1c; font-weight: 800; }
+        .announcement-priority-important { color: #b45309; font-weight: 800; }
+        body.dark-mode .announcement-drawer { background: #1e293b; border-color: #334155; }
+        body.dark-mode .announcement-drawer-header,
+        body.dark-mode .announcement-item { border-bottom-color: #334155; }
+        body.dark-mode .announcement-item:hover { background: #0f172a; }
+        body.dark-mode .announcement-item.unread { background: #172554; }
+        body.dark-mode .announcement-item-message,
+        body.dark-mode .announcement-item-meta { color: #cbd5e1; }
+        @media (max-width: 768px) {
+            .announcement-drawer { top: 126px; right: 14px; }
+        }
+
+
+        /* Commercial-Grade AI Assistant */
+        .internhub-ai-launcher {
+            position: fixed; right: 24px; bottom: 24px; width: 58px; height: 58px;
+            border: 0; border-radius: 50%; z-index: 1300;
+            background: linear-gradient(135deg, #0f766e, #2563eb); color: #fff;
+            box-shadow: 0 16px 38px rgba(15,23,42,.28); font-size: 24px;
+        }
+        .internhub-ai-panel {
+            position: fixed; right: 24px; bottom: 94px; width: min(390px, calc(100vw - 28px));
+            height: min(590px, calc(100vh - 125px)); background: #fff; z-index: 1299;
+            border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 24px 65px rgba(15,23,42,.24);
+            display: none; overflow: hidden;
+        }
+        .internhub-ai-panel.show { display: flex; flex-direction: column; }
+        .internhub-ai-header {
+            padding: 16px 18px; background: linear-gradient(135deg, #0f766e, #2563eb);
+            color: #fff; display: flex; align-items: center; justify-content: space-between;
+        }
+        .internhub-ai-messages { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; }
+        .internhub-ai-message { max-width: 88%; padding: 11px 13px; margin-bottom: 10px; border-radius: 13px; line-height: 1.45; font-size: 14px; white-space: pre-wrap; }
+        .internhub-ai-message.bot { background: #fff; border: 1px solid #e2e8f0; }
+        .internhub-ai-message.user { margin-left: auto; background: #2563eb; color: #fff; }
+        .internhub-ai-suggestions { padding: 8px 12px; display: flex; gap: 7px; overflow-x: auto; background: #fff; border-top: 1px solid #eef2f7; }
+        .internhub-ai-suggestion { border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+        .internhub-ai-form { padding: 12px; display: flex; gap: 8px; border-top: 1px solid #e2e8f0; background: #fff; }
+        .internhub-ai-form input { flex: 1; min-width: 0; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; }
+        .internhub-whatsapp { color: #fff; text-decoration: none; font-size: 18px; }
+        body.dark-mode .internhub-ai-panel, body.dark-mode .internhub-ai-suggestions,
+        body.dark-mode .internhub-ai-form, body.dark-mode .internhub-ai-message.bot {
+            background: #1e293b; color: #e5e7eb; border-color: #334155;
+        }
+        body.dark-mode .internhub-ai-messages { background: #0f172a; }
+        body.dark-mode .internhub-ai-suggestion { background: #1e293b; color: #e5e7eb; border-color: #475569; }
+        @media (max-width: 768px) {
+            .internhub-ai-launcher { right: 15px; bottom: 15px; }
+            .internhub-ai-panel { right: 14px; bottom: 82px; height: min(560px, calc(100vh - 105px)); }
+        }
+
+        /* Mobile off-canvas navigation */
+        .mobile-menu-button,
+        .sidebar-close-button,
+        .sidebar-backdrop {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            body.sidebar-open {
+                overflow: hidden;
+                touch-action: none;
+            }
+
+            .layout {
+                display: block;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: min(320px, 86vw);
+                height: 100vh;
+                height: 100dvh;
+                padding: 20px 16px 28px;
+                display: block !important;
+                overflow-x: hidden;
+                overflow-y: auto;
+                white-space: normal;
+                transform: translateX(-105%);
+                transition: transform .25s ease, visibility .25s ease;
+                visibility: hidden;
+                pointer-events: none;
+                z-index: 1500;
+                box-shadow: 18px 0 45px rgba(2, 6, 23, .32);
+                overscroll-behavior: contain;
+            }
+
+            body.sidebar-open .sidebar {
+                transform: translateX(0);
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            .sidebar-brand {
+                display: flex;
+                margin: 0 48px 20px 0;
+                padding: 0;
+                background: transparent;
+                font-size: 19px;
+            }
+
+            .sidebar-section,
+            .user-box,
+            .quick-panel {
+                display: block !important;
+            }
+
+            .sidebar-link {
+                display: flex;
+                width: 100%;
+                min-height: 46px;
+                margin: 0 0 6px;
+                padding: 12px 14px;
+                justify-content: flex-start;
+                font-size: 15px;
+                white-space: normal;
+            }
+
+            .logout-btn {
+                margin-top: 15px;
+            }
+
+            .sidebar-close-button {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                width: 40px;
+                height: 40px;
+                padding: 0;
+                border: 1px solid rgba(255, 255, 255, .28);
+                border-radius: 10px;
+                background: rgba(255, 255, 255, .12);
+                color: #ffffff;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .sidebar-close-button:hover,
+            .sidebar-close-button:focus-visible {
+                background: rgba(255, 255, 255, .22);
+                color: #ffffff;
+            }
+
+            .sidebar-backdrop {
+                position: fixed;
+                inset: 0;
+                display: block;
+                background: rgba(2, 6, 23, .58);
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity .25s ease, visibility .25s ease;
+                z-index: 1450;
+                backdrop-filter: blur(2px);
+            }
+
+            body.sidebar-open .sidebar-backdrop {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .topbar {
+                position: sticky;
+                top: 0;
+                min-height: 68px;
+                height: auto;
+                padding: 10px 14px;
+                flex-wrap: nowrap;
+                gap: 10px;
+                z-index: 1200;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, .08);
+            }
+
+            .mobile-menu-button {
+                width: 44px;
+                height: 44px;
+                min-height: 44px;
+                padding: 0;
+                display: inline-flex;
+                flex: 0 0 44px;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
+                background: #ffffff;
+                color: #0f172a;
+                font-size: 24px;
+            }
+
+            body.dark-mode .mobile-menu-button {
+                background: #1e293b;
+                color: #e5e7eb;
+                border-color: #475569;
+            }
+
+            .topbar-heading {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            .topbar-title {
+                min-width: 0;
+            }
+
+            .topbar-title h5 {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 16px;
+            }
+
+            .topbar-actions {
+                flex: 0 0 auto;
+                gap: 8px !important;
+            }
+
+            .topbar-username {
+                display: none;
+            }
+
+            .announcement-drawer {
+                top: 78px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .topbar-title small {
+                display: none;
+            }
+
+            .topbar-title h5 {
+                max-width: 48vw;
+                font-size: 14px;
+            }
+
+            .content-wrapper {
+                padding: 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sidebar,
+            .sidebar-backdrop {
+                transition: none;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar"
+           id="appSidebar"
+           aria-label="Main navigation">
+
+        <button class="sidebar-close-button"
+                id="sidebarCloseButton"
+                type="button"
+                aria-label="Close navigation">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="sidebar-brand">
+            <i class="bi bi-cpu-fill"></i>
+            AI Internship
+        </div>
+
+        {% if user.is_authenticated %}
+
+            <div class="user-box">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    {% if dashboard_profile_image_url %}
+
+                        <img src="{{ dashboard_profile_image_url }}"
+                             alt="{{ user.username }}"
+                             class="avatar-circle avatar-image">
+
+                    {% else %}
+
+                        <div class="avatar-circle">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+
+                    {% endif %}
+
+                    <div>
+                        <strong>
+                            {{ user.username }}
+                        </strong>
+
+                        <br>
+
+                        <small class="text-white-50">
+                            {{ user.role|title }}
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        <div class="sidebar-section">
+            Main
+        </div>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+           href="{% url 'home' %}">
+            <i class="bi bi-house-door"></i>
+            Home
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+               href="{% url 'dashboard' %}">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'notification_list' %}active{% endif %}"
+               href="{% url 'notification_list' %}">
+                <i class="bi bi-bell-fill"></i>
+                Notifications
+
+                {% if unread_notifications > 0 %}
+                    <span class="badge bg-danger rounded-pill ms-auto">
+                        {{ unread_notifications }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'announcement_center' %}active{% endif %}"
+               href="{% url 'announcement_center' %}">
+                <i class="bi bi-megaphone-fill"></i>
+                {% if user.role == 'admin' %}Announcements{% else %}Updates{% endif %}
+                <span class="badge bg-danger rounded-pill ms-auto"
+                      id="sidebarAnnouncementCount"
+                      style="display:none;">0</span>
+            </a>
+
+            {% if user.role == 'student' %}
+
+                <div class="sidebar-section">
+                    Student
+                </div>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'student_profile' %}active{% endif %}"
+                   href="{% url 'student_profile' %}">
+                    <i class="bi bi-person-circle"></i>
+                    My Profile
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'edit_student_profile' %}active{% endif %}"
+                   href="{% url 'edit_student_profile' %}">
+                    <i class="bi bi-pencil-square"></i>
+                    Edit Profile
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}"
+                   href="{% url 'opportunity_list' %}">
+                    <i class="bi bi-briefcase"></i>
+                    Opportunities
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'my_applications' %}active{% endif %}"
+                   href="{% url 'my_applications' %}">
+                    <i class="bi bi-file-earmark-text"></i>
+                    My Applications
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'my_placement' or request.resolver_match.url_name == 'placement_logbook' or request.resolver_match.url_name == 'submit_progress_report' %}active{% endif %}"
+                   href="{% url 'my_placement' %}">
+                    <i class="bi bi-journal-check"></i>
+                    My Placement
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'my_academic_results' %}active{% endif %}"
+                   href="{% url 'academics:my_academic_results' %}">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    My Academic Results
+                </a>
+
+<a
+    class="sidebar-link
+    {% if request.resolver_match.namespace == 'payments' %}
+        active
+    {% endif %}"
+    href="{% url 'payments:placement_assistance' %}"
+>
+    <i class="bi bi-search-heart"></i>
+    Placement Assistance
+</a>
+
+            {% endif %}
+
+            {% if user.role == 'lecturer' %}
+
+                <div class="sidebar-section">
+                    Academic Management
+                </div>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'lecturer_result_dashboard' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'lecturer_result_sheet' %}active{% endif %}"
+                   href="{% url 'academics:lecturer_result_dashboard' %}">
+                    <i class="bi bi-journal-check"></i>
+                    My Unit Marks
+                </a>
+
+            {% endif %}
+
+            {% if user.role == 'hod' %}
+
+                <div class="sidebar-section">
+                    Academic Management
+                </div>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'department_students' %}active{% endif %}"
+                   href="{% url 'academics:department_students' %}">
+                    <i class="bi bi-people-fill"></i>
+                    Students
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'hod_result_students' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'hod_student_results' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'register_student_units' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'hod_result_entry' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'request_grade_amendment' %}active{% endif %}"
+                   href="{% url 'academics:hod_result_students' %}">
+                    <i class="bi bi-journal-text"></i>
+                    Grade Management
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'hod_lecturer_sheet_queue' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'hod_review_lecturer_sheet' %}active{% endif %}"
+                   href="{% url 'academics:hod_lecturer_sheet_queue' %}">
+                    <i class="bi bi-clipboard2-check-fill"></i>
+                    Lecturer Mark Sheets
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'department_supervisors' %}active{% endif %}"
+                   href="{% url 'academics:department_supervisors' %}">
+                    <i class="bi bi-person-badge-fill"></i>
+                    Supervisors
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'department_internships' %}active{% endif %}"
+                   href="{% url 'academics:department_internships' %}">
+                    <i class="bi bi-briefcase-fill"></i>
+                    Internships
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'department_applications' %}active{% endif %}"
+                   href="{% url 'academics:department_applications' %}">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    Applications
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'academic_reports' %}active{% endif %}"
+                   href="{% url 'academics:academic_reports' %}">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    Reports &amp; Progress
+                </a>
+
+            {% endif %}
+
+            {% if user.role == 'dean' %}
+
+                <div class="sidebar-section">
+                    School Management
+                </div>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'school_departments' %}active{% endif %}"
+                   href="{% url 'academics:school_departments' %}">
+                    <i class="bi bi-diagram-3-fill"></i>
+                    Departments
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'school_students' %}active{% endif %}"
+                   href="{% url 'academics:school_students' %}">
+                    <i class="bi bi-people-fill"></i>
+                    Students
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'dean_result_queue' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'dean_review_results' %}active{% endif %}"
+                   href="{% url 'academics:dean_result_queue' %}">
+                    <i class="bi bi-clipboard2-check-fill"></i>
+                    Result Approvals
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'dean_amendment_queue' or request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'dean_review_amendment' %}active{% endif %}"
+                   href="{% url 'academics:dean_amendment_queue' %}">
+                    <i class="bi bi-pencil-square"></i>
+                    Grade Amendments
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'school_supervisors' %}active{% endif %}"
+                   href="{% url 'academics:school_supervisors' %}">
+                    <i class="bi bi-person-badge-fill"></i>
+                    Supervisors
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'school_internships' %}active{% endif %}"
+                   href="{% url 'academics:school_internships' %}">
+                    <i class="bi bi-briefcase-fill"></i>
+                    Internships
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'school_applications' %}active{% endif %}"
+                   href="{% url 'academics:school_applications' %}">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    Applications
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'academics' and request.resolver_match.url_name == 'academic_reports' %}active{% endif %}"
+                   href="{% url 'academics:academic_reports' %}">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    Reports &amp; Progress
+                </a>
+
+            {% endif %}
+{% if user.role == 'institution' %}
+
+    <div class="sidebar-section">
+        Institution Management
+    </div>
+
+    <a
+        class="sidebar-link
+        {% if request.resolver_match.namespace == 'payments' and request.resolver_match.url_name == 'institution_verifications' %}
+            active
+        {% endif %}"
+        href="{% url 'payments:institution_verifications' %}"
+    >
+        <i class="bi bi-person-vcard-fill"></i>
+        Student Verifications
+
+        {% if pending_student_verifications %}
+            <span class="badge bg-danger rounded-pill ms-auto">
+                {{ pending_student_verifications }}
+            </span>
+        {% endif %}
+    </a>
+
+{% endif %}
+
+            {% if user.role == 'employer' %}
+
+                <div class="sidebar-section">
+                    Employer
+                </div>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'employer_profile' %}active{% endif %}"
+                   href="{% url 'employer_profile' %}">
+                    <i class="bi bi-building"></i>
+                    Company Profile
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'edit_employer_profile' %}active{% endif %}"
+                   href="{% url 'edit_employer_profile' %}">
+                    <i class="bi bi-pencil-square"></i>
+                    Edit Company
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'create_opportunity' %}active{% endif %}"
+                   href="{% url 'create_opportunity' %}">
+                    <i class="bi bi-plus-circle"></i>
+                    Post Opportunity
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'my_opportunities' %}active{% endif %}"
+                   href="{% url 'my_opportunities' %}">
+                    <i class="bi bi-folder"></i>
+                    My Opportunities
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'employer_applications' %}active{% endif %}"
+                   href="{% url 'employer_applications' %}">
+                    <i class="bi bi-people"></i>
+                    Applications
+                </a>
+
+            {% endif %}
+
+            {% if user.role == 'admin' %}
+
+                <div class="sidebar-section">
+                    Admin
+                </div>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'admin_profile_settings' %}active{% endif %}"
+                   href="{% url 'admin_profile_settings' %}">
+                    <i class="bi bi-person-square"></i>
+                    Profile Image
+                </a>
+
+                <a class="sidebar-link {% if request.resolver_match.url_name == 'announcement_center' %}active{% endif %}"
+                   href="{% url 'announcement_center' %}">
+                    <i class="bi bi-broadcast-pin"></i>
+                    Broadcast Center
+                </a>
+
+            {% endif %}
+
+            <div class="quick-panel">
+
+                <small>
+                    Quick Panel
+                </small>
+
+                <div class="mt-2 d-flex justify-content-between">
+                    <span>Alerts</span>
+                    <strong>{{ unread_notifications }}</strong>
+                </div>
+
+                <div class="mt-2 d-flex justify-content-between">
+                    <span>Status</span>
+                    <strong>Online</strong>
+                </div>
+
+            </div>
+
+            <a class="sidebar-link logout-btn"
+               href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+
+        {% else %}
+
+            <div class="sidebar-section">
+                Account
+            </div>
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+               href="{% url 'login' %}">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Login
+            </a>
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'account_start' %}active{% endif %}"
+               href="{% url 'account_start' %}">
+                <i class="bi bi-grid"></i>
+                Start Here
+            </a>
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'student_register' %}active{% endif %}"
+               href="{% url 'student_register' %}">
+                <i class="bi bi-person-plus"></i>
+                Student Register
+            </a>
+
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'employer_register' %}active{% endif %}"
+               href="{% url 'employer_register' %}">
+                <i class="bi bi-building-add"></i>
+                Employer Register
+            </a>
+
+        {% endif %}
+
+    </aside>
+
+    <div class="sidebar-backdrop"
+         id="sidebarBackdrop"
+         aria-hidden="true"></div>
+
+    <main class="main-content">
+
+        <div class="topbar">
+
+            <div class="topbar-heading">
+                <button class="mobile-menu-button"
+                        id="mobileMenuButton"
+                        type="button"
+                        aria-label="Open navigation"
+                        aria-controls="appSidebar"
+                        aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="topbar-title">
+                    <h5 class="mb-0 fw-bold">
+                        Commercial-Grade AI-Powered Internship Management System
+                    </h5>
+
+                    <small class="text-muted">
+                        Smart recruitment, matching and analytics platform
+                    </small>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 topbar-actions">
+
+                {% if user.is_authenticated %}
+                    <button class="btn btn-outline-primary btn-sm announcement-topbar-button"
+                            id="announcementToggle"
+                            type="button"
+                            title="Announcements">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span class="announcement-count" id="announcementCount">0</span>
+                    </button>
+                    <span class="text-muted small topbar-username">{{ user.username }}</span>
+                {% endif %}
+
+                <button class="btn btn-outline-dark btn-sm"
+                        id="themeToggle"
+                        type="button">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="content-wrapper">
+
+            {% if messages %}
+                {% for message in messages %}
+
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+                        {{ message }}
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert">
+                        </button>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+        <footer>
+            <strong>Commercial-Grade AI-Powered Internship Management System</strong><br>
+            Intelligent recruitment and internship management platform.
+        </footer>
+
+    </main>
+
+</div>
+
+
+{% if user.is_authenticated %}
+<div class="announcement-drawer" id="announcementDrawer">
+    <div class="announcement-drawer-header">
+        <div>
+            <div class="fw-bold">Platform Announcements</div>
+            <small class="text-muted">Updates from the administration</small>
+        </div>
+        <a href="{% url 'announcement_center' %}" class="btn btn-sm btn-outline-primary">View all</a>
+    </div>
+    <div id="announcementDrawerBody">
+        <div class="p-4 text-center text-muted">Loading announcements...</div>
+    </div>
+</div>
+{% endif %}
+
+
+{% if user.is_authenticated %}
+<button type="button" class="internhub-ai-launcher" id="internhubAiLauncher" title="Commercial-Grade AI Assistant">
+    <i class="bi bi-stars"></i>
+</button>
+
+<div class="internhub-ai-panel" id="internhubAiPanel">
+    <div class="internhub-ai-header">
+        <div>
+            <div class="fw-bold"><i class="bi bi-cpu-fill me-1"></i> Commercial-Grade AI Assistant</div>
+            <small>AI-Powered Internship Management System</small>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a class="internhub-whatsapp"
+               href="https://wa.me/?text=Hello%20Commercial-Grade AI-Powered Internship Management System%20Support"
+               target="_blank" rel="noopener" title="WhatsApp Support">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+            <button type="button" class="btn btn-sm btn-light" id="internhubAiClose">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    <div class="internhub-ai-messages" id="internhubAiMessages">
+        <div class="internhub-ai-message bot">Hi {{ user.username }}. I'm Commercial-Grade AI Assistant. Ask me about the platform or information your account is allowed to see.</div>
+    </div>
+    <div class="internhub-ai-suggestions" id="internhubAiSuggestions"></div>
+    <form class="internhub-ai-form" id="internhubAiForm">
+        <input type="text" id="internhubAiInput" maxlength="1000" autocomplete="off" placeholder="Ask Commercial-Grade AI Assistant...">
+        <button class="btn btn-primary" type="submit" title="Send">
+            <i class="bi bi-send-fill"></i>
+        </button>
+    </form>
+</div>
+{% endif %}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const sidebarCloseButton = document.getElementById('sidebarCloseButton');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+    const appSidebar = document.getElementById('appSidebar');
+    const mobileNavigationQuery = window.matchMedia('(max-width: 992px)');
+
+    function openMobileNavigation() {
+        if (!mobileNavigationQuery.matches) return;
+
+        document.body.classList.add('sidebar-open');
+        mobileMenuButton.setAttribute('aria-expanded', 'true');
+        sidebarCloseButton.focus();
+    }
+
+    function closeMobileNavigation(returnFocus = false) {
+        const wasOpen = document.body.classList.contains('sidebar-open');
+
+        document.body.classList.remove('sidebar-open');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+
+        if (returnFocus && wasOpen && mobileNavigationQuery.matches) {
+            mobileMenuButton.focus();
+        }
+    }
+
+    mobileMenuButton.addEventListener('click', function () {
+        if (document.body.classList.contains('sidebar-open')) {
+            closeMobileNavigation(true);
+        } else {
+            openMobileNavigation();
+        }
+    });
+
+    sidebarCloseButton.addEventListener('click', function () {
+        closeMobileNavigation(true);
+    });
+
+    sidebarBackdrop.addEventListener('click', function () {
+        closeMobileNavigation(true);
+    });
+
+    appSidebar.querySelectorAll('a.sidebar-link').forEach(function (link) {
+        link.addEventListener('click', function () {
+            closeMobileNavigation(false);
+        });
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeMobileNavigation(true);
+        }
+    });
+
+    function handleNavigationBreakpoint(event) {
+        if (!event.matches) {
+            closeMobileNavigation(false);
+        }
+    }
+
+    if (typeof mobileNavigationQuery.addEventListener === 'function') {
+        mobileNavigationQuery.addEventListener(
+            'change',
+            handleNavigationBreakpoint
+        );
+    } else {
+        mobileNavigationQuery.addListener(
+            handleNavigationBreakpoint
+        );
+    }
+
+    const toggleButton = document.getElementById('themeToggle');
+    const body = document.body;
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        toggleButton.innerHTML = '<i class="bi bi-sun-fill"></i>';
+    }
+
+    toggleButton.addEventListener('click', function () {
+        body.classList.toggle('dark-mode');
+
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            toggleButton.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        } else {
+            localStorage.setItem('theme', 'light');
+            toggleButton.innerHTML = '<i class="bi bi-moon-fill"></i>';
+        }
+    });
+
+    document.querySelectorAll('.table').forEach(function (table) {
+        const headers = Array.from(table.querySelectorAll('thead th')).map(function (header) {
+            return header.textContent.trim();
+        });
+
+        if (!headers.length) {
+            return;
+        }
+
+        table.classList.add('mobile-card-table');
+
+        table.querySelectorAll('tbody tr').forEach(function (row) {
+            Array.from(row.children).forEach(function (cell, index) {
+                if (!cell.hasAttribute('data-label')) {
+                    cell.setAttribute('data-label', headers[index] || '');
+                }
+            });
+        });
+    });
+
+    {% if user.is_authenticated %}
+    const announcementToggle = document.getElementById('announcementToggle');
+    const announcementDrawer = document.getElementById('announcementDrawer');
+    const announcementDrawerBody = document.getElementById('announcementDrawerBody');
+    const announcementCount = document.getElementById('announcementCount');
+    const sidebarAnnouncementCount = document.getElementById('sidebarAnnouncementCount');
+
+    function getCookie(name) {
+        const found = document.cookie.split('; ').find(function (row) {
+            return row.startsWith(name + '=');
+        });
+        return found ? decodeURIComponent(found.split('=')[1]) : '';
+    }
+
+    function escapeAnnouncementHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = value || '';
+        return div.innerHTML;
+    }
+
+    function setAnnouncementBadge(count) {
+        const safeCount = Number(count || 0);
+        [announcementCount, sidebarAnnouncementCount].forEach(function (badge) {
+            if (!badge) return;
+            badge.textContent = safeCount > 99 ? '99+' : safeCount;
+            badge.style.display = safeCount > 0 ? 'inline-flex' : 'none';
+        });
+    }
+
+    async function markAnnouncementRead(id) {
+        try {
+            await fetch(`/announcements/${id}/read/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({}),
+                credentials: 'same-origin'
+            });
+            await loadAnnouncements();
+        } catch (error) {
+            console.error('Could not mark announcement as read.', error);
+        }
+    }
+
+    function renderAnnouncementFeed(payload) {
+        setAnnouncementBadge(payload.unread_count);
+        const announcements = payload.announcements || [];
+
+        if (!announcements.length) {
+            announcementDrawerBody.innerHTML = '<div class="p-4 text-center text-muted">No active announcements right now.</div>';
+            return;
+        }
+
+        announcementDrawerBody.innerHTML = announcements.map(function (item) {
+            const unreadClass = item.is_read ? '' : ' unread';
+            const priorityClass = item.priority === 'urgent'
+                ? 'announcement-priority-urgent'
+                : (item.priority === 'important' ? 'announcement-priority-important' : '');
+
+            return `
+                <div class="announcement-item${unreadClass}" data-announcement-id="${item.id}">
+                    <div class="d-flex justify-content-between gap-3">
+                        <div class="announcement-item-title">${escapeAnnouncementHtml(item.title)}</div>
+                        <span class="${priorityClass}">${escapeAnnouncementHtml(item.priority_label)}</span>
+                    </div>
+                    <div class="announcement-item-message">${escapeAnnouncementHtml(item.message)}</div>
+                    <div class="announcement-item-meta">${escapeAnnouncementHtml(item.audience)} · ${escapeAnnouncementHtml(item.created_at)}</div>
+                </div>`;
+        }).join('');
+
+        announcementDrawerBody.querySelectorAll('[data-announcement-id]').forEach(function (element) {
+            element.addEventListener('click', function () {
+                markAnnouncementRead(element.dataset.announcementId);
+            });
+        });
+    }
+
+    async function loadAnnouncements() {
+        try {
+            const response = await fetch('{% url "announcement_feed" %}', {credentials: 'same-origin'});
+            if (!response.ok) throw new Error('Announcement feed failed.');
+            renderAnnouncementFeed(await response.json());
+        } catch (error) {
+            console.error(error);
+            announcementDrawerBody.innerHTML = '<div class="p-4 text-center text-muted">Announcements could not be loaded.</div>';
+        }
+    }
+
+    if (announcementToggle) {
+        announcementToggle.addEventListener('click', function (event) {
+            event.stopPropagation();
+            announcementDrawer.classList.toggle('show');
+            if (announcementDrawer.classList.contains('show')) loadAnnouncements();
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        if (
+            announcementDrawer
+            && announcementDrawer.classList.contains('show')
+            && !announcementDrawer.contains(event.target)
+            && event.target !== announcementToggle
+        ) {
+            announcementDrawer.classList.remove('show');
+        }
+    });
+
+    loadAnnouncements();
+    {% endif %}
+
+
+    {% if user.is_authenticated %}
+    const internhubAiLauncher = document.getElementById('internhubAiLauncher');
+    const internhubAiPanel = document.getElementById('internhubAiPanel');
+    const internhubAiClose = document.getElementById('internhubAiClose');
+    const internhubAiMessages = document.getElementById('internhubAiMessages');
+    const internhubAiSuggestions = document.getElementById('internhubAiSuggestions');
+    const internhubAiForm = document.getElementById('internhubAiForm');
+    const internhubAiInput = document.getElementById('internhubAiInput');
+
+    function internhubEscape(value) {
+        const div = document.createElement('div');
+        div.textContent = value || '';
+        return div.innerHTML;
+    }
+
+    function internhubAddMessage(text, who) {
+        const item = document.createElement('div');
+        item.className = 'internhub-ai-message ' + who;
+        item.innerHTML = internhubEscape(text);
+        internhubAiMessages.appendChild(item);
+        internhubAiMessages.scrollTop = internhubAiMessages.scrollHeight;
+    }
+
+    function internhubRenderSuggestions(items) {
+        internhubAiSuggestions.innerHTML = '';
+        (items || []).forEach(function (text) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'internhub-ai-suggestion';
+            button.textContent = text;
+            button.addEventListener('click', function () {
+                internhubAiInput.value = text;
+                internhubAiForm.requestSubmit();
+            });
+            internhubAiSuggestions.appendChild(button);
+        });
+    }
+
+    async function internhubLoadStatus() {
+        try {
+            const response = await fetch('{% url "ai_assistant:status" %}', {credentials: 'same-origin'});
+            if (!response.ok) return;
+            const payload = await response.json();
+            internhubRenderSuggestions(payload.suggestions);
+        } catch (error) {
+            console.error('Commercial-Grade AI Assistant status failed.', error);
+        }
+    }
+
+    internhubAiLauncher.addEventListener('click', function () {
+        internhubAiPanel.classList.toggle('show');
+        if (internhubAiPanel.classList.contains('show')) {
+            internhubAiInput.focus();
+            internhubLoadStatus();
+        }
+    });
+
+    internhubAiClose.addEventListener('click', function () {
+        internhubAiPanel.classList.remove('show');
+    });
+
+    internhubAiForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const message = internhubAiInput.value.trim();
+        if (!message) return;
+
+        internhubAddMessage(message, 'user');
+        internhubAiInput.value = '';
+        internhubAiInput.disabled = true;
+
+        try {
+            const response = await fetch('{% url "ai_assistant:chat" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({message: message})
+            });
+            const payload = await response.json();
+            internhubAddMessage(payload.reply || payload.error || 'I could not answer that request.', 'bot');
+            if (payload.sources && payload.sources.length) {
+                const sourceBox = document.createElement('div');
+                sourceBox.className = 'internhub-ai-message bot';
+                const title = document.createElement('strong');
+                title.textContent = 'Sources';
+                sourceBox.appendChild(title);
+                payload.sources.forEach(function (source) {
+                    const row = document.createElement('div');
+                    const link = document.createElement('a');
+                    link.href = source.url;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = source.title || source.url;
+                    row.appendChild(link);
+                    sourceBox.appendChild(row);
+                });
+                internhubAiMessages.appendChild(sourceBox);
+                internhubAiMessages.scrollTop = internhubAiMessages.scrollHeight;
+            }
+            internhubRenderSuggestions(payload.suggestions || []);
+        } catch (error) {
+            internhubAddMessage('The assistant is temporarily unavailable. Please try again.', 'bot');
+        } finally {
+            internhubAiInput.disabled = false;
+            internhubAiInput.focus();
+        }
+    });
+    {% endif %}
+
+</script>
+
+</body>
+</html>

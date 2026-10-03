@@ -1,0 +1,52 @@
+databases:
+  - name: ai-attachment-system-db
+    plan: free
+    databaseName: ai_attachment_system
+    user: ai_attachment_system
+
+services:
+  - type: web
+    name: ai-attachment-system
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-attachment-system-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: PUBLIC_SITE_URL
+        value: "https://ai-attachment-system.onrender.com"
+      - key: SITE_URL
+        value: "https://ai-attachment-system.onrender.com"
+      - key: SITE_DOMAIN
+        value: "ai-attachment-system.onrender.com"
+      - key: BREVO_API_KEY
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: SERVER_EMAIL
+        sync: false
+      - key: EMAIL_REPLY_TO
+        sync: false
+      - key: ADMIN_NOTIFICATION_EMAIL
+        sync: false
+      - key: DJANGO_ADMIN_USERNAME
+        value: "admin"
+      - key: DJANGO_ADMIN_EMAIL
+        sync: false
+      - key: DJANGO_ADMIN_PASSWORD
+        sync: false
+      - key: DJANGO_ADMIN_FORCE_PASSWORD_RESET
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.4"

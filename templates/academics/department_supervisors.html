@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .supervisor-heading {
+        margin-bottom: 24px;
+    }
+
+    .supervisor-heading h1 {
+        color: #0f2940;
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .supervisor-heading p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .supervisor-toolbar {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+        padding: 18px;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .supervisor-search {
+        display: flex;
+        flex: 1;
+        gap: 10px;
+        max-width: 650px;
+    }
+
+    .supervisor-search input {
+        flex: 1;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 11px 13px;
+    }
+
+    .supervisor-count {
+        font-weight: 800;
+        color: #12343b;
+        white-space: nowrap;
+    }
+
+    .supervisor-panel {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+        padding: 20px;
+    }
+
+    .supervisor-table {
+        min-width: 950px;
+        margin: 0;
+    }
+
+    .supervisor-table thead th {
+        background: #173f45;
+        color: #ffffff;
+        border: 0;
+        padding: 14px 12px;
+    }
+
+    .supervisor-table tbody td {
+        padding: 14px 12px;
+        border-color: #e5e7eb;
+    }
+
+    .supervisor-name {
+        font-weight: 800;
+        color: #0f2940;
+    }
+
+    .supervisor-muted {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .status-verified {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #854d0e;
+    }
+
+    .empty-state {
+        padding: 45px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .page-navigation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .supervisor-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .supervisor-search {
+            max-width: none;
+        }
+    }
+</style>
+
+<div class="supervisor-heading">
+    <h1>Supervisor Management</h1>
+    <p>{{ department.name }}</p>
+</div>
+
+<div class="supervisor-toolbar">
+    <form method="get" class="supervisor-search">
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search by name, staff number, email or specialization"
+        >
+
+        <button type="submit" class="btn btn-dark">
+            Search
+        </button>
+
+        {% if search %}
+            <a
+                href="{% url 'academics:department_supervisors' %}"
+                class="btn btn-outline-secondary"
+            >
+                Clear
+            </a>
+        {% endif %}
+    </form>
+
+    <div class="supervisor-count">
+        {{ total_supervisors }}
+        supervisor{{ total_supervisors|pluralize }}
+    </div>
+</div>
+
+<div class="supervisor-panel">
+    {% if page_obj.object_list %}
+
+        <div class="table-responsive">
+            <table class="table supervisor-table">
+                <thead>
+                    <tr>
+                        <th>Supervisor</th>
+                        <th>Staff Number</th>
+                        <th>Job Title</th>
+                        <th>Specialization</th>
+                        <th>Contact</th>
+                        <th>Verification</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for assignment in page_obj.object_list %}
+                        <tr>
+                            <td>
+                                <div class="supervisor-name">
+                                    {% firstof assignment.supervisor.full_name assignment.supervisor.user.get_full_name assignment.supervisor.user.username %}
+                                </div>
+
+                                <div class="supervisor-muted">
+                                    {{ assignment.supervisor.user.username }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ assignment.supervisor.staff_number|default:"Not provided" }}
+                            </td>
+
+                            <td>
+                                {{ assignment.supervisor.job_title|default:"Not provided" }}
+                            </td>
+
+                            <td>
+                                {{ assignment.supervisor.specialization|default:"Not provided" }}
+                            </td>
+
+                            <td>
+                                {% firstof assignment.supervisor.official_email assignment.supervisor.user.email "No email" %}
+
+                                {% if assignment.supervisor.phone_number %}
+                                    <div class="supervisor-muted">
+                                        {{ assignment.supervisor.phone_number }}
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if assignment.supervisor.is_verified %}
+                                    <span class="status-badge status-verified">
+                                        Verified
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-pending">
+                                        Pending verification
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page_obj.has_other_pages %}
+            <div class="page-navigation">
+                {% if page_obj.has_previous %}
+                    <a
+                        href="?search={{ search|urlencode }}&page={{ page_obj.previous_page_number }}"
+                        class="btn btn-dark btn-sm"
+                    >
+                        Previous
+                    </a>
+                {% endif %}
+
+                <span class="badge bg-light text-dark">
+                    Page {{ page_obj.number }} of
+                    {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a
+                        href="?search={{ search|urlencode }}&page={{ page_obj.next_page_number }}"
+                        class="btn btn-dark btn-sm"
+                    >
+                        Next
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+    {% else %}
+        <div class="empty-state">
+            No departmental supervisors were found.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

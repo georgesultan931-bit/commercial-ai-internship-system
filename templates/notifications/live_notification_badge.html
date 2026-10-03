@@ -1,0 +1,118 @@
+{% if user.is_authenticated %}
+<style>
+    .live-notification-badge {
+        display: none;
+        margin-left: 6px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: #dc3545;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+    }
+
+    .live-message-toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: min(360px, calc(100vw - 40px));
+        z-index: 1080;
+        display: none;
+    }
+</style>
+
+<div class="alert alert-primary shadow live-message-toast"
+     id="liveMessageToast"
+     role="alert">
+    <div class="fw-bold mb-1">New notification</div>
+    <div id="liveMessageToastText"></div>
+    <a href="{% url 'notification_list' %}" class="btn btn-sm btn-primary mt-2">
+        Open Notifications
+    </a>
+</div>
+
+<script>
+(function () {
+    const summaryUrl = "{% url 'notification_summary' %}";
+    const notificationUrl = "{% url 'notification_list' %}";
+    const toast = document.getElementById('liveMessageToast');
+    const toastText = document.getElementById('liveMessageToastText');
+
+    let previousUnread = null;
+    let toastTimer = null;
+
+    function notificationLinks() {
+        return Array.from(document.querySelectorAll(`a[href="${notificationUrl}"]`));
+    }
+
+    function updateBadges(count) {
+        notificationLinks().forEach(function (link) {
+            let badge = link.querySelector('.live-notification-badge');
+
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'live-notification-badge';
+                link.appendChild(badge);
+            }
+
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.textContent = '';
+                badge.style.display = 'none';
+            }
+        });
+    }
+
+    function showToast(message) {
+        if (!toast || !toastText) return;
+
+        toastText.textContent = message;
+        toast.style.display = 'block';
+
+        if (toastTimer) clearTimeout(toastTimer);
+
+        toastTimer = setTimeout(function () {
+            toast.style.display = 'none';
+        }, 6000);
+    }
+
+    async function refreshNotifications() {
+        try {
+            const response = await fetch(summaryUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                cache: 'no-store'
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+            if (!data.success) return;
+
+            updateBadges(data.unread_count);
+
+            if (
+                previousUnread !== null
+                && data.unread_count > previousUnread
+                && data.latest.length
+            ) {
+                showToast(data.latest[0].message);
+            }
+
+            previousUnread = data.unread_count;
+        } catch (error) {
+            console.error('Notification refresh failed:', error);
+        }
+    }
+
+    refreshNotifications();
+    setInterval(refreshNotifications, 5000);
+})();
+</script>
+{% endif %}

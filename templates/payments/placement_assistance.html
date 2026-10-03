@@ -1,0 +1,760 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .assistance-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .page-heading {
+        margin-bottom: 24px;
+    }
+
+    .page-heading h1 {
+        color: #0f2940;
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .page-heading p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .stage-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .stage-card {
+        background: #ffffff;
+        border: 1px solid #dbe4e8;
+        border-radius: 12px;
+        padding: 17px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .stage-number {
+        align-items: center;
+        background: #173f45;
+        border-radius: 50%;
+        color: #ffffff;
+        display: flex;
+        font-weight: 800;
+        height: 34px;
+        justify-content: center;
+        margin-bottom: 11px;
+        width: 34px;
+    }
+
+    .stage-card h3 {
+        color: #0f2940;
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .stage-card p {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+        gap: 22px;
+    }
+
+    .panel {
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+        margin-bottom: 22px;
+        padding: 24px;
+    }
+
+    .panel h2 {
+        color: #0f2940;
+        font-size: 21px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .panel-description {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .status-box {
+        border-radius: 10px;
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+
+    .status-pending {
+        background: #fff7d6;
+        border-left: 5px solid #eab308;
+        color: #713f12;
+    }
+
+    .status-approved {
+        background: #dcfce7;
+        border-left: 5px solid #22c55e;
+        color: #14532d;
+    }
+
+    .status-rejected {
+        background: #fee2e2;
+        border-left: 5px solid #ef4444;
+        color: #7f1d1d;
+    }
+
+    .status-info {
+        background: #e0f2fe;
+        border-left: 5px solid #0284c7;
+        color: #0c4a6e;
+    }
+
+    .details-list {
+        display: grid;
+        gap: 13px;
+    }
+
+    .detail-row {
+        background: #f8fafc;
+        border-radius: 9px;
+        padding: 14px;
+    }
+
+    .detail-row span {
+        color: #64748b;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .detail-row strong {
+        color: #0f2940;
+        overflow-wrap: anywhere;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        color: #0f2940;
+        display: block;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 11px 12px;
+        width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #173f45;
+        box-shadow: 0 0 0 3px rgba(23, 63, 69, 0.12);
+        outline: none;
+    }
+
+    .help-text {
+        color: #64748b;
+        display: block;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-top: 6px;
+    }
+
+    .field-error {
+        color: #b91c1c;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .action-button {
+        background: #173f45;
+        border: 0;
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: 800;
+        padding: 12px 19px;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .action-button:hover {
+        background: #102c30;
+        color: #ffffff;
+    }
+
+    .action-button.full-width {
+        width: 100%;
+    }
+
+    .action-button.disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .fee-card {
+        background: #173f45;
+        border-radius: 13px;
+        color: #ffffff;
+        margin-bottom: 20px;
+        padding: 22px;
+    }
+
+    .fee-card span {
+        color: #cbd5e1;
+        display: block;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .fee-card strong {
+        display: block;
+        font-size: 31px;
+        margin-bottom: 8px;
+    }
+
+    .fee-card p {
+        color: #dbeafe;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .payment-panel {
+        border-top: 5px solid #16a34a;
+    }
+
+    .payment-amount {
+        color: #166534;
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    .payment-attempt {
+        border-left: 4px solid #94a3b8;
+    }
+
+    .payment-attempt.pending {
+        border-left-color: #eab308;
+    }
+
+    .payment-attempt.successful {
+        border-left-color: #22c55e;
+    }
+
+    .payment-attempt.failed,
+    .payment-attempt.cancelled,
+    .payment-attempt.timed_out {
+        border-left-color: #ef4444;
+    }
+
+    .security-note {
+        background: #fef3c7;
+        border-left: 5px solid #f59e0b;
+        border-radius: 9px;
+        color: #713f12;
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 15px;
+    }
+
+    @media (max-width: 900px) {
+        .stage-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .stage-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .panel {
+            padding: 18px;
+        }
+    }
+</style>
+
+<div class="assistance-page">
+
+    <div class="page-heading">
+        <h1>Placement Assistance</h1>
+
+        <p>
+            Request help from your institution in finding a suitable
+            internship or attachment opportunity.
+        </p>
+    </div>
+
+    <div class="stage-grid">
+        <div class="stage-card">
+            <div class="stage-number">1</div>
+
+            <h3>Verify Student</h3>
+
+            <p>
+                Confirm your academic assignment or submit your student
+                identification document.
+            </p>
+        </div>
+
+        <div class="stage-card">
+            <div class="stage-number">2</div>
+
+            <h3>Set Preferences</h3>
+
+            <p>
+                Select your preferred counties, work mode and placement
+                requirements.
+            </p>
+        </div>
+
+        <div class="stage-card">
+            <div class="stage-number">3</div>
+
+            <h3>Pay KES 1,500</h3>
+
+            <p>
+                Payment is completed through an official M-Pesa
+                STK prompt.
+            </p>
+        </div>
+
+        <div class="stage-card">
+            <div class="stage-number">4</div>
+
+            <h3>Institution Matching</h3>
+
+            <p>
+                Your institution reviews your request and begins finding
+                suitable opportunities.
+            </p>
+        </div>
+    </div>
+
+    <div class="content-grid">
+
+        <div>
+            <section class="panel">
+                <h2>Student Verification</h2>
+
+                <p class="panel-description">
+                    Verification prevents non-students from purchasing
+                    institutional placement assistance.
+                </p>
+
+                {% if verification %}
+
+                    {% if verification.status == "verified" %}
+                        <div class="status-box status-approved">
+                            <strong>Verification approved.</strong>
+                            Your student identity has been confirmed.
+                        </div>
+
+                    {% elif verification.status == "rejected" %}
+                        <div class="status-box status-rejected">
+                            <strong>Verification rejected.</strong>
+
+                            {% if verification.rejection_reason %}
+                                {{ verification.rejection_reason }}
+                            {% else %}
+                                Review your document and submit it again.
+                            {% endif %}
+                        </div>
+
+                    {% else %}
+                        <div class="status-box status-pending">
+                            <strong>Verification pending.</strong>
+                            Your institution must review the submitted
+                            information before payment is enabled.
+                        </div>
+                    {% endif %}
+
+                {% elif assignment %}
+                    <div class="status-box status-info">
+                        <strong>Academic assignment found.</strong>
+                        Submit the verification below so your institution
+                        can confirm your identity.
+                    </div>
+
+                {% else %}
+                    <div class="status-box status-rejected">
+                        <strong>
+                            No active academic assignment was found.
+                        </strong>
+
+                        Contact your institution before requesting
+                        placement assistance.
+                    </div>
+                {% endif %}
+
+                {% if assignment %}
+                    <div class="details-list">
+                        <div class="detail-row">
+                            <span>Institution</span>
+
+                            <strong>
+                                {{ assignment.institution.institution_name }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Admission number</span>
+
+                            <strong>
+                                {{ assignment.admission_number|default:"Not provided" }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Department</span>
+
+                            <strong>
+                                {{ assignment.department.name|default:"Not assigned" }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Programme</span>
+
+                            <strong>
+                                {{ assignment.programme.name|default:"Not assigned" }}
+                            </strong>
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+
+            {% if verification_form %}
+                <section class="panel">
+                    <h2>Submit Verification</h2>
+
+                    <p class="panel-description">
+                        You may use your academic record or upload a clear
+                        photo of your valid student identification card.
+                    </p>
+
+                    <form
+                        method="post"
+                        action="{% url 'payments:submit_verification' %}"
+                        enctype="multipart/form-data"
+                    >
+                        {% csrf_token %}
+
+                        {% if verification_form.non_field_errors %}
+                            {% for error in verification_form.non_field_errors %}
+                                <div class="status-box status-rejected">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% for field in verification_form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <span class="help-text">
+                                        {{ field.help_text }}
+                                    </span>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="field-error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <button
+                            type="submit"
+                            class="action-button"
+                        >
+                            Submit for Verification
+                        </button>
+                    </form>
+                </section>
+            {% endif %}
+
+            {% if payment_transactions %}
+                <section class="panel">
+                    <h2>Payment History</h2>
+
+                    <p class="panel-description">
+                        Recent M-Pesa payment attempts for this placement
+                        assistance request.
+                    </p>
+
+                    <div class="details-list">
+                        {% for payment in payment_transactions %}
+                            <div class="detail-row payment-attempt {{ payment.status }}">
+                                <span>
+                                    {{ payment.initiated_at|date:"d M Y, H:i" }}
+                                </span>
+
+                                <strong>
+                                    {{ payment.get_status_display }}
+                                </strong>
+
+                                <div class="help-text">
+                                    Phone:
+                                    {{ payment.masked_phone_number }}
+                                </div>
+
+                                <div class="help-text">
+                                    Amount: KES {{ payment.amount }}
+                                </div>
+
+                                {% if payment.result_description %}
+                                    <div class="help-text">
+                                        {{ payment.result_description }}
+                                    </div>
+                                {% endif %}
+
+                                {% if payment.mpesa_receipt_number %}
+                                    <div class="help-text">
+                                        Receipt:
+                                        {{ payment.mpesa_receipt_number }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+
+        <aside>
+            <section class="panel">
+                <h2>Request Status</h2>
+
+                {% if placement_request %}
+                    <div class="details-list">
+                        <div class="detail-row">
+                            <span>Current status</span>
+
+                            <strong>
+                                {{ placement_request.get_status_display }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Payment</span>
+
+                            <strong>
+                                {% if placement_request.is_paid %}
+                                    Paid
+                                {% else %}
+                                    Not paid
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Preferred field</span>
+
+                            <strong>
+                                {{ placement_request.attachment_field|default:"Not selected" }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Preferred counties</span>
+
+                            <strong>
+                                {{ placement_request.preferred_counties|default:"Not selected" }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Placement mode</span>
+
+                            <strong>
+                                {{ placement_request.get_placement_mode_display }}
+                            </strong>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="status-box status-info">
+                        You have not created a placement assistance request.
+                    </div>
+                {% endif %}
+            </section>
+
+            <div class="fee-card">
+                <span>Placement assistance fee</span>
+
+                <strong>KES 1,500</strong>
+
+                <p>
+                    Payment becomes available only after verification and
+                    placement preferences are completed.
+                </p>
+            </div>
+
+            {% if placement_request.is_paid %}
+                <section class="panel payment-panel">
+                    <h2>Payment Confirmed</h2>
+
+                    <div class="status-box status-approved">
+                        <strong>Placement matching is active.</strong>
+                        Your institution has been notified.
+                    </div>
+
+                    {% with payment=placement_request.successful_payment %}
+                        {% if payment %}
+                            <div class="details-list">
+                                <div class="detail-row">
+                                    <span>M-Pesa receipt</span>
+
+                                    <strong>
+                                        {{ payment.mpesa_receipt_number }}
+                                    </strong>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span>Amount paid</span>
+
+                                    <strong>
+                                        KES {{ payment.amount }}
+                                    </strong>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span>Payment phone</span>
+
+                                    <strong>
+                                        {{ payment.masked_phone_number }}
+                                    </strong>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span>Paid on</span>
+
+                                    <strong>
+                                        {{ payment.paid_at|date:"d M Y, H:i" }}
+                                    </strong>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </section>
+
+            {% elif placement_request and placement_request.status == "awaiting_payment" %}
+                <section class="panel payment-panel">
+                    <h2>Pay with M-Pesa</h2>
+
+                    <p class="panel-description">
+                        Enter the Safaricom number that should receive
+                        the secure M-Pesa prompt.
+                    </p>
+
+                    <div class="payment-amount">
+                        KES 1,500
+                    </div>
+
+                    <form
+                        method="post"
+                        action="{% url 'payments:initiate_payment' %}"
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="placement_request_id"
+                            value="{{ placement_request.id }}"
+                        >
+
+                        <div class="form-group">
+                            <label for="payment-phone-number">
+                                M-Pesa phone number
+                            </label>
+
+                            <input
+                                id="payment-phone-number"
+                                type="tel"
+                                name="phone_number"
+                                value="{{ student.phone_number|default:'' }}"
+                                placeholder="0712345678"
+                                inputmode="tel"
+                                autocomplete="tel"
+                                required
+                            >
+
+                            <span class="help-text">
+                                The M-Pesa prompt will be sent to this
+                                number. You may pay using another valid
+                                M-Pesa number.
+                            </span>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="action-button full-width"
+                        >
+                            Send M-Pesa Prompt
+                        </button>
+                    </form>
+                </section>
+
+            {% elif verification_is_verified %}
+                <a
+                    href="{% url 'payments:placement_preferences' %}"
+                    class="action-button full-width"
+                >
+                    Continue to Preferences
+                </a>
+
+            {% else %}
+                <span class="action-button disabled full-width">
+                    Verification Required
+                </span>
+            {% endif %}
+
+            <div class="security-note" style="margin-top: 18px;">
+                Never enter your M-Pesa PIN on this website. Your PIN must
+                only be entered in the secure M-Pesa prompt displayed on
+                your phone.
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+{% endblock %}

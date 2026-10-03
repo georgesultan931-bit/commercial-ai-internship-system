@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Assignment Pending{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 760px;">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5 text-center">
+
+            <div
+                class="bg-warning-subtle text-warning rounded-circle d-inline-flex
+                       align-items-center justify-content-center mb-4"
+                style="width: 72px; height: 72px; font-size: 32px;"
+            >
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <h2 class="fw-bold mb-3">
+                Academic Assignment Pending
+            </h2>
+
+            <p class="text-muted mb-4">
+                Your {{ academic_role }} account has been approved, but it has
+                not yet been assigned to the appropriate institution,
+                school/faculty and department.
+            </p>
+
+            <div class="alert alert-info text-start">
+                <strong>What happens next?</strong>
+                <ul class="mb-0 mt-2">
+                    <li>An administrator will review your academic account.</li>
+                    <li>Your institution and school/faculty will be assigned.</li>
+                    <li>HOD accounts will also be assigned to a department.</li>
+                    <li>Your dashboard will become available automatically.</li>
+                </ul>
+            </div>
+
+            <p class="small text-muted mt-4">
+                If the assignment is taking too long, contact the platform
+                administrator.
+            </p>
+
+            <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
+                Log out
+            </a>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

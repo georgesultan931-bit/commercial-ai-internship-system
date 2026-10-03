@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .lecturer-shell { max-width: 1250px; margin: 0 auto; }
+    .lecturer-card { background: var(--card-bg, #fff); border: 1px solid rgba(15, 23, 42, .08); border-radius: 18px; box-shadow: 0 10px 28px rgba(15, 23, 42, .06); margin-bottom: 18px; padding: 22px; }
+    .lecturer-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; margin: 0 0 6px; }
+    .lecturer-muted { color: #64748b; }
+    .assignment-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); margin-top: 18px; }
+    .assignment-item { border: 1px solid #dbe4e8; border-radius: 15px; padding: 18px; }
+    .assignment-code { color: #0f766e; font-size: .82rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .assignment-item h3 { margin: 7px 0; }
+    .status { border-radius: 999px; display: inline-flex; font-size: .8rem; font-weight: 800; margin: 10px 0; padding: 6px 10px; }
+    .status-draft, .status-returned { background: #fff7ed; color: #9a3412; }
+    .status-submitted { background: #eef2ff; color: #4338ca; }
+    .status-approved { background: #ecfdf5; color: #047857; }
+    .lecturer-button { background: #173f43; border-radius: 11px; color: #fff; display: inline-flex; font-weight: 800; margin-top: 8px; padding: 10px 14px; text-decoration: none; }
+    .empty-state { color: #64748b; padding: 45px 15px; text-align: center; }
+</style>
+
+<div class="lecturer-shell">
+    <section class="lecturer-card">
+        <div style="color:#0f766e;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Lecturer Grade Management</div>
+        <h1 class="lecturer-title">My Assigned Units</h1>
+        <p class="lecturer-muted">Enter CAT and examination marks, then submit each complete unit sheet to the HOD.</p>
+    </section>
+
+    <section class="lecturer-card">
+        {% if assignments %}
+            <div class="assignment-grid">
+                {% for assignment in assignments %}
+                    <article class="assignment-item">
+                        <div class="assignment-code">{{ assignment.unit.code }}</div>
+                        <h3>{{ assignment.unit.title }}</h3>
+                        <div class="lecturer-muted">{{ assignment.semester }}</div>
+                        {% if assignment.result_sheet %}
+                            <span class="status status-{{ assignment.result_sheet.status }}">{{ assignment.result_sheet.get_status_display }}</span>
+                        {% else %}
+                            <span class="status status-draft">Not started</span>
+                        {% endif %}
+                        <div>
+                            <a class="lecturer-button" href="{% url 'academics:lecturer_result_sheet' assignment.id %}">Open Mark Sheet</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No units assigned</h3>
+                <p>Ask the institution administrator to assign your semester units.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

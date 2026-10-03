@@ -1,0 +1,536 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Institution Reports & Analytics
+            </h2>
+
+            <p class="text-muted mb-0">
+                {{ profile.institution_name }}
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+
+            <a
+                href="{% url 'institution_reports_csv' %}"
+                class="btn btn-success"
+            >
+                Export CSV
+            </a>
+
+            <a
+                href="{% url 'institution_dashboard' %}"
+                class="btn btn-outline-secondary"
+            >
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Main statistics -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted">
+                        Students
+                    </small>
+
+                    <h2 class="fw-bold mb-0">
+                        {{ total_students }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted">
+                        Placements
+                    </small>
+
+                    <h2 class="fw-bold mb-0">
+                        {{ total_assignments }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted">
+                        Supervisors
+                    </small>
+
+                    <h2 class="fw-bold mb-0">
+                        {{ total_supervisors }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted">
+                        Completion Rate
+                    </small>
+
+                    <h2 class="fw-bold mb-0">
+                        {{ completion_rate }}%
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- Placement statistics -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-4">
+                        Placement Status
+                    </h5>
+
+                    <div class="row g-3">
+
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">
+                                    Pending
+                                </small>
+
+                                <h4 class="fw-bold">
+                                    {{ pending_assignments }}
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">
+                                    Assigned
+                                </small>
+
+                                <h4 class="fw-bold">
+                                    {{ assigned_assignments }}
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">
+                                    Ongoing
+                                </small>
+
+                                <h4 class="fw-bold">
+                                    {{ ongoing_assignments }}
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">
+                                    Completed
+                                </small>
+
+                                <h4 class="fw-bold">
+                                    {{ completed_assignments }}
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">
+                                    Suspended
+                                </small>
+
+                                <h4 class="fw-bold">
+                                    {{ suspended_assignments }}
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">
+                                    Cancelled
+                                </small>
+
+                                <h4 class="fw-bold">
+                                    {{ cancelled_assignments }}
+                                </h4>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Logbook -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-4">
+                        Logbook Reports
+                    </h5>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 text-center">
+
+                                <h3 class="fw-bold">
+                                    {{ total_reports }}
+                                </h3>
+
+                                <small class="text-muted">
+                                    Total
+                                </small>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 text-center">
+
+                                <h3 class="fw-bold">
+                                    {{ reviewed_reports }}
+                                </h3>
+
+                                <small class="text-muted">
+                                    Reviewed
+                                </small>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 text-center">
+
+                                <h3 class="fw-bold">
+                                    {{ revision_reports }}
+                                </h3>
+
+                                <small class="text-muted">
+                                    Revision
+                                </small>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <p class="mb-1">
+                        Waiting for review:
+                        <strong>
+                            {{ submitted_reports }}
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Evaluations -->
+    <div class="card border-0 shadow-sm mt-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-4">
+                Supervisor Evaluations
+            </h5>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+
+                        <small class="text-muted">
+                            Total Evaluations
+                        </small>
+
+                        <h3 class="fw-bold">
+                            {{ total_evaluations }}
+                        </h3>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+
+                        <small class="text-muted">
+                            Midterm
+                        </small>
+
+                        <h3 class="fw-bold">
+                            {{ midterm_evaluations }}
+                        </h3>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+
+                        <small class="text-muted">
+                            Final
+                        </small>
+
+                        <h3 class="fw-bold">
+                            {{ final_evaluations }}
+                        </h3>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+
+                        <small class="text-muted">
+                            Average Score
+                        </small>
+
+                        <h3 class="fw-bold">
+                            {{ average_evaluation_score }}/5
+                        </h3>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent reports -->
+    <div class="card border-0 shadow-sm mt-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold">
+                Recent Logbook Reports
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Student</th>
+                        <th>Week</th>
+                        <th>Hours</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for report in recent_reports %}
+
+                    <tr>
+
+                        <td>
+                            {{ report.assignment.student.full_name|default:report.assignment.student.user.username }}
+                        </td>
+
+                        <td>
+                            Week {{ report.week_number }}
+                        </td>
+
+                        <td>
+                            {{ report.hours_worked }}
+                        </td>
+
+                        <td>
+
+                            {% if report.status == "reviewed" %}
+
+                                <span class="badge bg-success">
+                                    Reviewed
+                                </span>
+
+                            {% elif report.status == "revision_required" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Revision Required
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Submitted
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ report.submitted_at|date:"d M Y" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="5"
+                            class="text-center text-muted py-4"
+                        >
+                            No logbook reports yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent evaluations -->
+    <div class="card border-0 shadow-sm mt-4">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="fw-bold">
+                Recent Evaluations
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Student</th>
+                        <th>Supervisor</th>
+                        <th>Type</th>
+                        <th>Score</th>
+                        <th>Recommendation</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for evaluation in recent_evaluations %}
+
+                    <tr>
+
+                        <td>
+                            {{ evaluation.assignment.student.full_name|default:evaluation.assignment.student.user.username }}
+                        </td>
+
+                        <td>
+                            {{ evaluation.supervisor.full_name }}
+                        </td>
+
+                        <td>
+                            {{ evaluation.get_evaluation_type_display }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ evaluation.total_score }}/25
+                            </strong>
+
+                            <br>
+
+                            <small class="text-muted">
+                                {{ evaluation.average_score }}/5
+                            </small>
+                        </td>
+
+                        <td>
+                            {{ evaluation.get_recommendation_display }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="5"
+                            class="text-center text-muted py-4"
+                        >
+                            No supervisor evaluations yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .decision-shell {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .decision-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        padding: 24px;
+    }
+
+    .decision-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .decision-title {
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .decision-muted {
+        color: #64748b;
+    }
+
+    .decision-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .decision-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .decision-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .student-banner {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 13px;
+        margin-bottom: 18px;
+        padding: 14px;
+    }
+
+    .student-banner strong {
+        display: block;
+        font-size: 1.05rem;
+    }
+
+    .comparison-grid {
+        display: grid;
+        gap: 13px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 18px;
+    }
+
+    .comparison-box {
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .comparison-current {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .comparison-proposed {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .comparison-box span {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+    }
+
+    .comparison-box strong {
+        display: block;
+        font-size: 1.05rem;
+    }
+
+    .reason-box {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        border-radius: 11px;
+        color: #9a3412;
+        margin-bottom: 20px;
+        padding: 14px;
+    }
+
+    .decision-form-grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+
+    .choice-list ul {
+        display: grid;
+        gap: 10px;
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+    }
+
+    .choice-list li label {
+        align-items: flex-start;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        cursor: pointer;
+        display: flex;
+        gap: 9px;
+        padding: 12px;
+    }
+
+    .choice-list input {
+        height: 18px;
+        margin-top: 2px;
+        width: 18px;
+    }
+
+    .notes-field label {
+        display: block;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .notes-field textarea {
+        border: 1px solid #cbd5e1;
+        border-radius: 11px;
+        padding: 11px;
+        width: 100%;
+    }
+
+    .field-error {
+        color: #b91c1c;
+        display: block;
+        font-size: 0.8rem;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    body.dark-mode .decision-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .choice-list li label {
+        background: #1f3038;
+        border-color: #3b4d56;
+    }
+
+    body.dark-mode .decision-title {
+        color: #f8fafc;
+    }
+
+    @media (max-width: 680px) {
+        .decision-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .decision-header,
+        .form-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .comparison-grid,
+        .decision-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .decision-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="decision-shell">
+    <section class="decision-card">
+        <div class="decision-header">
+            <div>
+                <h1 class="decision-title">Review Grade Amendment</h1>
+                <p class="decision-muted mb-0">
+                    Confirm whether the published academic record should be changed.
+                </p>
+            </div>
+
+            <a href="{% url 'academics:dean_amendment_queue' %}"
+               class="decision-button secondary">
+                <i class="bi bi-arrow-left"></i>
+                Amendment Queue
+            </a>
+        </div>
+
+        <div class="student-banner">
+            <strong>
+                {% firstof amendment.grade.submission.assignment.student.full_name amendment.grade.submission.assignment.student.user.get_full_name amendment.grade.submission.assignment.student.user.username %}
+            </strong>
+            <span>
+                {{ amendment.grade.submission.assignment.admission_number|default:"No admission number" }}
+                · {{ amendment.grade.registration.unit.code }}
+                · {{ amendment.grade.registration.unit.title }}
+            </span>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-box comparison-current">
+                <span>Current Published Grade</span>
+                <strong>
+                    CAT {{ amendment.grade.coursework_mark }} ·
+                    Exam {{ amendment.grade.examination_mark }}
+                </strong>
+                <div class="mt-2">
+                    Total {{ amendment.grade.total_mark }} ·
+                    Grade {{ amendment.grade.letter_grade }} ·
+                    Points {{ amendment.grade.grade_point }}
+                </div>
+            </div>
+
+            <div class="comparison-box comparison-proposed">
+                <span>Proposed Corrected Marks</span>
+                <strong>
+                    CAT {{ amendment.proposed_coursework_mark }} ·
+                    Exam {{ amendment.proposed_examination_mark }}
+                </strong>
+                <div class="mt-2">
+                    The system will recalculate the total, letter grade and grade points
+                    if approved.
+                </div>
+            </div>
+        </div>
+
+        <div class="reason-box">
+            <strong>Reason submitted by the HOD:</strong><br>
+            {{ amendment.reason|linebreaksbr }}
+            <div class="small mt-2">
+                Requested by
+                {% firstof amendment.requested_by.get_full_name amendment.requested_by.username %}
+                on {{ amendment.requested_at|date:"d M Y H:i" }}
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+
+            <div class="decision-form-grid">
+                <div class="choice-list">
+                    <strong>Select Decision</strong>
+                    {{ form.action }}
+                    {% for error in form.action.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="notes-field">
+                    <label for="{{ form.review_notes.id_for_label }}">
+                        Dean Review Notes
+                    </label>
+                    {{ form.review_notes }}
+                    {% for error in form.review_notes.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                    <p class="decision-muted small mt-2 mb-0">
+                        Notes are mandatory when rejecting an amendment.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'academics:dean_amendment_queue' %}"
+                   class="decision-button secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="decision-button">
+                    <i class="bi bi-shield-check"></i>
+                    Save Amendment Decision
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

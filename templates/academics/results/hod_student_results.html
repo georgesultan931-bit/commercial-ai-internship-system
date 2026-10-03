@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .workspace-shell {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .workspace-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        margin-bottom: 18px;
+        padding: 22px;
+    }
+
+    .workspace-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 20px;
+        justify-content: space-between;
+    }
+
+    .workspace-kicker {
+        color: #0f766e;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .workspace-title {
+        font-size: clamp(1.5rem, 3vw, 2.1rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .workspace-muted {
+        color: #64748b;
+    }
+
+    .workspace-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .workspace-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .workspace-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .student-summary {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .summary-item {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 13px;
+    }
+
+    .summary-item span {
+        color: #64748b;
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .summary-item strong {
+        display: block;
+        overflow-wrap: anywhere;
+    }
+
+    .workspace-section-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        margin: 0 0 5px;
+    }
+
+    .setup-grid {
+        align-items: end;
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+        margin-top: 18px;
+    }
+
+    .field-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .field-group select {
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        min-height: 44px;
+        width: 100%;
+    }
+
+    .field-error {
+        color: #b91c1c;
+        font-size: 0.8rem;
+        margin-top: 5px;
+    }
+
+    .warning-box {
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        border-left: 5px solid #f97316;
+        border-radius: 12px;
+        color: #9a3412;
+        margin-top: 16px;
+        padding: 14px;
+    }
+
+    .submission-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .submission-row {
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        display: grid;
+        gap: 14px;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto auto;
+        padding: 15px;
+    }
+
+    .submission-row h3 {
+        font-size: 1rem;
+        font-weight: 800;
+        margin: 0 0 3px;
+    }
+
+    .status-pill {
+        border-radius: 999px;
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 7px 10px;
+        text-align: center;
+    }
+
+    .status-draft {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    .status-submitted {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-returned {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-published {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .empty-state {
+        color: #64748b;
+        padding: 35px 15px;
+        text-align: center;
+    }
+
+    body.dark-mode .workspace-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .summary-item,
+    body.dark-mode .submission-row {
+        background: #1f3038;
+        border-color: #3b4d56;
+    }
+
+    body.dark-mode .workspace-title,
+    body.dark-mode .workspace-section-title,
+    body.dark-mode .summary-item strong,
+    body.dark-mode .submission-row h3 {
+        color: #f8fafc;
+    }
+
+    @media (max-width: 900px) {
+        .student-summary {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .submission-row {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .workspace-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .workspace-header,
+        .submission-row {
+            align-items: stretch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .student-summary,
+        .setup-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .workspace-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="workspace-shell">
+    <section class="workspace-card">
+        <div class="workspace-header">
+            <div>
+                <div class="workspace-kicker">Student Academic Record</div>
+                <h1 class="workspace-title">
+                    {% firstof assignment.student.full_name assignment.student.user.get_full_name assignment.student.user.username %}
+                </h1>
+                <p class="workspace-muted mb-0">
+                    Create and manage semester result submissions for this student.
+                </p>
+            </div>
+
+            <a href="{% url 'academics:hod_result_students' %}"
+               class="workspace-button secondary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Students
+            </a>
+        </div>
+
+        <div class="student-summary">
+            <div class="summary-item">
+                <span>Admission Number</span>
+                <strong>{{ assignment.admission_number|default:"Not assigned" }}</strong>
+            </div>
+            <div class="summary-item">
+                <span>Programme</span>
+                <strong>{% firstof assignment.programme.name "Not assigned" %}</strong>
+            </div>
+            <div class="summary-item">
+                <span>Department</span>
+                <strong>{{ assignment.department.name }}</strong>
+            </div>
+            <div class="summary-item">
+                <span>Current Study Year</span>
+                <strong>Year {{ assignment.year_of_study }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="workspace-card">
+        <h2 class="workspace-section-title">Start or Open a Semester Record</h2>
+        <p class="workspace-muted mb-0">
+            Select the semester and grading scale. Existing records will open instead
+            of being duplicated.
+        </p>
+
+        {% if has_grading_scale %}
+            <form method="post" class="setup-grid">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="setup">
+
+                <div class="field-group">
+                    <label for="{{ setup_form.semester.id_for_label }}">Semester</label>
+                    {{ setup_form.semester }}
+                    {% for error in setup_form.semester.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="field-group">
+                    <label for="{{ setup_form.grading_scale.id_for_label }}">
+                        Grading Scale
+                    </label>
+                    {{ setup_form.grading_scale }}
+                    {% for error in setup_form.grading_scale.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="workspace-button">
+                    <i class="bi bi-arrow-right-circle"></i>
+                    Continue
+                </button>
+            </form>
+
+            {% for error in setup_form.non_field_errors %}
+                <div class="field-error mt-2">{{ error }}</div>
+            {% endfor %}
+        {% else %}
+            <div class="warning-box">
+                <strong>No grading scale configured.</strong>
+                The Dean or system administrator must create an active grading scale
+                and its grade bands before the HOD can enter results.
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="workspace-card">
+        <h2 class="workspace-section-title">Semester Result History</h2>
+        <p class="workspace-muted mb-0">
+            Draft, submitted, returned and published records appear here.
+        </p>
+
+        {% if submissions %}
+            <div class="submission-list">
+                {% for submission in submissions %}
+                    <article class="submission-row">
+                        <div>
+                            <h3>
+                                {{ submission.semester.academic_year.name }} —
+                                {{ submission.semester.name }}
+                            </h3>
+                            <div class="workspace-muted small">
+                                {{ submission.grading_scale.name }} ·
+                                {{ submission.grades.count }} recorded grade{{ submission.grades.count|pluralize }}
+                            </div>
+                        </div>
+
+                        <div class="workspace-muted small">
+                            {% if submission.status == "returned" and submission.review_notes %}
+                                <strong>Dean note:</strong><br>
+                                {{ submission.review_notes|truncatechars:90 }}
+                            {% elif submission.published_at %}
+                                Published {{ submission.published_at|date:"d M Y H:i" }}
+                            {% elif submission.submitted_at %}
+                                Submitted {{ submission.submitted_at|date:"d M Y H:i" }}
+                            {% else %}
+                                Created {{ submission.created_at|date:"d M Y" }}
+                            {% endif %}
+                        </div>
+
+                        <span class="status-pill status-{{ submission.status }}">
+                            {{ submission.get_status_display }}
+                        </span>
+
+                        <a href="{% url 'academics:hod_result_entry' submission.id %}"
+                           class="workspace-button">
+                            {% if submission.status == "published" %}
+                                View Results
+                            {% else %}
+                                Manage Results
+                            {% endif %}
+                        </a>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-journal-x fs-1"></i>
+                <h3 class="h5 mt-3">No semester records yet</h3>
+                <p class="mb-0">Use the form above to create the first result record.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

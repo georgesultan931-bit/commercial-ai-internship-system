@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .dean-shell {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .dean-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        margin-bottom: 18px;
+        padding: 22px;
+    }
+
+    .dean-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+    }
+
+    .dean-title {
+        font-size: clamp(1.55rem, 3vw, 2.15rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .dean-muted {
+        color: #64748b;
+    }
+
+    .dean-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .dean-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .dean-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .count-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .count-card {
+        border-radius: 13px;
+        padding: 15px;
+    }
+
+    .count-card span {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .count-card strong {
+        display: block;
+        font-size: 1.7rem;
+        line-height: 1;
+    }
+
+    .count-submitted { background: #fef3c7; color: #92400e; }
+    .count-returned { background: #fee2e2; color: #991b1b; }
+    .count-published { background: #dcfce7; color: #166534; }
+
+    .filter-form {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) minmax(190px, 0.35fr) auto auto;
+    }
+
+    .filter-form input,
+    .filter-form select {
+        border: 1px solid #cbd5e1;
+        border-radius: 11px;
+        min-height: 44px;
+        padding: 9px 12px;
+        width: 100%;
+    }
+
+    .submission-list {
+        display: grid;
+        gap: 13px;
+    }
+
+    .submission-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .submission-top {
+        align-items: flex-start;
+        display: flex;
+        gap: 14px;
+        justify-content: space-between;
+    }
+
+    .student-name {
+        font-size: 1.08rem;
+        font-weight: 800;
+        margin: 0 0 3px;
+    }
+
+    .status-pill {
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        padding: 7px 11px;
+        white-space: nowrap;
+    }
+
+    .status-submitted { background: #fef3c7; color: #92400e; }
+    .status-returned { background: #fee2e2; color: #991b1b; }
+    .status-published { background: #dcfce7; color: #166534; }
+
+    .submission-details {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin: 14px 0;
+    }
+
+    .submission-detail {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .submission-detail span {
+        color: #64748b;
+        display: block;
+        font-size: 0.67rem;
+        font-weight: 800;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+    }
+
+    .submission-detail strong {
+        display: block;
+        font-size: 0.88rem;
+        overflow-wrap: anywhere;
+    }
+
+    .submission-footer {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+    }
+
+    .empty-state {
+        color: #64748b;
+        padding: 45px 15px;
+        text-align: center;
+    }
+
+    body.dark-mode .dean-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .submission-item,
+    body.dark-mode .submission-detail {
+        background: #1f3038;
+        border-color: #3b4d56;
+    }
+
+    body.dark-mode .dean-title,
+    body.dark-mode .student-name,
+    body.dark-mode .submission-detail strong {
+        color: #f8fafc;
+    }
+
+    @media (max-width: 900px) {
+        .submission-details {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-form {
+            grid-template-columns: minmax(0, 1fr) minmax(180px, 0.5fr) auto;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .dean-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .dean-header,
+        .submission-top,
+        .submission-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .count-grid,
+        .submission-details,
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .dean-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="dean-shell">
+    <section class="dean-card">
+        <div class="dean-header">
+            <div>
+                <h1 class="dean-title">Academic Result Approvals</h1>
+                <p class="dean-muted mb-0">
+                    Verify HOD submissions before publishing official results to students.
+                </p>
+            </div>
+
+            <a href="{% url 'academics:dean_amendment_queue' %}"
+               class="dean-button secondary">
+                <i class="bi bi-pencil-square"></i>
+                Grade Amendments
+            </a>
+        </div>
+
+        <div class="count-grid">
+            <div class="count-card count-submitted">
+                <span>Awaiting Review</span>
+                <strong>{{ counts.submitted }}</strong>
+            </div>
+            <div class="count-card count-returned">
+                <span>Returned</span>
+                <strong>{{ counts.returned }}</strong>
+            </div>
+            <div class="count-card count-published">
+                <span>Published</span>
+                <strong>{{ counts.published }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="dean-card">
+        <form method="get" class="filter-form">
+            <input
+                type="search"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search student, admission number, department or programme"
+                aria-label="Search result submissions"
+            >
+
+            <select name="status" aria-label="Filter workflow status">
+                <option value="submitted" {% if selected_status == "submitted" %}selected{% endif %}>
+                    Awaiting review
+                </option>
+                <option value="returned" {% if selected_status == "returned" %}selected{% endif %}>
+                    Returned
+                </option>
+                <option value="published" {% if selected_status == "published" %}selected{% endif %}>
+                    Published
+                </option>
+                <option value="all" {% if selected_status == "all" %}selected{% endif %}>
+                    All statuses
+                </option>
+            </select>
+
+            <button type="submit" class="dean-button">
+                <i class="bi bi-funnel"></i>
+                Filter
+            </button>
+
+            {% if query or selected_status != "submitted" %}
+                <a href="{% url 'academics:dean_result_queue' %}"
+                   class="dean-button secondary">
+                    Clear
+                </a>
+            {% endif %}
+        </form>
+    </section>
+
+    <section class="dean-card">
+        {% if submissions %}
+            <div class="submission-list">
+                {% for submission in submissions %}
+                    <article class="submission-item">
+                        <div class="submission-top">
+                            <div>
+                                <h2 class="student-name">
+                                    {% firstof submission.assignment.student.full_name submission.assignment.student.user.get_full_name submission.assignment.student.user.username %}
+                                </h2>
+                                <div class="dean-muted small">
+                                    {{ submission.assignment.admission_number|default:"No admission number" }}
+                                    · {{ submission.assignment.student.user.email }}
+                                </div>
+                            </div>
+
+                            <span class="status-pill status-{{ submission.status }}">
+                                {{ submission.get_status_display }}
+                            </span>
+                        </div>
+
+                        <div class="submission-details">
+                            <div class="submission-detail">
+                                <span>Academic Period</span>
+                                <strong>
+                                    {{ submission.semester.academic_year.name }} —
+                                    {{ submission.semester.name }}
+                                </strong>
+                            </div>
+                            <div class="submission-detail">
+                                <span>Department</span>
+                                <strong>{{ submission.assignment.department.name }}</strong>
+                            </div>
+                            <div class="submission-detail">
+                                <span>Programme</span>
+                                <strong>{% firstof submission.assignment.programme.name "Not assigned" %}</strong>
+                            </div>
+                            <div class="submission-detail">
+                                <span>Grades</span>
+                                <strong>
+                                    {{ submission.grades.count }} unit{{ submission.grades.count|pluralize }}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="submission-footer">
+                            <div class="dean-muted small">
+                                {% if submission.submitted_at %}
+                                    Submitted {{ submission.submitted_at|date:"d M Y H:i" }}
+                                    {% if submission.submitted_by %}
+                                        by {% firstof submission.submitted_by.get_full_name submission.submitted_by.username %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <a href="{% url 'academics:dean_review_results' submission.id %}"
+                               class="dean-button">
+                                {% if submission.status == "submitted" %}
+                                    Review Results
+                                {% else %}
+                                    View Record
+                                {% endif %}
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-inbox fs-1"></i>
+                <h2 class="h5 mt-3">No result submissions found</h2>
+                <p class="mb-0">There are no records matching the selected filters.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .start-card {
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 16px 36px rgba(15, 23, 42, .08);
+    }
+
+    .start-action {
+        min-height: 82px;
+        border-radius: 8px;
+        text-align: left;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-xl-7 col-lg-9">
+        <div class="card start-card">
+            <div class="card-body p-4 p-md-5">
+
+                <span class="badge text-bg-success mb-3">
+                    Account Access
+                </span>
+
+                <h1 class="fw-bold mb-2">
+                    Start Here
+                </h1>
+
+                <p class="text-muted mb-4">
+                    Choose your account type to continue.
+                </p>
+
+                <div class="d-grid gap-3">
+
+                    <!-- Student -->
+                    <a href="{% url 'student_register' %}"
+                       class="btn btn-dark btn-lg start-action d-flex align-items-center gap-3">
+
+                        <i class="bi bi-person-plus fs-3"></i>
+
+                        <span>
+                            <strong>Student Register</strong><br>
+                            <small>
+                                Create a student account, verify your email,
+                                complete your profile and find opportunities.
+                            </small>
+                        </span>
+                    </a>
+
+
+                    <!-- Employer -->
+                    <a href="{% url 'employer_register' %}"
+                       class="btn btn-outline-dark btn-lg start-action d-flex align-items-center gap-3">
+
+                        <i class="bi bi-building-add fs-3"></i>
+
+                        <span>
+                            <strong>Employer Register</strong><br>
+                            <small>
+                                Create an employer account, get approved
+                                and post internship or attachment opportunities.
+                            </small>
+                        </span>
+                    </a>
+
+
+                    <!-- Institution -->
+                    <a href="{% url 'institution_register' %}"
+                       class="btn btn-outline-success btn-lg start-action d-flex align-items-center gap-3">
+
+                        <i class="bi bi-bank fs-3"></i>
+
+                        <span>
+                            <strong>Institution Register</strong><br>
+                            <small>
+                                Register a university, college, polytechnic
+                                or TVET institution and coordinate student placements.
+                            </small>
+                        </span>
+                    </a>
+
+
+                    <!-- Supervisor -->
+                    <a href="{% url 'supervisor_register' %}"
+                       class="btn btn-outline-secondary btn-lg start-action d-flex align-items-center gap-3">
+
+                        <i class="bi bi-person-badge fs-3"></i>
+
+                        <span>
+                            <strong>Supervisor Register</strong><br>
+                            <small>
+                                Create a supervisor account to monitor assigned
+                                students, progress and evaluations.
+                            </small>
+                        </span>
+                    </a>
+
+
+                    <!-- Login -->
+                    <a href="{% url 'login' %}"
+                       class="btn btn-outline-primary btn-lg start-action d-flex align-items-center gap-3">
+
+                        <i class="bi bi-box-arrow-in-right fs-3"></i>
+
+                        <span>
+                            <strong>Login</strong><br>
+                            <small>
+                                Already registered? Continue to your dashboard.
+                            </small>
+                        </span>
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

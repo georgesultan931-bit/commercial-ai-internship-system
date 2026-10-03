@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .preferences-page {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .page-heading {
+        margin-bottom: 24px;
+    }
+
+    .page-heading h1 {
+        color: #0f2940;
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .page-heading p {
+        color: #64748b;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+        gap: 22px;
+    }
+
+    .panel {
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+        margin-bottom: 22px;
+        padding: 25px;
+    }
+
+    .panel h2 {
+        color: #0f2940;
+        font-size: 21px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .panel-description {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 22px;
+    }
+
+    .form-group {
+        margin-bottom: 19px;
+    }
+
+    .form-group label {
+        color: #0f2940;
+        display: block;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .form-group input:not([type="checkbox"]),
+    .form-group select,
+    .form-group textarea {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 11px 12px;
+        width: 100%;
+    }
+
+    .form-group textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #173f45;
+        box-shadow: 0 0 0 3px rgba(23, 63, 69, 0.12);
+        outline: none;
+    }
+
+    .checkbox-field {
+        align-items: flex-start;
+        background: #f8fafc;
+        border: 1px solid #dbe4e8;
+        border-radius: 9px;
+        display: flex;
+        gap: 11px;
+        padding: 15px;
+    }
+
+    .checkbox-field input {
+        height: 18px;
+        margin-top: 3px;
+        width: 18px;
+    }
+
+    .checkbox-field label {
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .help-text {
+        color: #64748b;
+        display: block;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-top: 6px;
+    }
+
+    .field-error {
+        color: #b91c1c;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        border-left: 5px solid #ef4444;
+        border-radius: 8px;
+        color: #7f1d1d;
+        margin-bottom: 18px;
+        padding: 14px;
+    }
+
+    .button-row {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 11px;
+        margin-top: 22px;
+    }
+
+    .button {
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: 800;
+        padding: 12px 18px;
+        text-decoration: none;
+    }
+
+    .button-primary {
+        background: #173f45;
+        color: #ffffff;
+    }
+
+    .button-primary:hover {
+        background: #102c30;
+        color: #ffffff;
+    }
+
+    .button-secondary {
+        background: #e2e8f0;
+        color: #0f2940;
+    }
+
+    .summary-card {
+        background: #173f45;
+        border-radius: 13px;
+        color: #ffffff;
+        margin-bottom: 20px;
+        padding: 22px;
+    }
+
+    .summary-card h3 {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 17px;
+    }
+
+    .summary-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        margin-bottom: 13px;
+        padding-bottom: 13px;
+    }
+
+    .summary-row:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .summary-row span {
+        color: #cbd5e1;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .summary-row strong {
+        overflow-wrap: anywhere;
+    }
+
+    .fee-card {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    .fee-card span {
+        color: #166534;
+        display: block;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .fee-card strong {
+        color: #14532d;
+        display: block;
+        font-size: 30px;
+    }
+
+    .security-note {
+        background: #fef3c7;
+        border-left: 5px solid #f59e0b;
+        border-radius: 9px;
+        color: #713f12;
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 15px;
+    }
+
+    .process-list {
+        color: #475569;
+        line-height: 1.7;
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .process-list li {
+        margin-bottom: 8px;
+    }
+
+    @media (max-width: 850px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .panel {
+            padding: 18px;
+        }
+
+        .button-row {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .button {
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="preferences-page">
+
+    <div class="page-heading">
+        <h1>Placement Preferences</h1>
+        <p>
+            Tell your institution what type of internship or attachment
+            placement you need. These details will be used during matching.
+        </p>
+    </div>
+
+    <div class="content-grid">
+
+        <main>
+            <section class="panel">
+                <h2>Your Placement Requirements</h2>
+
+                <p class="panel-description">
+                    Provide accurate and flexible preferences. Selecting
+                    several suitable counties increases your chance of
+                    receiving a placement.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="error-box">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+
+                        {% if field.field.widget.input_type == "checkbox" %}
+                            <div class="form-group">
+                                <div class="checkbox-field">
+                                    {{ field }}
+
+                                    <div>
+                                        <label for="{{ field.id_for_label }}">
+                                            {{ field.label }}
+                                        </label>
+
+                                        {% if field.help_text %}
+                                            <span class="help-text">
+                                                {{ field.help_text }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                {% for error in field.errors %}
+                                    <div class="field-error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        {% else %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <span class="help-text">
+                                        {{ field.help_text }}
+                                    </span>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="field-error">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+
+                    <div class="button-row">
+                        <button type="submit" class="button button-primary">
+                            Save Placement Preferences
+                        </button>
+
+                        <a
+                            href="{% url 'payments:placement_assistance' %}"
+                            class="button button-secondary"
+                        >
+                            Back
+                        </a>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <aside>
+            <div class="summary-card">
+                <h3>Verified Student</h3>
+
+                <div class="summary-row">
+                    <span>Student</span>
+                    <strong>
+                        {% firstof student.full_name student.user.get_full_name student.user.username %}
+                    </strong>
+                </div>
+
+                {% if assignment %}
+                    <div class="summary-row">
+                        <span>Institution</span>
+                        <strong>
+                            {{ assignment.institution.institution_name }}
+                        </strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Admission number</span>
+                        <strong>
+                            {{ assignment.admission_number|default:"Not provided" }}
+                        </strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Programme</span>
+                        <strong>
+                            {{ assignment.programme.name|default:"Not assigned" }}
+                        </strong>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="fee-card">
+                <span>Fixed placement assistance fee</span>
+                <strong>KES 1,500</strong>
+            </div>
+
+            <section class="panel">
+                <h2>What Happens Next?</h2>
+
+                <ol class="process-list">
+                    <li>Your preferences are saved.</li>
+                    <li>You proceed to secure M-Pesa payment.</li>
+                    <li>M-Pesa sends an STK prompt to your phone.</li>
+                    <li>You enter your PIN only on your phone.</li>
+                    <li>Matching starts after payment confirmation.</li>
+                </ol>
+            </section>
+
+            <div class="security-note">
+                This website will never request your M-Pesa PIN. Do not
+                enter your PIN into any website form or share it with
+                institution staff.
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+{% endblock %}

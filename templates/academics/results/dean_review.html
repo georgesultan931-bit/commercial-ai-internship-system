@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .review-shell {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .review-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        margin-bottom: 18px;
+        padding: 22px;
+    }
+
+    .review-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+    }
+
+    .review-title {
+        font-size: clamp(1.5rem, 3vw, 2.05rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .review-muted {
+        color: #64748b;
+    }
+
+    .review-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .review-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .review-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .record-grid {
+        display: grid;
+        gap: 11px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .record-box {
+        background: #f8fafc;
+        border-radius: 11px;
+        padding: 12px;
+    }
+
+    .record-box span {
+        color: #64748b;
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .record-box strong {
+        display: block;
+        overflow-wrap: anywhere;
+    }
+
+    .status-pill {
+        background: #fef3c7;
+        border-radius: 999px;
+        color: #92400e;
+        display: inline-block;
+        font-size: 0.76rem;
+        font-weight: 800;
+        padding: 7px 11px;
+    }
+
+    .status-pill.returned { background: #fee2e2; color: #991b1b; }
+    .status-pill.published { background: #dcfce7; color: #166534; }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .review-table {
+        border-collapse: collapse;
+        min-width: 900px;
+        width: 100%;
+    }
+
+    .review-table th,
+    .review-table td {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 11px 9px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .review-table th {
+        background: #173f43;
+        color: #ffffff;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .grade-pill {
+        background: #e0f2fe;
+        border-radius: 8px;
+        color: #075985;
+        display: inline-block;
+        font-weight: 800;
+        min-width: 38px;
+        padding: 5px 8px;
+        text-align: center;
+    }
+
+    .gpa-box {
+        align-items: center;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        color: #047857;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 16px;
+        padding: 14px;
+    }
+
+    .gpa-box strong {
+        font-size: 1.35rem;
+    }
+
+    .decision-grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        margin-top: 18px;
+    }
+
+    .choice-list ul {
+        display: grid;
+        gap: 10px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .choice-list li label {
+        align-items: flex-start;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        cursor: pointer;
+        display: flex;
+        gap: 9px;
+        padding: 12px;
+    }
+
+    .choice-list input {
+        height: 18px;
+        margin-top: 2px;
+        width: 18px;
+    }
+
+    .notes-field label {
+        display: block;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .notes-field textarea {
+        border: 1px solid #cbd5e1;
+        border-radius: 11px;
+        padding: 11px;
+        width: 100%;
+    }
+
+    .field-error {
+        color: #b91c1c;
+        display: block;
+        font-size: 0.8rem;
+        margin-top: 5px;
+    }
+
+    .decision-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 18px;
+    }
+
+    .existing-decision {
+        background: #f8fafc;
+        border-left: 5px solid #64748b;
+        border-radius: 11px;
+        padding: 14px;
+    }
+
+    body.dark-mode .review-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .record-box,
+    body.dark-mode .choice-list li label,
+    body.dark-mode .existing-decision {
+        background: #1f3038;
+        border-color: #3b4d56;
+    }
+
+    body.dark-mode .review-title,
+    body.dark-mode .record-box strong,
+    body.dark-mode .review-table td {
+        color: #f8fafc;
+    }
+
+    @media (max-width: 1000px) {
+        .record-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 700px) {
+        .review-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .review-header {
+            flex-direction: column;
+        }
+
+        .record-grid,
+        .decision-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .review-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="review-shell">
+    <section class="review-card">
+        <div class="review-header">
+            <div>
+                <h1 class="review-title">Verify Academic Results</h1>
+                <p class="review-muted mb-0">
+                    Review the complete marks record before making a final decision.
+                </p>
+            </div>
+
+            <a href="{% url 'academics:dean_result_queue' %}"
+               class="review-button secondary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Approvals
+            </a>
+        </div>
+
+        <div class="record-grid">
+            <div class="record-box">
+                <span>Student</span>
+                <strong>
+                    {% firstof submission.assignment.student.full_name submission.assignment.student.user.get_full_name submission.assignment.student.user.username %}
+                </strong>
+            </div>
+            <div class="record-box">
+                <span>Admission Number</span>
+                <strong>{{ submission.assignment.admission_number|default:"Not assigned" }}</strong>
+            </div>
+            <div class="record-box">
+                <span>Programme</span>
+                <strong>{% firstof submission.assignment.programme.name "Not assigned" %}</strong>
+            </div>
+            <div class="record-box">
+                <span>Academic Period</span>
+                <strong>
+                    {{ submission.semester.academic_year.name }} —
+                    {{ submission.semester.name }}
+                </strong>
+            </div>
+            <div class="record-box">
+                <span>Status</span>
+                <strong>
+                    <span class="status-pill {{ submission.status }}">
+                        {{ submission.get_status_display }}
+                    </span>
+                </strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="review-card">
+        <div class="table-wrap">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th>Unit Code</th>
+                        <th>Unit Title</th>
+                        <th>Credits</th>
+                        <th>CAT</th>
+                        <th>Exam</th>
+                        <th>Total</th>
+                        <th>Grade</th>
+                        <th>Points</th>
+                        <th>Remark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grade in grades %}
+                        <tr>
+                            <td><strong>{{ grade.registration.unit.code }}</strong></td>
+                            <td>{{ grade.registration.unit.title }}</td>
+                            <td>{{ grade.registration.unit.credit_hours }}</td>
+                            <td>{{ grade.coursework_mark }}</td>
+                            <td>{{ grade.examination_mark }}</td>
+                            <td><strong>{{ grade.total_mark }}</strong></td>
+                            <td><span class="grade-pill">{{ grade.letter_grade }}</span></td>
+                            <td>{{ grade.grade_point }}</td>
+                            <td>{{ grade.remark|default:"—" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                No grades were submitted.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="gpa-box">
+            <span>Calculated Semester GPA</span>
+            <strong>{{ semester_gpa|default:"N/A" }}</strong>
+        </div>
+    </section>
+
+    <section class="review-card">
+        {% if submission.status == "submitted" %}
+            <h2 class="h5 fw-bold mb-1">Dean Decision</h2>
+            <p class="review-muted mb-0">
+                Approval immediately publishes these results to the student and enables PDF downloads.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger mt-3">{{ error }}</div>
+                {% endfor %}
+
+                <div class="decision-grid">
+                    <div class="choice-list">
+                        <strong class="d-block mb-2">Select action</strong>
+                        {{ form.action }}
+                        {% for error in form.action.errors %}
+                            <span class="field-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="notes-field">
+                        <label for="{{ form.review_notes.id_for_label }}">
+                            Review Notes
+                        </label>
+                        {{ form.review_notes }}
+                        {% for error in form.review_notes.errors %}
+                            <span class="field-error">{{ error }}</span>
+                        {% endfor %}
+                        <p class="review-muted small mt-2 mb-0">
+                            Notes are mandatory when returning results for correction.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="decision-actions">
+                    <button type="submit" class="review-button">
+                        <i class="bi bi-shield-check"></i>
+                        Save Dean Decision
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <div class="existing-decision">
+                <h2 class="h5 fw-bold">Review Completed</h2>
+                <p class="mb-1">
+                    <strong>Status:</strong> {{ submission.get_status_display }}
+                </p>
+                <p class="mb-1">
+                    <strong>Reviewed by:</strong>
+                    {% firstof submission.reviewed_by.get_full_name submission.reviewed_by.username "Not recorded" %}
+                </p>
+                <p class="mb-1">
+                    <strong>Reviewed at:</strong>
+                    {{ submission.reviewed_at|date:"d M Y H:i"|default:"Not recorded" }}
+                </p>
+                {% if submission.review_notes %}
+                    <p class="mb-0">
+                        <strong>Notes:</strong><br>
+                        {{ submission.review_notes|linebreaksbr }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

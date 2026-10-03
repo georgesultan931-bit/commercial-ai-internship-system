@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .workflow-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .workflow-heading {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .workflow-heading h1 {
+        color: #0f2940;
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .workflow-heading p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .workflow-button {
+        background: #173f45;
+        border: 0;
+        border-radius: 8px;
+        color: #ffffff;
+        display: inline-block;
+        font-weight: 800;
+        padding: 11px 17px;
+        text-decoration: none;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 13px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card,
+    .toolbar,
+    .request-card,
+    .empty-state {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+    }
+
+    .summary-card {
+        padding: 17px;
+    }
+
+    .summary-card span {
+        color: #64748b;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+
+    .summary-card strong {
+        color: #173f45;
+        font-size: 25px;
+    }
+
+    .toolbar {
+        margin-bottom: 22px;
+        padding: 18px;
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) 220px auto auto;
+        gap: 10px;
+    }
+
+    .filter-form input,
+    .filter-form select {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 11px 12px;
+        width: 100%;
+    }
+
+    .request-card {
+        margin-bottom: 17px;
+        padding: 21px;
+    }
+
+    .request-top {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .student-name {
+        color: #0f2940;
+        font-size: 19px;
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+
+    .muted {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .status-badge {
+        border-radius: 999px;
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 7px 11px;
+    }
+
+    .status-active { background: #dbeafe; color: #1e40af; }
+    .status-matching { background: #fef3c7; color: #854d0e; }
+    .status-shortlisted { background: #ede9fe; color: #5b21b6; }
+    .status-placed { background: #dcfce7; color: #166534; }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 17px;
+    }
+
+    .detail-box {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 13px;
+    }
+
+    .detail-box span {
+        color: #64748b;
+        display: block;
+        font-size: 11px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .detail-box strong {
+        color: #0f2940;
+        overflow-wrap: anywhere;
+    }
+
+    .empty-state {
+        color: #64748b;
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+    .pagination {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    @media (max-width: 900px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-form {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .workflow-heading,
+        .request-top {
+            flex-direction: column;
+        }
+
+        .summary-grid,
+        .details-grid,
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="workflow-page">
+    <div class="workflow-heading">
+        <div>
+            <h1>Paid Placement Requests</h1>
+            <p>{{ institution.institution_name }}</p>
+        </div>
+
+        <a
+            href="{% url 'payments:institution_verifications' %}"
+            class="workflow-button"
+        >
+            Student Verifications
+        </a>
+    </div>
+
+    <section class="summary-grid">
+        <div class="summary-card">
+            <span>All Paid</span>
+            <strong>{{ status_counts.all }}</strong>
+        </div>
+        <div class="summary-card">
+            <span>Active</span>
+            <strong>{{ status_counts.active }}</strong>
+        </div>
+        <div class="summary-card">
+            <span>Matching</span>
+            <strong>{{ status_counts.matching }}</strong>
+        </div>
+        <div class="summary-card">
+            <span>Shortlisted</span>
+            <strong>{{ status_counts.shortlisted }}</strong>
+        </div>
+        <div class="summary-card">
+            <span>Placed</span>
+            <strong>{{ status_counts.placed }}</strong>
+        </div>
+    </section>
+
+    <section class="toolbar">
+        <form method="get" class="filter-form">
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                placeholder="Search student, admission number or field"
+            >
+
+            <select name="status">
+                <option value="">All workflow statuses</option>
+                {% for value, label in status_choices %}
+                    <option
+                        value="{{ value }}"
+                        {% if status_filter == value %}selected{% endif %}
+                    >
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="workflow-button">
+                Filter
+            </button>
+
+            <a
+                href="{% url 'payments:institution_paid_requests' %}"
+                class="workflow-button"
+            >
+                Clear
+            </a>
+        </form>
+    </section>
+
+    {% if page_obj.object_list %}
+        {% for placement_request in page_obj.object_list %}
+            <article class="request-card">
+                <div class="request-top">
+                    <div>
+                        <div class="student-name">
+                            {% firstof placement_request.student.full_name placement_request.student.user.get_full_name placement_request.student.user.username %}
+                        </div>
+                        <div class="muted">
+                            {{ placement_request.assignment.admission_number|default:"No admission number" }}
+                        </div>
+                    </div>
+
+                    <span class="status-badge status-{{ placement_request.status }}">
+                        {{ placement_request.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <span>Placement field</span>
+                        <strong>{{ placement_request.attachment_field }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Preferred counties</span>
+                        <strong>{{ placement_request.preferred_counties }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Start date</span>
+                        <strong>{{ placement_request.expected_start_date|date:"d M Y" }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Selected opportunity</span>
+                        <strong>
+                            {{ placement_request.matched_opportunity.title|default:"Not selected" }}
+                        </strong>
+                    </div>
+                </div>
+
+                <a
+                    href="{% url 'payments:institution_paid_request_detail' placement_request.id %}"
+                    class="workflow-button"
+                >
+                    Manage Request
+                </a>
+            </article>
+        {% endfor %}
+
+        {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a
+                        href="?search={{ search|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.previous_page_number }}"
+                        class="workflow-button"
+                    >Previous</a>
+                {% endif %}
+
+                <span>
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a
+                        href="?search={{ search|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.next_page_number }}"
+                        class="workflow-button"
+                    >Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            No paid placement requests match the selected filters.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .entry-shell {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .entry-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        margin-bottom: 18px;
+        padding: 22px;
+    }
+
+    .entry-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+    }
+
+    .entry-title {
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .entry-muted {
+        color: #64748b;
+    }
+
+    .entry-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .entry-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .entry-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .entry-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .entry-button.warning {
+        background: #b45309;
+    }
+
+    .entry-summary {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .summary-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 12px;
+    }
+
+    .summary-box span {
+        color: #64748b;
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .summary-box strong {
+        display: block;
+        overflow-wrap: anywhere;
+    }
+
+    .status-pill {
+        border-radius: 999px;
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 800;
+        padding: 7px 11px;
+    }
+
+    .status-draft { background: #e2e8f0; color: #334155; }
+    .status-submitted { background: #fef3c7; color: #92400e; }
+    .status-returned { background: #fee2e2; color: #991b1b; }
+    .status-published { background: #dcfce7; color: #166534; }
+
+    .feedback-box {
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        border-left: 5px solid #f97316;
+        border-radius: 12px;
+        color: #9a3412;
+        margin-top: 16px;
+        padding: 14px;
+    }
+
+    .lock-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-left: 5px solid #3b82f6;
+        border-radius: 12px;
+        color: #1e40af;
+        margin-bottom: 16px;
+        padding: 14px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .grade-table {
+        border-collapse: collapse;
+        min-width: 980px;
+        width: 100%;
+    }
+
+    .grade-table th,
+    .grade-table td {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 11px 9px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .grade-table th {
+        background: #173f43;
+        color: #ffffff;
+        font-size: 0.76rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .grade-table input[type="number"] {
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        min-width: 92px;
+        padding: 8px;
+        width: 100%;
+    }
+
+    .grade-error {
+        color: #b91c1c;
+        display: block;
+        font-size: 0.72rem;
+        margin-top: 4px;
+    }
+
+    .grade-pill {
+        background: #e0f2fe;
+        border-radius: 8px;
+        color: #075985;
+        display: inline-block;
+        font-weight: 800;
+        min-width: 38px;
+        padding: 5px 8px;
+        text-align: center;
+    }
+
+    .table-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
+    }
+
+    .submit-panel {
+        align-items: center;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+    }
+
+    .confirmation-box label {
+        align-items: flex-start;
+        display: flex;
+        gap: 9px;
+        font-weight: 700;
+    }
+
+    .confirmation-box input {
+        height: 18px;
+        margin-top: 2px;
+        width: 18px;
+    }
+
+    .empty-state {
+        color: #64748b;
+        padding: 42px 15px;
+        text-align: center;
+    }
+
+    body.dark-mode .entry-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .summary-box {
+        background: #1f3038;
+    }
+
+    body.dark-mode .entry-title,
+    body.dark-mode .summary-box strong {
+        color: #f8fafc;
+    }
+
+    body.dark-mode .grade-table td {
+        border-color: #3b4d56;
+        color: #e2e8f0;
+    }
+
+    @media (max-width: 1000px) {
+        .entry-summary {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 680px) {
+        .entry-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .entry-header,
+        .submit-panel {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .entry-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .entry-actions,
+        .entry-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="entry-shell">
+    <section class="entry-card">
+        <div class="entry-header">
+            <div>
+                <h1 class="entry-title">Semester Grade Entry</h1>
+                <p class="entry-muted mb-0">
+                    {% firstof submission.assignment.student.full_name submission.assignment.student.user.get_full_name submission.assignment.student.user.username %}
+                    · {{ submission.assignment.admission_number|default:"No admission number" }}
+                </p>
+            </div>
+
+            <div class="entry-actions">
+                <a href="{% url 'academics:hod_student_results' submission.assignment.id %}"
+                   class="entry-button secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Semester History
+                </a>
+
+                {% if editable %}
+                    <a href="{% url 'academics:register_student_units' submission.id %}"
+                       class="entry-button">
+                        <i class="bi bi-journal-plus"></i>
+                        Register Units
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="entry-summary">
+            <div class="summary-box">
+                <span>Academic Year</span>
+                <strong>{{ submission.semester.academic_year.name }}</strong>
+            </div>
+            <div class="summary-box">
+                <span>Semester</span>
+                <strong>{{ submission.semester.name }}</strong>
+            </div>
+            <div class="summary-box">
+                <span>Programme</span>
+                <strong>{% firstof submission.assignment.programme.name "Not assigned" %}</strong>
+            </div>
+            <div class="summary-box">
+                <span>Grading Scale</span>
+                <strong>{{ submission.grading_scale.name }}</strong>
+            </div>
+            <div class="summary-box">
+                <span>Workflow Status</span>
+                <strong>
+                    <span class="status-pill status-{{ submission.status }}">
+                        {{ submission.get_status_display }}
+                    </span>
+                </strong>
+            </div>
+        </div>
+
+        {% if submission.status == "returned" and submission.review_notes %}
+            <div class="feedback-box">
+                <strong>Dean correction instructions:</strong><br>
+                {{ submission.review_notes|linebreaksbr }}
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="entry-card">
+        <div class="entry-header mb-3">
+            <div>
+                <h2 class="h5 fw-bold mb-1">Registered Units and Marks</h2>
+                <p class="entry-muted mb-0">
+                    CAT maximum: {{ submission.grading_scale.coursework_weight }} ·
+                    Examination maximum: {{ submission.grading_scale.examination_weight }}
+                </p>
+            </div>
+            <div class="entry-muted small">
+                {{ graded_count }} of {{ registered_count }} unit{{ registered_count|pluralize }} graded
+            </div>
+        </div>
+
+        {% if not editable %}
+            <div class="lock-box">
+                <i class="bi bi-lock-fill"></i>
+                {% if submission.status == "submitted" %}
+                    These marks are locked while awaiting Dean verification.
+                {% else %}
+                    These results are published. Changes require a formal amendment request.
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if rows %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="save_grades">
+                {{ grade_formset.management_form }}
+
+                {% for error in grade_formset.non_form_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+
+                <div class="table-wrap">
+                    <table class="grade-table">
+                        <thead>
+                            <tr>
+                                <th>Unit Code</th>
+                                <th>Unit Title</th>
+                                <th>Credits</th>
+                                <th>CAT</th>
+                                <th>Exam</th>
+                                <th>Total</th>
+                                <th>Grade</th>
+                                <th>Remark / Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registration, grade_form in rows %}
+                                <tr>
+                                    <td>
+                                        {{ grade_form.registration_id }}
+                                        <strong>{{ registration.unit.code }}</strong>
+                                    </td>
+                                    <td>{{ registration.unit.title }}</td>
+                                    <td>{{ registration.unit.credit_hours }}</td>
+
+                                    {% if editable %}
+                                        <td>
+                                            {{ grade_form.coursework_mark }}
+                                            {% for error in grade_form.coursework_mark.errors %}
+                                                <span class="grade-error">{{ error }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {{ grade_form.examination_mark }}
+                                            {% for error in grade_form.examination_mark.errors %}
+                                                <span class="grade-error">{{ error }}</span>
+                                            {% endfor %}
+                                        </td>
+                                    {% else %}
+                                        <td>{{ registration.grade.coursework_mark }}</td>
+                                        <td>{{ registration.grade.examination_mark }}</td>
+                                    {% endif %}
+
+                                    <td>
+                                        {% if registration.grade %}
+                                            <strong>{{ registration.grade.total_mark }}</strong>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if registration.grade %}
+                                            <span class="grade-pill">
+                                                {{ registration.grade.letter_grade }}
+                                            </span>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if registration.grade %}
+                                            {{ registration.grade.remark|default:"—" }}
+
+                                            {% if submission.status == "published" %}
+                                                <div class="mt-2">
+                                                    <a href="{% url 'academics:request_grade_amendment' registration.grade.id %}"
+                                                       class="entry-button warning">
+                                                        Request Amendment
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        {% else %}
+                                            Save marks to calculate the grade.
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if editable %}
+                    <div class="table-actions">
+                        <button type="submit" class="entry-button">
+                            <i class="bi bi-save"></i>
+                            Save Draft Grades
+                        </button>
+                    </div>
+                {% endif %}
+            </form>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-journal-plus fs-1"></i>
+                <h3 class="h5 mt-3">No units registered</h3>
+                <p>Register this student’s semester units before entering marks.</p>
+                {% if editable %}
+                    <a href="{% url 'academics:register_student_units' submission.id %}"
+                       class="entry-button">
+                        Register Units
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+
+    {% if editable and rows %}
+        <section class="entry-card">
+            <form method="post"
+                  action="{% url 'academics:submit_results_to_dean' submission.id %}"
+                  class="submit-panel">
+                {% csrf_token %}
+
+                <div>
+                    <h2 class="h5 fw-bold mb-2">Submit for Dean Verification</h2>
+                    <div class="confirmation-box">
+                        <label>
+                            {{ submission_form.confirmation }}
+                            <span>{{ submission_form.confirmation.label }}</span>
+                        </label>
+                        {% for error in submission_form.confirmation.errors %}
+                            <span class="grade-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="entry-button">
+                    <i class="bi bi-send-check"></i>
+                    Submit Results to Dean
+                </button>
+            </form>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

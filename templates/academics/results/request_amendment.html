@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .amend-shell {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .amend-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        padding: 24px;
+    }
+
+    .amend-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .amend-title {
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .amend-muted {
+        color: #64748b;
+    }
+
+    .amend-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .amend-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .amend-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .warning-box {
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        border-left: 5px solid #f97316;
+        border-radius: 12px;
+        color: #9a3412;
+        margin-bottom: 20px;
+        padding: 14px;
+    }
+
+    .grade-summary {
+        display: grid;
+        gap: 11px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-bottom: 20px;
+    }
+
+    .summary-box {
+        background: #f8fafc;
+        border-radius: 11px;
+        padding: 12px;
+    }
+
+    .summary-box span {
+        color: #64748b;
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .summary-box strong {
+        display: block;
+        overflow-wrap: anywhere;
+    }
+
+    .amend-form-grid {
+        display: grid;
+        gap: 15px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .field-group input,
+    .field-group textarea {
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 10px 11px;
+        width: 100%;
+    }
+
+    .field-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .field-error {
+        color: #b91c1c;
+        display: block;
+        font-size: 0.8rem;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    body.dark-mode .amend-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .summary-box {
+        background: #1f3038;
+    }
+
+    body.dark-mode .amend-title,
+    body.dark-mode .summary-box strong {
+        color: #f8fafc;
+    }
+
+    @media (max-width: 650px) {
+        .amend-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .amend-header,
+        .form-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .grade-summary,
+        .amend-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .field-group.full {
+            grid-column: auto;
+        }
+
+        .amend-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="amend-shell">
+    <section class="amend-card">
+        <div class="amend-header">
+            <div>
+                <h1 class="amend-title">Request Grade Amendment</h1>
+                <p class="amend-muted mb-0">
+                    Propose corrected marks for Dean review and authorization.
+                </p>
+            </div>
+
+            <a href="{% url 'academics:hod_result_entry' grade.submission.id %}"
+               class="amend-button secondary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Results
+            </a>
+        </div>
+
+        <div class="warning-box">
+            <strong>Published academic record.</strong>
+            The existing grade will remain unchanged until the Dean approves this
+            amendment. The original and corrected values will remain in the audit log.
+        </div>
+
+        <div class="grade-summary">
+            <div class="summary-box">
+                <span>Student</span>
+                <strong>
+                    {% firstof grade.submission.assignment.student.full_name grade.submission.assignment.student.user.get_full_name grade.submission.assignment.student.user.username %}
+                </strong>
+            </div>
+            <div class="summary-box">
+                <span>Unit</span>
+                <strong>
+                    {{ grade.registration.unit.code }} —
+                    {{ grade.registration.unit.title }}
+                </strong>
+            </div>
+            <div class="summary-box">
+                <span>Current Result</span>
+                <strong>
+                    CAT {{ grade.coursework_mark }} · Exam {{ grade.examination_mark }} ·
+                    Total {{ grade.total_mark }} · {{ grade.letter_grade }}
+                </strong>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+
+            <div class="amend-form-grid">
+                <div class="field-group">
+                    <label for="{{ form.proposed_coursework_mark.id_for_label }}">
+                        Corrected CAT Mark
+                    </label>
+                    {{ form.proposed_coursework_mark }}
+                    {% for error in form.proposed_coursework_mark.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="field-group">
+                    <label for="{{ form.proposed_examination_mark.id_for_label }}">
+                        Corrected Examination Mark
+                    </label>
+                    {{ form.proposed_examination_mark }}
+                    {% for error in form.proposed_examination_mark.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="field-group full">
+                    <label for="{{ form.reason.id_for_label }}">
+                        Detailed Reason and Supporting Explanation
+                    </label>
+                    {{ form.reason }}
+                    {% for error in form.reason.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'academics:hod_result_entry' grade.submission.id %}"
+                   class="amend-button secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="amend-button">
+                    <i class="bi bi-send-check"></i>
+                    Submit Amendment to Dean
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

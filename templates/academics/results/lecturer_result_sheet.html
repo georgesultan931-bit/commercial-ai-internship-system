@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .sheet-shell { max-width: 1320px; margin: 0 auto; }
+    .sheet-card { background: var(--card-bg, #fff); border: 1px solid rgba(15, 23, 42, .08); border-radius: 18px; box-shadow: 0 10px 28px rgba(15, 23, 42, .06); margin-bottom: 18px; padding: 22px; }
+    .sheet-header { align-items: flex-start; display: flex; gap: 16px; justify-content: space-between; }
+    .sheet-title { font-size: clamp(1.45rem, 3vw, 2rem); font-weight: 800; margin: 0 0 6px; }
+    .sheet-muted { color: #64748b; }
+    .sheet-status { background: #eef2ff; border-radius: 999px; color: #4338ca; font-weight: 800; padding: 8px 13px; }
+    .sheet-alert { background: #fff7ed; border-left: 4px solid #f97316; border-radius: 10px; margin-top: 16px; padding: 12px 14px; }
+    .sheet-table-wrap { overflow-x: auto; }
+    .sheet-table { border-collapse: collapse; min-width: 880px; width: 100%; }
+    .sheet-table th { background: #173f43; color: #fff; font-size: .78rem; padding: 12px; text-align: left; text-transform: uppercase; }
+    .sheet-table td { border-bottom: 1px solid #e5e7eb; padding: 12px; vertical-align: middle; }
+    .sheet-table input { border: 1px solid #cbd5e1; border-radius: 9px; max-width: 120px; padding: 9px; width: 100%; }
+    .sheet-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+    .sheet-button { background: #173f43; border: 0; border-radius: 11px; color: #fff; cursor: pointer; font-weight: 800; min-height: 43px; padding: 10px 15px; text-decoration: none; }
+    .sheet-button.secondary { background: #e9e5df; color: #111827; }
+    @media (max-width: 700px) { .sheet-header { flex-direction: column; } }
+</style>
+
+<div class="sheet-shell">
+    <section class="sheet-card">
+        <div class="sheet-header">
+            <div>
+                <div style="color:#0f766e;font-size:.8rem;font-weight:800;text-transform:uppercase;">Lecturer Mark Sheet</div>
+                <h1 class="sheet-title">{{ lecturer_assignment.unit.code }} — {{ lecturer_assignment.unit.title }}</h1>
+                <div class="sheet-muted">{{ lecturer_assignment.semester }} · {{ student_count }} registered students · {{ graded_count }} graded</div>
+            </div>
+            <span class="sheet-status">{{ sheet.get_status_display }}</span>
+        </div>
+        {% if sheet.review_notes %}
+            <div class="sheet-alert"><strong>HOD feedback:</strong> {{ sheet.review_notes }}</div>
+        {% endif %}
+    </section>
+
+    <section class="sheet-card">
+        {% if rows %}
+            <form method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% if formset.non_form_errors %}<div class="sheet-alert">{{ formset.non_form_errors }}</div>{% endif %}
+                <div class="sheet-table-wrap">
+                    <table class="sheet-table">
+                        <thead><tr><th>Admission</th><th>Student</th><th>CAT</th><th>Exam</th></tr></thead>
+                        <tbody>
+                            {% for registration, form in rows %}
+                                <tr>
+                                    <td>{{ registration.assignment.admission_number }}</td>
+                                    <td>{{ registration.assignment.student }}</td>
+                                    <td>{{ form.registration_id }}{{ form.coursework_mark }}{{ form.coursework_mark.errors }}</td>
+                                    <td>{{ form.examination_mark }}{{ form.examination_mark.errors }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sheet-actions">
+                    <a class="sheet-button secondary" href="{% url 'academics:lecturer_result_dashboard' %}">Back</a>
+                    {% if editable %}<button class="sheet-button" type="submit" name="save_marks">Save Marks</button>{% endif %}
+                </div>
+            </form>
+
+            {% if editable and student_count == graded_count and student_count > 0 %}
+                <form method="post" action="{% url 'academics:submit_lecturer_result_sheet' sheet.id %}" style="margin-top:18px;">
+                    {% csrf_token %}
+                    <label>{{ submission_form.confirmation }} {{ submission_form.confirmation.label }}</label>
+                    <div class="sheet-actions"><button class="sheet-button" type="submit">Submit to HOD</button></div>
+                </form>
+            {% endif %}
+        {% else %}
+            <div style="padding:40px;text-align:center;" class="sheet-muted">No students are registered for this unit and semester.</div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

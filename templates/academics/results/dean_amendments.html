@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .amendments-shell {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .amendments-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        margin-bottom: 18px;
+        padding: 22px;
+    }
+
+    .amendments-header {
+        align-items: flex-start;
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+    }
+
+    .amendments-title {
+        font-size: clamp(1.5rem, 3vw, 2.1rem);
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .amendments-muted {
+        color: #64748b;
+    }
+
+    .amendments-button {
+        align-items: center;
+        background: #173f43;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 7px;
+        justify-content: center;
+        min-height: 43px;
+        padding: 10px 15px;
+        text-decoration: none;
+    }
+
+    .amendments-button:hover {
+        background: #0f3033;
+        color: #ffffff;
+    }
+
+    .amendments-button.secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .queue-count {
+        background: #fef3c7;
+        border-radius: 999px;
+        color: #92400e;
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 800;
+        margin-top: 14px;
+        padding: 8px 12px;
+    }
+
+    .amendment-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .amendment-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .amendment-top {
+        align-items: flex-start;
+        display: flex;
+        gap: 14px;
+        justify-content: space-between;
+    }
+
+    .student-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0 0 3px;
+    }
+
+    .pending-pill {
+        background: #fef3c7;
+        border-radius: 999px;
+        color: #92400e;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 7px 10px;
+        white-space: nowrap;
+    }
+
+    .mark-comparison {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 14px 0;
+    }
+
+    .mark-box {
+        border-radius: 11px;
+        padding: 12px;
+    }
+
+    .mark-current {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .mark-proposed {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .mark-box span {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .mark-box strong {
+        display: block;
+    }
+
+    .reason-box {
+        background: #ffffff;
+        border-left: 4px solid #94a3b8;
+        border-radius: 9px;
+        margin-bottom: 14px;
+        padding: 11px 13px;
+    }
+
+    .item-footer {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+    }
+
+    .empty-state {
+        color: #64748b;
+        padding: 48px 15px;
+        text-align: center;
+    }
+
+    body.dark-mode .amendments-card {
+        background: #17242b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .amendment-item,
+    body.dark-mode .reason-box {
+        background: #1f3038;
+        border-color: #3b4d56;
+    }
+
+    body.dark-mode .amendments-title,
+    body.dark-mode .student-name {
+        color: #f8fafc;
+    }
+
+    @media (max-width: 650px) {
+        .amendments-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .amendments-header,
+        .amendment-top,
+        .item-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .mark-comparison {
+            grid-template-columns: 1fr;
+        }
+
+        .amendments-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="amendments-shell">
+    <section class="amendments-card">
+        <div class="amendments-header">
+            <div>
+                <h1 class="amendments-title">Grade Amendment Requests</h1>
+                <p class="amendments-muted mb-0">
+                    Review requests to change grades that have already been published.
+                </p>
+                <span class="queue-count">
+                    {{ amendments|length }} pending request{{ amendments|length|pluralize }}
+                </span>
+            </div>
+
+            <a href="{% url 'academics:dean_result_queue' %}"
+               class="amendments-button secondary">
+                <i class="bi bi-arrow-left"></i>
+                Result Approvals
+            </a>
+        </div>
+    </section>
+
+    <section class="amendments-card">
+        {% if amendments %}
+            <div class="amendment-list">
+                {% for amendment in amendments %}
+                    <article class="amendment-item">
+                        <div class="amendment-top">
+                            <div>
+                                <h2 class="student-name">
+                                    {% firstof amendment.grade.submission.assignment.student.full_name amendment.grade.submission.assignment.student.user.get_full_name amendment.grade.submission.assignment.student.user.username %}
+                                </h2>
+                                <div class="amendments-muted small">
+                                    {{ amendment.grade.submission.assignment.admission_number|default:"No admission number" }}
+                                    · {{ amendment.grade.registration.unit.code }}
+                                    · {{ amendment.grade.registration.unit.title }}
+                                </div>
+                            </div>
+
+                            <span class="pending-pill">Pending Dean Review</span>
+                        </div>
+
+                        <div class="mark-comparison">
+                            <div class="mark-box mark-current">
+                                <span>Published Result</span>
+                                <strong>
+                                    CAT {{ amendment.grade.coursework_mark }} ·
+                                    Exam {{ amendment.grade.examination_mark }} ·
+                                    Total {{ amendment.grade.total_mark }} ·
+                                    {{ amendment.grade.letter_grade }}
+                                </strong>
+                            </div>
+
+                            <div class="mark-box mark-proposed">
+                                <span>Proposed Correction</span>
+                                <strong>
+                                    CAT {{ amendment.proposed_coursework_mark }} ·
+                                    Exam {{ amendment.proposed_examination_mark }}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="reason-box">
+                            <strong>HOD reason:</strong><br>
+                            {{ amendment.reason|linebreaksbr }}
+                        </div>
+
+                        <div class="item-footer">
+                            <div class="amendments-muted small">
+                                Requested by
+                                {% firstof amendment.requested_by.get_full_name amendment.requested_by.username %}
+                                on {{ amendment.requested_at|date:"d M Y H:i" }}
+                            </div>
+
+                            <a href="{% url 'academics:dean_review_amendment' amendment.id %}"
+                               class="amendments-button">
+                                Review Amendment
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-check2-circle fs-1"></i>
+                <h2 class="h5 mt-3">No pending amendments</h2>
+                <p class="mb-0">All published-grade correction requests have been processed.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

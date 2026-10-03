@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .review-shell { max-width: 1250px; margin: 0 auto; }
+    .review-card { background: var(--card-bg, #fff); border: 1px solid rgba(15, 23, 42, .08); border-radius: 18px; box-shadow: 0 10px 28px rgba(15, 23, 42, .06); margin-bottom: 18px; padding: 22px; }
+    .review-title { font-size: clamp(1.45rem, 3vw, 2rem); font-weight: 800; margin: 0 0 6px; }
+    .review-muted { color: #64748b; }
+    .review-table-wrap { overflow-x: auto; }
+    .review-table { border-collapse: collapse; min-width: 850px; width: 100%; }
+    .review-table th { background: #173f43; color: #fff; font-size: .78rem; padding: 12px; text-align: left; text-transform: uppercase; }
+    .review-table td { border-bottom: 1px solid #e5e7eb; padding: 12px; }
+    .review-form { display: grid; gap: 14px; }
+    .review-form textarea { border: 1px solid #cbd5e1; border-radius: 11px; padding: 11px; width: 100%; }
+    .review-button { background: #173f43; border: 0; border-radius: 11px; color: #fff; cursor: pointer; font-weight: 800; padding: 11px 16px; text-decoration: none; }
+    .review-errors { color: #b91c1c; }
+</style>
+
+<div class="review-shell">
+    <section class="review-card">
+        <div style="color:#0f766e;font-size:.8rem;font-weight:800;text-transform:uppercase;">HOD Mark Review</div>
+        <h1 class="review-title">{{ sheet.lecturer_assignment.unit.code }} — {{ sheet.lecturer_assignment.unit.title }}</h1>
+        <p class="review-muted">Lecturer: {{ sheet.lecturer_assignment.lecturer.user.get_full_name|default:sheet.lecturer_assignment.lecturer.user.username }} · {{ sheet.lecturer_assignment.semester }} · {{ sheet.get_status_display }}</p>
+    </section>
+
+    <section class="review-card">
+        <div class="review-table-wrap">
+            <table class="review-table">
+                <thead><tr><th>Admission</th><th>Student</th><th>CAT</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead>
+                <tbody>
+                    {% for grade in grades %}
+                        <tr>
+                            <td>{{ grade.registration.assignment.admission_number }}</td>
+                            <td>{{ grade.registration.assignment.student }}</td>
+                            <td>{{ grade.coursework_mark }}</td>
+                            <td>{{ grade.examination_mark }}</td>
+                            <td><strong>{{ grade.total_mark }}</strong></td>
+                            <td>{{ grade.letter_grade }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6">No grades were submitted.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {% if sheet.status == 'submitted' %}
+        <section class="review-card">
+            <form class="review-form" method="post">
+                {% csrf_token %}
+                <div>{{ form.action }}<div class="review-errors">{{ form.action.errors }}</div></div>
+                <div><label for="{{ form.review_notes.id_for_label }}"><strong>Review notes</strong></label>{{ form.review_notes }}<div class="review-errors">{{ form.review_notes.errors }}</div></div>
+                <div><button class="review-button" type="submit">Save HOD Decision</button></div>
+            </form>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

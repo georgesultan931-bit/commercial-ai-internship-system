@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Academic Reports | AI Internship</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef3f7;
+            color: #17273b;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            flex: 0 0 260px;
+            background: #102c30;
+            color: #ffffff;
+            padding: 25px 18px;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
+
+        .profile-box {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .profile-box h3 {
+            margin-bottom: 7px;
+        }
+
+        .profile-box p {
+            color: #d2e5e4;
+            font-size: 14px;
+        }
+
+        .menu-title {
+            color: #9bb8b9;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin: 20px 10px 10px;
+        }
+
+        .menu-link {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            background: #ffffff;
+            color: #102c30;
+        }
+
+        .logout-link {
+            margin-top: 35px;
+            background: #fff8dc;
+            color: #17273b;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 32px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 29px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #637080;
+        }
+
+        .role-badge {
+            background: #d9f3ec;
+            color: #09644f;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .notice {
+            background: #e1f4fb;
+            border-left: 5px solid #1686a0;
+            border-radius: 8px;
+            padding: 15px 17px;
+            margin-bottom: 22px;
+            line-height: 1.5;
+            color: #164f60;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card .label {
+            color: #687687;
+            font-size: 13px;
+            margin-bottom: 11px;
+        }
+
+        .card .number {
+            color: #173f45;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .card.attention .number {
+            color: #9b6500;
+        }
+
+        .card.success .number {
+            color: #176538;
+        }
+
+        .toolbar {
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: minmax(240px, 2fr) repeat(2, minmax(170px, 1fr)) auto;
+            align-items: end;
+            gap: 12px;
+        }
+
+        .field label {
+            display: block;
+            color: #586777;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            min-height: 43px;
+            border: 1px solid #ccd6dc;
+            border-radius: 7px;
+            padding: 10px 12px;
+            background: #ffffff;
+            color: #17273b;
+            font-size: 14px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 9px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 43px;
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 17px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .button-primary {
+            background: #173f45;
+            color: #ffffff;
+        }
+
+        .button-light {
+            background: #edf2f4;
+            color: #17273b;
+        }
+
+        .results-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 14px;
+            color: #637080;
+            font-size: 14px;
+        }
+
+        .results-line strong {
+            color: #173f45;
+        }
+
+        .table-panel {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 1120px;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #173f45;
+            color: #ffffff;
+            text-align: left;
+            padding: 14px 12px;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e3e8eb;
+            vertical-align: top;
+            line-height: 1.4;
+        }
+
+        tbody tr:hover {
+            background: #f8fafb;
+        }
+
+        .primary-text {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .muted {
+            color: #718091;
+            font-size: 13px;
+        }
+
+        .metric {
+            font-weight: 700;
+            color: #173f45;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .badge-pending,
+        .badge-assigned {
+            background: #fff1c7;
+            color: #805d00;
+        }
+
+        .badge-ongoing {
+            background: #dff1ff;
+            color: #185a83;
+        }
+
+        .badge-completed {
+            background: #dff5e7;
+            color: #176538;
+        }
+
+        .badge-suspended,
+        .badge-cancelled {
+            background: #fde2e2;
+            color: #992b2b;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px 20px;
+            color: #6f7c88;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 9px 13px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .pagination a {
+            background: #173f45;
+            color: #ffffff;
+        }
+
+        .pagination span {
+            background: #edf2f4;
+            color: #17273b;
+        }
+
+        @media (max-width: 1150px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 750px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .cards,
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-wrap: wrap;
+            }
+
+            .results-line {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">AI Internship</div>
+
+        <div class="profile-box">
+            <h3>
+                {% firstof request.user.get_full_name request.user.username %}
+            </h3>
+            <p>
+                {% if role == "hod" %}
+                    Head of Department
+                {% else %}
+                    Dean
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="menu-title">
+            {% if role == "hod" %}
+                Academic Management
+            {% else %}
+                School Management
+            {% endif %}
+        </div>
+
+        <a href="{% url 'academics:dashboard' %}" class="menu-link">
+            Dashboard
+        </a>
+
+        {% if role == "hod" %}
+            <a href="{% url 'academics:department_students' %}" class="menu-link">
+                Students
+            </a>
+
+            <a href="{% url 'academics:department_supervisors' %}" class="menu-link">
+                Supervisors
+            </a>
+
+            <a href="{% url 'academics:department_internships' %}" class="menu-link">
+                Internships
+            </a>
+
+            <a href="{% url 'academics:department_applications' %}" class="menu-link">
+                Applications
+            </a>
+        {% else %}
+            <a href="{% url 'academics:school_departments' %}" class="menu-link">
+                Departments
+            </a>
+
+            <a href="{% url 'academics:school_students' %}" class="menu-link">
+                Students
+            </a>
+
+            <a href="{% url 'academics:school_supervisors' %}" class="menu-link">
+                Supervisors
+            </a>
+
+            <a href="{% url 'academics:school_internships' %}" class="menu-link">
+                Internships
+            </a>
+
+            <a href="{% url 'academics:school_applications' %}" class="menu-link">
+                Applications
+            </a>
+        {% endif %}
+
+        <a href="{% url 'academics:academic_reports' %}"
+           class="menu-link active">
+            Reports &amp; Progress
+        </a>
+
+        <a href="/notifications/" class="menu-link">
+            Notifications
+        </a>
+
+        <a href="/announcements/" class="menu-link">
+            Announcements
+        </a>
+
+        <a href="/logout/" class="menu-link logout-link">
+            Log out
+        </a>
+    </aside>
+
+    <main class="main">
+
+        <div class="header">
+            <div>
+                <h1>Academic Reports and Progress</h1>
+                <p>{{ scope_name }}</p>
+            </div>
+
+            <div class="role-badge">
+                {% if role == "hod" %}HOD REPORTS{% else %}DEAN REPORTS{% endif %}
+            </div>
+        </div>
+
+        <div class="notice">
+            This is a read-only academic oversight page. Supervisors review weekly
+            reports and complete evaluations, while employers retain application
+            decision-making authority.
+        </div>
+
+        <section class="cards">
+            <div class="card">
+                <div class="label">Total Placements</div>
+                <div class="number">{{ summary.total_placements|default:"0" }}</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Ongoing Placements</div>
+                <div class="number">{{ summary.ongoing_placements|default:"0" }}</div>
+            </div>
+
+            <div class="card success">
+                <div class="label">Completed Placements</div>
+                <div class="number">{{ summary.completed_placements|default:"0" }}</div>
+            </div>
+
+            <div class="card attention">
+                <div class="label">Pending / Assigned</div>
+                <div class="number">{{ summary.pending_placements|default:"0" }}</div>
+            </div>
+
+            <div class="card attention">
+                <div class="label">Reports Awaiting Review</div>
+                <div class="number">{{ summary.submitted_reports|default:"0" }}</div>
+            </div>
+
+            <div class="card success">
+                <div class="label">Reviewed Reports</div>
+                <div class="number">{{ summary.reviewed_reports|default:"0" }}</div>
+            </div>
+
+            <div class="card attention">
+                <div class="label">Revision Required</div>
+                <div class="number">{{ summary.revision_reports|default:"0" }}</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Supervisor Evaluations</div>
+                <div class="number">{{ summary.evaluation_count|default:"0" }}</div>
+            </div>
+        </section>
+
+        <section class="toolbar">
+            <form method="get" class="filter-form">
+                <div class="field">
+                    <label for="search">Search</label>
+                    <input
+                        id="search"
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Student, supervisor, department or internship"
+                    >
+                </div>
+
+                {% if role == "dean" %}
+                    <div class="field">
+                        <label for="department">Department</label>
+                        <select id="department" name="department">
+                            <option value="">All departments</option>
+
+                            {% for item in departments %}
+                                <option
+                                    value="{{ item.id }}"
+                                    {% if department_filter == item.id|stringformat:"s" %}selected{% endif %}
+                                >
+                                    {{ item.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                <div class="field">
+                    <label for="status">Placement status</label>
+                    <select id="status" name="status">
+                        <option value="">All statuses</option>
+
+                        {% for value, label in status_choices %}
+                            <option
+                                value="{{ value }}"
+                                {% if status_filter == value %}selected{% endif %}
+                            >
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="button button-primary">
+                        Apply
+                    </button>
+
+                    {% if search or department_filter or status_filter %}
+                        <a href="{% url 'academics:academic_reports' %}"
+                           class="button button-light">
+                            Clear
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <div class="results-line">
+                <span>
+                    <strong>{{ total_results }}</strong>
+                    placement{{ total_results|pluralize }} shown
+                </span>
+
+                <span>
+                    Total reported hours:
+                    <strong>{{ summary.total_hours|default:"0" }}</strong>
+                </span>
+            </div>
+        </section>
+
+        <section class="table-panel">
+            {% if page_obj.object_list %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Department / Programme</th>
+                            <th>Internship</th>
+                            <th>Supervisor</th>
+                            <th>Status</th>
+                            <th>Period</th>
+                            <th>Progress Reports</th>
+                            <th>Evaluations</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for placement in page_obj.object_list %}
+                            <tr>
+                                <td>
+                                    <div class="primary-text">
+                                        {% firstof placement.student.full_name placement.student.user.get_full_name placement.student.user.username %}
+                                    </div>
+                                    <div class="muted">
+                                        {{ placement.student.user.email }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="primary-text">
+                                        {% firstof placement.student.academic_assignment.department.name "Department not assigned" %}
+                                    </div>
+                                    <div class="muted">
+                                        {% firstof placement.student.academic_assignment.programme.name "Programme not assigned" %}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    {% if placement.application and placement.application.opportunity %}
+                                        <div class="primary-text">
+                                            {{ placement.application.opportunity.title }}
+                                        </div>
+                                        <div class="muted">
+                                            {% firstof placement.application.opportunity.employer.company_name placement.application.opportunity.employer.user.username "Employer unavailable" %}
+                                        </div>
+                                    {% else %}
+                                        <span class="muted">No linked application</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if placement.supervisor %}
+                                        <div class="primary-text">
+                                            {% firstof placement.supervisor.full_name placement.supervisor.user.get_full_name placement.supervisor.user.username %}
+                                        </div>
+                                        <div class="muted">
+                                            {{ placement.supervisor.job_title|default:"Supervisor" }}
+                                        </div>
+                                    {% else %}
+                                        <span class="muted">Not assigned</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <span class="badge badge-{{ placement.status }}">
+                                        {{ placement.get_status_display }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {% if placement.start_date %}
+                                        <div>{{ placement.start_date|date:"d M Y" }}</div>
+                                    {% else %}
+                                        <div class="muted">Start not set</div>
+                                    {% endif %}
+
+                                    {% if placement.end_date %}
+                                        <div class="muted">
+                                            to {{ placement.end_date|date:"d M Y" }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <div class="metric">
+                                        {{ placement.report_total }}
+                                        report{{ placement.report_total|pluralize }}
+                                    </div>
+                                    <div class="muted">
+                                        {{ placement.hours_total|default:"0" }} hours logged
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="metric">
+                                        {{ placement.evaluation_total }}
+                                        evaluation{{ placement.evaluation_total|pluralize }}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% if page_obj.has_other_pages %}
+                    <div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?search={{ search|urlencode }}&department={{ department_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.previous_page_number }}">
+                                Previous
+                            </a>
+                        {% endif %}
+
+                        <span>
+                            Page {{ page_obj.number }} of
+                            {{ page_obj.paginator.num_pages }}
+                        </span>
+
+                        {% if page_obj.has_next %}
+                            <a href="?search={{ search|urlencode }}&department={{ department_filter|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.next_page_number }}">
+                                Next
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty">
+                    No placement records matched the selected filters.
+                </div>
+            {% endif %}
+        </section>
+
+    </main>
+</div>
+</body>
+</html>

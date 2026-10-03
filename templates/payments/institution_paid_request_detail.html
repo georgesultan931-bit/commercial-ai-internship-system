@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .request-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 23px;
+    }
+
+    .page-heading h1 {
+        color: #0f2940;
+        font-size: 29px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .muted {
+        color: #64748b;
+    }
+
+    .button {
+        background: #173f45;
+        border: 0;
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: 800;
+        padding: 11px 16px;
+        text-decoration: none;
+    }
+
+    .button-success { background: #15803d; }
+    .button-purple { background: #6d28d9; }
+    .button-light { background: #e2e8f0; color: #0f2940; }
+
+    .layout-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(310px, 0.7fr);
+        gap: 21px;
+    }
+
+    .panel {
+        background: #ffffff;
+        border-radius: 13px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+        margin-bottom: 20px;
+        padding: 22px;
+    }
+
+    .panel h2 {
+        color: #0f2940;
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .detail-box {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 13px;
+    }
+
+    .detail-box span {
+        color: #64748b;
+        display: block;
+        font-size: 11px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .detail-box strong {
+        color: #0f2940;
+        overflow-wrap: anywhere;
+    }
+
+    .status-box {
+        background: #e0f2fe;
+        border-left: 5px solid #0284c7;
+        border-radius: 8px;
+        color: #0c4a6e;
+        margin-bottom: 16px;
+        padding: 14px;
+    }
+
+    .opportunity-card {
+        border: 1px solid #dbe4e8;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        padding: 16px;
+    }
+
+    .opportunity-top {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 11px;
+    }
+
+    .opportunity-title {
+        color: #0f2940;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .score {
+        background: #dcfce7;
+        border-radius: 999px;
+        color: #166534;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 7px 10px;
+        white-space: nowrap;
+    }
+
+    .opportunity-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 13px;
+    }
+
+    textarea {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        min-height: 130px;
+        padding: 11px;
+        resize: vertical;
+        width: 100%;
+    }
+
+    .notes-form button {
+        margin-top: 11px;
+    }
+
+    .current-match {
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+        border-radius: 9px;
+        color: #4c1d95;
+        margin-bottom: 15px;
+        padding: 14px;
+    }
+
+    .empty-state {
+        color: #64748b;
+        padding: 25px 10px;
+        text-align: center;
+    }
+
+    @media (max-width: 900px) {
+        .layout-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .page-heading,
+        .opportunity-top {
+            flex-direction: column;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="request-page">
+    <div class="page-heading">
+        <div>
+            <h1>
+                {% firstof student.full_name student.user.get_full_name student.user.username %}
+            </h1>
+            <div class="muted">
+                {{ assignment.admission_number|default:"No admission number" }}
+                · {{ assignment.programme.name|default:"No programme" }}
+            </div>
+        </div>
+
+        <a
+            href="{% url 'payments:institution_paid_requests' %}"
+            class="button button-light"
+        >
+            Back to Paid Requests
+        </a>
+    </div>
+
+    <div class="layout-grid">
+        <main>
+            <section class="panel">
+                <h2>Placement Request</h2>
+
+                <div class="status-box">
+                    Current stage:
+                    <strong>{{ placement_request.get_status_display }}</strong>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <span>Preferred field</span>
+                        <strong>{{ placement_request.attachment_field }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Preferred counties</span>
+                        <strong>{{ placement_request.preferred_counties }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Placement mode</span>
+                        <strong>{{ placement_request.get_placement_mode_display }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Expected start</span>
+                        <strong>{{ placement_request.expected_start_date|date:"d M Y" }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Duration</span>
+                        <strong>{{ placement_request.duration_weeks }} weeks</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Payment receipt</span>
+                        <strong>{{ payment.mpesa_receipt_number|default:"Confirmed" }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Department</span>
+                        <strong>{{ assignment.department.name }}</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Year of study</span>
+                        <strong>Year {{ assignment.year_of_study }}</strong>
+                    </div>
+                </div>
+
+                {% if placement_request.additional_requirements %}
+                    <div class="detail-box" style="margin-top: 12px;">
+                        <span>Additional requirements</span>
+                        <strong>{{ placement_request.additional_requirements }}</strong>
+                    </div>
+                {% endif %}
+
+                {% if student.cv %}
+                    <a
+                        href="{{ student.cv.url }}"
+                        target="_blank"
+                        rel="noopener"
+                        class="button"
+                        style="margin-top: 15px;"
+                    >
+                        Open Student CV
+                    </a>
+                {% endif %}
+            </section>
+
+            <section class="panel">
+                <h2>Ranked Internship Opportunities</h2>
+
+                {% if ranked_opportunities %}
+                    {% for match in ranked_opportunities %}
+                        <article class="opportunity-card">
+                            <div class="opportunity-top">
+                                <div>
+                                    <div class="opportunity-title">
+                                        {{ match.opportunity.title }}
+                                    </div>
+                                    <div class="muted">
+                                        {{ match.opportunity.employer }} ·
+                                        {{ match.opportunity.location }}
+                                    </div>
+                                </div>
+
+                                <span class="score">
+                                    {{ match.score }}% compatibility
+                                </span>
+                            </div>
+
+                            <div class="muted">
+                                Required skills:
+                                {{ match.opportunity.required_skills }}
+                            </div>
+
+                            <div class="muted" style="margin-top: 5px;">
+                                Deadline:
+                                {{ match.opportunity.deadline|date:"d M Y" }} ·
+                                {{ match.opportunity.slots_available }} slots
+                            </div>
+
+                            <div class="opportunity-actions">
+                                <form
+                                    method="post"
+                                    action="{% url 'payments:update_paid_request' placement_request.id %}"
+                                >
+                                    {% csrf_token %}
+                                    <input type="hidden" name="opportunity_id" value="{{ match.opportunity.id }}">
+                                    <input type="hidden" name="institution_notes" value="{{ placement_request.institution_notes }}">
+                                    <button type="submit" name="action" value="start_matching" class="button">
+                                        Select &amp; Start Matching
+                                    </button>
+                                    <button type="submit" name="action" value="shortlist" class="button button-purple">
+                                        Shortlist
+                                    </button>
+                                    <button type="submit" name="action" value="mark_placed" class="button button-success">
+                                        Mark Placed
+                                    </button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        No open internship opportunities are currently available.
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+
+        <aside>
+            <section class="panel">
+                <h2>Selected Opportunity</h2>
+
+                {% if placement_request.matched_opportunity %}
+                    <div class="current-match">
+                        <strong>{{ placement_request.matched_opportunity.title }}</strong>
+                        <br>
+                        {{ placement_request.matched_opportunity.employer }}
+                        <br>
+                        {{ placement_request.matched_opportunity.location }}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        No opportunity selected yet.
+                    </div>
+                {% endif %}
+
+                {% if placement_request.status != "active" %}
+                    <form
+                        method="post"
+                        action="{% url 'payments:update_paid_request' placement_request.id %}"
+                    >
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="return_active">
+                        <input type="hidden" name="institution_notes" value="{{ placement_request.institution_notes }}">
+                        <button type="submit" class="button button-light">
+                            Return to Active
+                        </button>
+                    </form>
+                {% endif %}
+            </section>
+
+            <section class="panel">
+                <h2>Institution Notes</h2>
+
+                <form
+                    method="post"
+                    action="{% url 'payments:update_paid_request' placement_request.id %}"
+                    class="notes-form"
+                >
+                    {% csrf_token %}
+                    <textarea
+                        name="institution_notes"
+                        placeholder="Record employer contacts, follow-ups and internal decisions..."
+                    >{{ placement_request.institution_notes }}</textarea>
+
+                    <button type="submit" name="action" value="save_notes" class="button">
+                        Save Notes
+                    </button>
+                </form>
+
+                {% if placement_request.managed_by %}
+                    <div class="muted" style="margin-top: 12px;">
+                        Last managed by:
+                        {% firstof placement_request.managed_by.get_full_name placement_request.managed_by.username %}
+                    </div>
+                {% endif %}
+            </section>
+        </aside>
+    </div>
+</div>
+
+{% endblock %}

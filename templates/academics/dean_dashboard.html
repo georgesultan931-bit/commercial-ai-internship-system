@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dean Dashboard | AI Internship</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef3f7;
+            color: #17273b;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: #102c30;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
+
+        .profile-box {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .profile-box h3 {
+            margin-bottom: 7px;
+        }
+
+        .profile-box p {
+            color: #d2e5e4;
+            font-size: 14px;
+        }
+
+        .menu-title {
+            color: #9bb8b9;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin: 20px 10px 10px;
+        }
+
+        .menu-link {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            background: white;
+            color: #102c30;
+        }
+
+        .logout-link {
+            margin-top: 35px;
+            background: #fff8dc;
+            color: #17273b;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 32px;
+            overflow-x: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 29px;
+            margin-bottom: 7px;
+        }
+
+        .header p {
+            color: #637080;
+        }
+
+        .role-badge {
+            background: #e4ecff;
+            color: #294d9b;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-link {
+            color: inherit;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        .card .label {
+            color: #687687;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card .number {
+            color: #173f45;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+        }
+
+        .panel-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel-heading h2 {
+            margin-bottom: 0;
+        }
+
+        .panel-link {
+            display: inline-block;
+            background: #173f45;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .panel-link:hover {
+            background: #0f3035;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .detail {
+            background: #f5f8fa;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .detail span {
+            display: block;
+            color: #718091;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .detail strong {
+            font-size: 16px;
+        }
+
+        .department-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .department-card {
+            border: 1px solid #dce5ea;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .department-card h3 {
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .department-card p {
+            color: #687687;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .department-meta {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 14px;
+            color: #173f45;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 850px;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #173f45;
+            color: white;
+            text-align: left;
+            padding: 13px 12px;
+        }
+
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e3e8eb;
+            vertical-align: top;
+        }
+
+        .primary-text {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .muted {
+            color: #718091;
+            font-size: 13px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-success {
+            background: #dff5e7;
+            color: #176538;
+        }
+
+        .badge-danger {
+            background: #fde4e4;
+            color: #9b2929;
+        }
+
+        .badge-info {
+            background: #dff1ff;
+            color: #185a83;
+        }
+
+        .badge-warning {
+            background: #fff1c7;
+            color: #805d00;
+        }
+
+        .badge-muted {
+            background: #edf1f4;
+            color: #52616d;
+        }
+
+        .empty {
+            color: #718091;
+            text-align: center;
+            padding: 28px;
+        }
+
+        .notice {
+            background: #fff4d4;
+            border-left: 5px solid #efb400;
+            padding: 16px;
+            border-radius: 7px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .department-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 750px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .panel-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .cards,
+            .details-grid,
+            .department-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">AI Internship</div>
+
+        <div class="profile-box">
+            <h3>
+                {% firstof request.user.get_full_name request.user.username %}
+            </h3>
+            <p>Dean</p>
+        </div>
+
+        <div class="menu-title">School Management</div>
+
+        <a href="{% url 'academics:dashboard' %}" class="menu-link active">
+            Dashboard
+        </a>
+
+        <a href="{% url 'academics:school_departments' %}" class="menu-link">
+            Departments
+        </a>
+
+        <a href="{% url 'academics:school_students' %}" class="menu-link">
+            Students
+        </a>
+
+        <a href="{% url 'academics:dean_result_queue' %}" class="menu-link">
+            Result Approvals
+        </a>
+
+        <a href="{% url 'academics:dean_amendment_queue' %}" class="menu-link">
+            Grade Amendments
+        </a>
+
+        <a href="{% url 'academics:school_supervisors' %}" class="menu-link">
+            Supervisors
+        </a>
+
+        <a href="{% url 'academics:school_internships' %}" class="menu-link">
+            Internships
+        </a>
+
+        <a href="{% url 'academics:school_applications' %}" class="menu-link">
+            Applications
+        </a>
+
+        <a href="{% url 'academics:academic_reports' %}" class="menu-link">
+            Reports &amp; Progress
+        </a>
+
+        <a href="/notifications/" class="menu-link">
+            Notifications
+        </a>
+
+        <a href="/announcements/" class="menu-link">
+            Announcements
+        </a>
+
+        <a href="/logout/" class="menu-link logout-link">
+            Log out
+        </a>
+    </aside>
+
+    <main class="main">
+
+        <div class="header">
+            <div>
+                <h1>Dean Dashboard</h1>
+                <p>
+                    Welcome back,
+                    {% firstof request.user.first_name request.user.username %}.
+                </p>
+            </div>
+
+            <div class="role-badge">DEAN</div>
+        </div>
+
+        <section class="cards">
+            <a href="{% url 'academics:school_students' %}"
+               class="card card-link">
+                <div class="label">Students</div>
+                <div class="number">{{ students_count|default:"0" }}</div>
+            </a>
+
+            <a href="{% url 'academics:school_supervisors' %}"
+               class="card card-link">
+                <div class="label">Supervisors</div>
+                <div class="number">{{ supervisors_count|default:"0" }}</div>
+            </a>
+
+            <a href="{% url 'academics:school_internships' %}"
+               class="card card-link">
+                <div class="label">Active Internships</div>
+                <div class="number">{{ internships_count|default:"0" }}</div>
+            </a>
+
+            <a href="{% url 'academics:school_applications' %}?status=pending"
+               class="card card-link">
+                <div class="label">Pending Applications</div>
+                <div class="number">{{ pending_applications_count|default:"0" }}</div>
+            </a>
+
+            <div class="card">
+                <div class="label">Programmes</div>
+                <div class="number">{{ programme_count|default:"0" }}</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Active Units</div>
+                <div class="number">{{ unit_count|default:"0" }}</div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Academic Assignment</h2>
+
+            <div class="details-grid">
+                <div class="detail">
+                    <span>Institution</span>
+                    <strong>
+                        {% firstof profile.institution.institution_name profile.institution.name "Institution not assigned" %}
+                    </strong>
+                </div>
+
+                <div class="detail">
+                    <span>School/Faculty</span>
+                    <strong>
+                        {% firstof school.name profile.school.name "School not assigned" %}
+                    </strong>
+                </div>
+
+                <div class="detail">
+                    <span>Departments</span>
+                    <strong>{{ department_count|default:"0" }}</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Academic Role</span>
+                    <strong>Dean</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Current Academic Year</span>
+                    <strong>
+                        {% firstof current_academic_year.name "Not configured" %}
+                    </strong>
+                </div>
+
+                <div class="detail">
+                    <span>Current Semester</span>
+                    <strong>
+                        {% firstof current_semester.name "Not configured" %}
+                    </strong>
+                </div>
+
+                <div class="detail">
+                    <span>School Programmes</span>
+                    <strong>{{ programme_count|default:"0" }}</strong>
+                </div>
+
+                <div class="detail">
+                    <span>School Units</span>
+                    <strong>{{ unit_count|default:"0" }}</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Units in Current Semester</span>
+                    <strong>{{ semester_unit_count|default:"0" }}</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Semesters in Current Academic Year</span>
+                    <strong>{{ semester_count|default:"0" }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>School Reports and Progress</h2>
+                    <p class="muted">
+                        Review placements, weekly reports, logged hours and
+                        supervisor evaluations across the school.
+                    </p>
+                </div>
+
+                <a href="{% url 'academics:academic_reports' %}"
+                   class="panel-link">
+                    Open reports
+                </a>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>School Departments</h2>
+
+                <a href="{% url 'academics:school_departments' %}"
+                   class="panel-link">
+                    View all departments
+                </a>
+            </div>
+
+            {% if departments %}
+                <div class="department-grid">
+                    {% for department in departments %}
+                        <div class="department-card">
+                            <h3>{{ department.name }}</h3>
+
+                            <p>
+                                {% if department.code %}
+                                    Department code: {{ department.code }}
+                                {% else %}
+                                    No department code provided.
+                                {% endif %}
+                            </p>
+
+                            <div class="department-meta">
+                                <span>
+                                    {{ department.programme_total }}
+                                    programme{{ department.programme_total|pluralize }}
+                                </span>
+
+                                <span>
+                                    {{ department.unit_total }}
+                                    unit{{ department.unit_total|pluralize }}
+                                </span>
+
+                                <span>
+                                    {{ department.student_total }}
+                                    student{{ department.student_total|pluralize }}
+                                </span>
+
+                                <span>
+                                    {% if department.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">
+                    No active departments are assigned to this school.
+                </div>
+            {% endif %}
+
+            <div class="notice">
+                The Dean has read-only school-wide oversight. Employers retain
+                responsibility for shortlisting, accepting and rejecting applications.
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Recent School Applications</h2>
+
+                <a href="{% url 'academics:school_applications' %}"
+                   class="panel-link">
+                    View all applications
+                </a>
+            </div>
+
+            {% if recent_applications %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Internship</th>
+                                <th>Employer</th>
+                                <th>Status</th>
+                                <th>Applied</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for application in recent_applications %}
+                                <tr>
+                                    <td>
+                                        <div class="primary-text">
+                                            {% firstof application.student.full_name application.student.user.get_full_name application.student.user.username %}
+                                        </div>
+                                        <div class="muted">
+                                            {{ application.student.user.email }}
+                                        </div>
+                                    </td>
+
+                                    <td>{{ application.opportunity.title }}</td>
+
+                                    <td>
+                                        {% firstof application.opportunity.employer.company_name application.opportunity.employer.user.get_full_name application.opportunity.employer.user.username "Employer unavailable" %}
+                                    </td>
+
+                                    <td>
+                                        {% if application.status == "accepted" %}
+                                            <span class="badge badge-success">
+                                                {{ application.get_status_display }}
+                                            </span>
+                                        {% elif application.status == "rejected" %}
+                                            <span class="badge badge-danger">
+                                                {{ application.get_status_display }}
+                                            </span>
+                                        {% elif application.status == "shortlisted" or application.status == "interview_scheduled" %}
+                                            <span class="badge badge-info">
+                                                {{ application.get_status_display }}
+                                            </span>
+                                        {% elif application.status == "pending" %}
+                                            <span class="badge badge-warning">
+                                                {{ application.get_status_display }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge badge-muted">
+                                                {{ application.get_status_display }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>{{ application.applied_at|date:"d M Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty">
+                    No applications have been submitted by students in this school.
+                </div>
+            {% endif %}
+        </section>
+
+    </main>
+</div>
+</body>
+</html>
